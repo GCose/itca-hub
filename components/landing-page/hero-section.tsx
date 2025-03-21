@@ -1,7 +1,6 @@
 import { useEffect, useRef } from "react";
-import Image from "next/image";
 import { motion } from "framer-motion";
-import { ArrowDownCircle } from "lucide-react";
+import { ArrowDownCircle, Target, Eye, ChevronRight } from "lucide-react";
 
 const HeroSection = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -56,7 +55,7 @@ const HeroSection = () => {
       </div>
       {/*==================== End of Animated grid lines ====================*/}
 
-      {/*==================== Glowing dots at intersections ====================*/}
+      {/* Glowing dots at intersections */}
       <div className="absolute inset-0 z-10">
         <div className="absolute top-1/4 left-1/4 h-3 w-3 rounded-full bg-blue-500/70 animate-pulse shadow-lg shadow-blue-500/50"></div>
         <div
@@ -99,10 +98,10 @@ const HeroSection = () => {
       {/*==================== Content ====================*/}
       <div className="relative z-20 flex h-full flex-col items-center justify-center px-4 text-white">
         <motion.h1
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="mb-4 text-center text-5xl font-bold tracking-tight md:text-6xl lg:text-7xl"
+          transition={{ duration: 0.8, delay: 0.3 }}
+          className="mb-8 text-center text-5xl font-bold tracking-tight md:text-6xl lg:text-7xl"
         >
           <span className="text-blue-700">Information</span> Technology{" "}
           <span className="text-amber-500">Communication</span> Association
@@ -111,33 +110,62 @@ const HeroSection = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          className="mb-8 max-w-3xl text-center text-lg text-gray-300 md:text-xl"
+          transition={{ duration: 0.8, delay: 0.5 }}
+          className="mb-12 grid gap-8 md:grid-cols-2 max-w-4xl"
         >
-          <p className="mb-4">
-            <span className="font-semibold text-amber-500">Our Mission:</span>{" "}
-            To empower students with cutting-edge technology skills and foster
-            innovation in the ICT sector.
-          </p>
-          <p>
-            <span className="font-semibold text-blue-700">Our Vision:</span> To
-            be the leading technology association that bridges academic
-            knowledge with industry practices.
-          </p>
+          {/*==================== Mission Card ====================*/}
+          <div className="group relative overflow-hidden rounded-xl border border-blue-700/30 bg-transparent p-6 backdrop-blur-md transition-all duration-300 hover:scale-105 hover:border-blue-700/60 hover:shadow-lg hover:shadow-blue-700/10">
+            <div className="mb-4 flex items-center">
+              <div className="mr-4 flex h-12 w-12 items-center justify-center rounded-full bg-blue-700/20">
+                <Target className="h-6 w-6 text-blue-500" />
+              </div>
+              <h3 className="text-xl font-bold text-blue-500">Our Mission</h3>
+            </div>
+            <p className="text-gray-300">
+              To empower students with cutting-edge technology skills and foster
+              innovation in the ICT sector through practical learning, industry
+              collaboration, and community engagement.
+            </p>
+            <div className="absolute -bottom-2 -right-2 h-24 w-24 rounded-full bg-blue-700/10 blur-2xl"></div>
+          </div>
+          {/*==================== End of Mission Card ====================*/}
+
+          {/*==================== Vision Card ====================*/}
+          <div className="group relative overflow-hidden rounded-xl border border-amber-500/30 bg-transparent p-6 backdrop-blur-md transition-all duration-300 hover:scale-105 hover:border-amber-500/60 hover:shadow-lg hover:shadow-amber-500/10">
+            <div className="mb-4 flex items-center">
+              <div className="mr-4 flex h-12 w-12 items-center justify-center rounded-full bg-amber-500/20">
+                <Eye className="h-6 w-6 text-amber-500" />
+              </div>
+              <h3 className="text-xl font-bold text-amber-500">Our Vision</h3>
+            </div>
+            <p className="text-gray-300">
+              To be the leading technology association that bridges academic
+              knowledge with industry practices, creating a generation of tech
+              professionals who drive innovation and digital transformation.
+            </p>
+            <div className="absolute -bottom-2 -right-2 h-24 w-24 rounded-full bg-amber-500/10 blur-2xl"></div>
+          </div>
+          {/*==================== End of Vision Card ====================*/}
         </motion.div>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
+          transition={{ duration: 0.8, delay: 0.7 }}
           className="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4"
         >
-          <button className="group relative overflow-hidden rounded-full bg-blue-700 px-8 py-3 text-white transition-all duration-300 hover:bg-blue-600">
-            <span className="relative z-10">Explore Programs</span>
+          <button className="group relative overflow-hidden rounded-full bg-blue-700 px-8 py-3 text-white transition-all duration-300 hover:bg-blue-600 hover:shadow-lg hover:shadow-blue-700/30">
+            <span className="relative z-10 flex items-center">
+              Explore Programs
+              <ChevronRight className="ml-1 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+            </span>
             <span className="absolute inset-0 -z-10 translate-y-full bg-amber-500 transition-transform duration-300 group-hover:translate-y-0"></span>
           </button>
-          <button className="group relative overflow-hidden rounded-full border-2 border-amber-500 bg-transparent px-8 py-3 text-amber-500 transition-all duration-300 hover:text-white">
-            <span className="relative z-10">Join ITCA</span>
+          <button className="group relative overflow-hidden rounded-full border-2 border-amber-500 bg-transparent px-8 py-3 text-amber-500 transition-all duration-300 hover:text-white hover:shadow-lg hover:shadow-amber-500/30">
+            <span className="relative z-10 flex items-center">
+              Join ITCA
+              <ChevronRight className="ml-1 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+            </span>
             <span className="absolute inset-0 -z-10 translate-y-full bg-amber-500 transition-transform duration-300 group-hover:translate-y-0"></span>
           </button>
         </motion.div>
