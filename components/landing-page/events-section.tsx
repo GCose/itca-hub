@@ -23,7 +23,7 @@ const events: Event[] = [
     location: "Main Auditorium",
     description:
       "Join us for our annual technology conference featuring industry leaders and innovative showcases.",
-    image: "/images/conference-1.jpg",
+    image: "/images/event-1.jpg",
     category: "conference",
   },
   {
@@ -34,7 +34,7 @@ const events: Event[] = [
     location: "Lab 302",
     description:
       "Hands-on workshop on modern web development techniques and frameworks.",
-    image: "/images/conference-2.jpg",
+    image: "/images/event-2.jpg",
     category: "workshop",
   },
   {
@@ -45,7 +45,7 @@ const events: Event[] = [
     location: "ICT Building",
     description:
       "A 48-hour hackathon focused on solving real-world cybersecurity challenges.",
-    image: "/images/conference-3.jpg",
+    image: "/images/event-3.jpg",
     category: "hackathon",
   },
   {
@@ -56,7 +56,7 @@ const events: Event[] = [
     location: "Virtual (Zoom)",
     description:
       "Learn about the latest advancements in AI and machine learning from industry experts.",
-    image: "/images/conference-1.jpg",
+    image: "/images/event-1.jpg",
     category: "seminar",
   },
 ];
