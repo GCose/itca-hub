@@ -28,6 +28,13 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({
       <div className="min-h-screen flex flex-col md:flex-row">
         {/*==================== Left side - Form ====================*/}
         <div className="w-full md:w-1/2 flex flex-col justify-center items-center p-8 md:p-16">
+          {/* Background elements */}
+          <div className="absolute inset-0 -z-10 bg-gradient-to-b from-white to-gray-100"></div>
+          <div className="absolute inset-0 -z-10 overflow-hidden">
+            <div className="absolute sm:left-70 lg:left-96 top-0 h-80 w-80 rounded-full bg-blue-700/5"></div>
+            <div className="absolute left-5 bottom-0 h-60 w-60 rounded-full bg-amber-500/5"></div>
+          </div>
+
           <div className="w-full max-w-md">
             <div className="mb-8">
               <Link
@@ -52,9 +59,10 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({
             </div>
 
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              className="backdrop-blur-xl"
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
+              initial={{ opacity: 0, y: 20 }}
             >
               {children}
             </motion.div>

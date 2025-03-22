@@ -4,6 +4,7 @@ import { Eye, EyeOff, Lock } from "lucide-react";
 import Link from "next/link";
 import { FormData } from "@/types/sign-up";
 import PasswordStrengthIndicator from "./password-strength-indicator";
+import AuthButton from "../auth-button";
 
 interface SecurityStepProps {
   formData: FormData;
@@ -45,14 +46,14 @@ const SecurityStep = ({
             <Lock className="h-5 w-5 text-gray-400" />
           </div>
           <input
+            required
             id="password"
             name="password"
-            type={showPassword ? "text" : "password"}
-            value={formData.password}
             onChange={onChange}
-            className="pl-10 w-full py-3 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
             placeholder="••••••••"
-            required
+            value={formData.password}
+            type={showPassword ? "text" : "password"}
+            className="pl-10 w-full py-3 px-4 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-all"
           />
           <button
             type="button"
@@ -90,7 +91,7 @@ const SecurityStep = ({
             placeholder="••••••••"
             value={formData.confirmPassword}
             type={showConfirmPassword ? "text" : "password"}
-            className="pl-10 w-full py-3 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+            className="pl-10 w-full py-3 px-4 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-all"
           />
           <button
             type="button"
@@ -140,26 +141,24 @@ const SecurityStep = ({
       </div>
 
       <div className="flex space-x-4">
-        <button
-          type="button"
+        <AuthButton
+          variant="secondary"
           onClick={onPrevious}
-          className="w-1/3 py-3 px-4 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+          fullWidth={false}
+          className="w-1/3"
         >
           Back
-        </button>
+        </AuthButton>
 
-        <button
+        <AuthButton
           type="submit"
-          disabled={isLoading}
-          className="group relative w-2/3 py-3 px-4 border border-transparent rounded-lg text-white bg-blue-700 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors disabled:opacity-70"
+          isLoading={isLoading}
+          loadingText="Creating account..."
+          fullWidth={false}
+          className="w-2/3"
         >
-          <span className="absolute inset-0 overflow-hidden rounded-lg">
-            <span className="absolute left-0 w-full h-full bg-amber-500 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300"></span>
-          </span>
-          <span className="relative flex justify-center items-center">
-            {isLoading ? "Creating account..." : "Create account"}
-          </span>
-        </button>
+          Create account
+        </AuthButton>
       </div>
     </motion.div>
   );

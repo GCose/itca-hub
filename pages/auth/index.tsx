@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Eye, EyeOff, Lock, Mail } from "lucide-react";
 import Link from "next/link";
 import AuthLayout from "@/components/ui/layouts/auth-layout";
+import AuthButton from "@/components/ui/auth-button";
 
 const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -98,13 +99,13 @@ const SignIn = () => {
                 <Mail className="h-5 w-5 text-gray-400" />
               </div>
               <input
+                required
                 id="email"
                 type="email"
                 value={email}
+                placeholder="your.email@utg.edu.gm"
                 onChange={(e) => setEmail(e.target.value)}
-                className="pl-10 w-full py-3 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                placeholder="your.email@example.com"
-                required
+                className="pl-10 w-full py-3 px-4 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-all"
               />
             </div>
           </div>
@@ -129,13 +130,13 @@ const SignIn = () => {
                 <Lock className="h-5 w-5 text-gray-400" />
               </div>
               <input
-                id="password"
-                type={showPassword ? "text" : "password"}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="pl-10 w-full py-3 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                placeholder="••••••••"
                 required
+                id="password"
+                value={password}
+                placeholder="••••••••"
+                type={showPassword ? "text" : "password"}
+                onChange={(e) => setPassword(e.target.value)}
+                className="pl-10 w-full py-3 px-4 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-all"
               />
               <button
                 type="button"
@@ -151,18 +152,13 @@ const SignIn = () => {
             </div>
           </div>
 
-          <button
+          <AuthButton
             type="submit"
-            disabled={isLoading}
-            className="group relative w-full py-3 px-4 border border-transparent rounded-lg text-white bg-blue-700 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors disabled:opacity-70"
+            isLoading={isLoading}
+            loadingText="Signing in..."
           >
-            <span className="absolute inset-0 overflow-hidden rounded-lg">
-              <span className="absolute left-0 w-full h-full bg-amber-500 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300 border-0"></span>
-            </span>
-            <span className="relative flex justify-center items-center">
-              {isLoading ? "Signing in..." : "Sign in"}
-            </span>
-          </button>
+            Sign in
+          </AuthButton>
         </form>
 
         <div className="mt-8 text-center">

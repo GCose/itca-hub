@@ -7,6 +7,16 @@ export interface FormData {
   agreeToTerms: boolean;
 }
 
+// DTO for the backend API
+export interface RegisterUserDTO {
+  schoolEmail: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  profilePicture?: string;
+  role?: string;
+}
+
 export interface FormErrors {
   [key: string]: string;
 }

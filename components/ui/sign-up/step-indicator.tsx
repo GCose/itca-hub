@@ -16,21 +16,22 @@ const StepIndicator = ({
       <div className="flex items-center">
         {Array.from({ length: totalSteps }).map((_, index) => (
           <React.Fragment key={index}>
+            {/* Step circle */}
             <div
               className={`flex items-center justify-center w-8 h-8 rounded-full ${
-                index < currentStep
-                  ? "bg-blue-700 text-white"
-                  : index === currentStep
+                index <= currentStep - 1
                   ? "bg-blue-700 text-white"
                   : "bg-gray-300 text-gray-600"
               }`}
             >
               {index + 1}
             </div>
+
+            {/* Progress bar between steps */}
             {index < totalSteps - 1 && (
               <div
                 className={`flex-1 h-1 mx-2 ${
-                  index < currentStep ? "bg-blue-700" : "bg-gray-300"
+                  index < currentStep - 1 ? "bg-blue-700" : "bg-gray-300"
                 }`}
               ></div>
             )}
