@@ -18,6 +18,14 @@ export const validatePersonalInfo = (
     };
   }
 
+  // Check for UTG email domain
+  if (!formData.email.endsWith("@utg.edu.gm")) {
+    return {
+      isValid: false,
+      error: "Please use your University of The Gambia email (@utg.edu.gm)",
+    };
+  }
+
   return {
     isValid: true,
     error: "",

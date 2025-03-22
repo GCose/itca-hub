@@ -34,14 +34,14 @@ const PersonalInfoStep = ({
               <User className="h-5 w-5 text-gray-400" />
             </div>
             <input
+              required
+              type="text"
               id="firstName"
               name="firstName"
-              type="text"
-              value={formData.firstName}
-              onChange={onChange}
-              className="pl-10 w-full py-3 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
               placeholder="John"
-              required
+              onChange={onChange}
+              value={formData.firstName}
+              className="pl-10 w-full py-3 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
             />
           </div>
         </div>
@@ -54,14 +54,14 @@ const PersonalInfoStep = ({
             Last Name
           </label>
           <input
+            required
+            type="text"
             id="lastName"
             name="lastName"
-            type="text"
-            value={formData.lastName}
-            onChange={onChange}
-            className="w-full py-3 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
             placeholder="Doe"
-            required
+            onChange={onChange}
+            value={formData.lastName}
+            className="w-full py-3 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
           />
         </div>
       </div>
@@ -78,14 +78,14 @@ const PersonalInfoStep = ({
             <Mail className="h-5 w-5 text-gray-400" />
           </div>
           <input
+            required
             id="email"
             name="email"
             type="email"
-            value={formData.email}
             onChange={onChange}
+            value={formData.email}
+            placeholder="your.email@utg.edu.gm"
             className="pl-10 w-full py-3 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-            placeholder="your.email@example.com"
-            required
           />
         </div>
       </div>
