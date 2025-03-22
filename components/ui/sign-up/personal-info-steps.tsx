@@ -16,10 +16,10 @@ const PersonalInfoStep = ({
 }: PersonalInfoStepProps) => {
   return (
     <motion.div
-      initial={{ opacity: 0, x: 20 }}
-      animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -20 }}
       transition={{ duration: 0.3 }}
+      animate={{ opacity: 1, x: 0 }}
+      initial={{ opacity: 0, x: 20 }}
     >
       <div className="grid grid-cols-2 gap-4 mb-6">
         <div>

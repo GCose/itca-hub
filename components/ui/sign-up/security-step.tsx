@@ -83,19 +83,19 @@ const SecurityStep = ({
             <Lock className="h-5 w-5 text-gray-400" />
           </div>
           <input
+            required
+            onChange={onChange}
             id="confirmPassword"
             name="confirmPassword"
-            type={showConfirmPassword ? "text" : "password"}
-            value={formData.confirmPassword}
-            onChange={onChange}
-            className="pl-10 w-full py-3 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
             placeholder="••••••••"
-            required
+            value={formData.confirmPassword}
+            type={showConfirmPassword ? "text" : "password"}
+            className="pl-10 w-full py-3 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
           />
           <button
             type="button"
-            className="absolute inset-y-0 right-0 pr-3 flex items-center"
             onClick={toggleShowConfirmPassword}
+            className="absolute inset-y-0 right-0 pr-3 flex items-center"
           >
             {showConfirmPassword ? (
               <EyeOff className="h-5 w-5 text-gray-400" />
@@ -116,8 +116,8 @@ const SecurityStep = ({
           <input
             type="checkbox"
             name="agreeToTerms"
-            checked={formData.agreeToTerms}
             onChange={onChange}
+            checked={formData.agreeToTerms}
             className="h-4 w-4 text-blue-700 focus:ring-blue-500 border-gray-300 rounded"
           />
           <span className="ml-2 text-sm text-gray-600">
