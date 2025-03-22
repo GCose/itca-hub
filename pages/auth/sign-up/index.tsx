@@ -12,9 +12,9 @@ import {
   validatePersonalInfo,
   validateSecurity,
 } from "@/utils/sign-up/validation";
-import PersonalInfoStep from "../../../components/ui/sign-up/personal-info-steps";
-import SecurityStep from "../../../components/ui/sign-up/security-step";
-import StepIndicator from "../../../components/ui/sign-up/step-indicator";
+import PersonalInfoStep from "@/components/ui/sign-up/personal-info-steps";
+import SecurityStep from "@/components/ui/sign-up/security-step";
+import StepIndicator from "@/components/ui/sign-up/step-indicator";
 
 const SignUp = () => {
   // State management
