@@ -1,4 +1,4 @@
-import { FormData } from "../../types/sign-up";
+import { FormData } from "@/types/sign-up";
 
 export const validatePersonalInfo = (
   formData: FormData

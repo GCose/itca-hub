@@ -169,6 +169,7 @@ const SignUp = () => {
             currentStep={step}
             labels={["Personal Info", "Security"]}
           />
+          {/*==================== End of Step indicator component ====================*/}
 
           {/*==================== Render the appropriate step component ====================*/}
           {step === 1 ? (
