@@ -2,9 +2,9 @@ import React from "react";
 import { CheckCircle } from "lucide-react";
 import {
   calculatePasswordStrength,
-  getPasswordStrengthColor,
   getPasswordStrengthText,
-} from "../utils/password-strength";
+  getPasswordStrengthColor,
+} from "@/utils/sign-up/password-strength";
 
 interface PasswordStrengthIndicatorProps {
   password: string;

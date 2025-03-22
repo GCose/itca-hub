@@ -1,7 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Mail, User } from "lucide-react";
-import { FormData } from "../types";
+import { FormData } from "@/types/sign-up";
 
 interface PersonalInfoStepProps {
   formData: FormData;

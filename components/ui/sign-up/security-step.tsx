@@ -2,7 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Eye, EyeOff, Lock } from "lucide-react";
 import Link from "next/link";
-import { FormData } from "../types";
+import { FormData } from "@/types/sign-up";
 import PasswordStrengthIndicator from "./password-strength-indicator";
 
 interface SecurityStepProps {

@@ -5,13 +5,16 @@ import Link from "next/link";
 import AuthLayout from "@/components/ui/layouts/auth-layout";
 
 // Import types
-import { FormData } from "./types";
+import { FormData } from "@/types/sign-up";
 
 // Import utilities
-import { validatePersonalInfo, validateSecurity } from "./utils/validation";
-import PersonalInfoStep from "./components/personal-info-steps";
-import SecurityStep from "./components/security-step";
-import StepIndicator from "./components/step-indicator";
+import {
+  validatePersonalInfo,
+  validateSecurity,
+} from "@/utils/sign-up/validation";
+import PersonalInfoStep from "../../../components/ui/sign-up/personal-info-steps";
+import SecurityStep from "../../../components/ui/sign-up/security-step";
+import StepIndicator from "../../../components/ui/sign-up/step-indicator";
 
 const SignUp = () => {
   // State management
