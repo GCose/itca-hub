@@ -1,0 +1,168 @@
+import React from "react";
+import { motion } from "framer-motion";
+import { Eye, EyeOff, Lock } from "lucide-react";
+import Link from "next/link";
+import { FormData } from "../types";
+import PasswordStrengthIndicator from "./password-strength-indicator";
+
+interface SecurityStepProps {
+  formData: FormData;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onPrevious: () => void;
+  isLoading: boolean;
+  showPassword: boolean;
+  showConfirmPassword: boolean;
+  toggleShowPassword: () => void;
+  toggleShowConfirmPassword: () => void;
+}
+
+const SecurityStep = ({
+  formData,
+  onChange,
+  onPrevious,
+  isLoading,
+  showPassword,
+  showConfirmPassword,
+  toggleShowPassword,
+  toggleShowConfirmPassword,
+}: SecurityStepProps) => {
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -20 }}
+      transition={{ duration: 0.3 }}
+    >
+      <div className="mb-6">
+        <label
+          htmlFor="password"
+          className="block text-sm font-medium text-gray-700 mb-2"
+        >
+          Password
+        </label>
+        <div className="relative">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <Lock className="h-5 w-5 text-gray-400" />
+          </div>
+          <input
+            id="password"
+            name="password"
+            type={showPassword ? "text" : "password"}
+            value={formData.password}
+            onChange={onChange}
+            className="pl-10 w-full py-3 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+            placeholder="••••••••"
+            required
+          />
+          <button
+            type="button"
+            className="absolute inset-y-0 right-0 pr-3 flex items-center"
+            onClick={toggleShowPassword}
+          >
+            {showPassword ? (
+              <EyeOff className="h-5 w-5 text-gray-400" />
+            ) : (
+              <Eye className="h-5 w-5 text-gray-400" />
+            )}
+          </button>
+        </div>
+
+        {/* Password strength indicator */}
+        <PasswordStrengthIndicator password={formData.password} />
+      </div>
+
+      <div className="mb-6">
+        <label
+          htmlFor="confirmPassword"
+          className="block text-sm font-medium text-gray-700 mb-2"
+        >
+          Confirm Password
+        </label>
+        <div className="relative">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <Lock className="h-5 w-5 text-gray-400" />
+          </div>
+          <input
+            id="confirmPassword"
+            name="confirmPassword"
+            type={showConfirmPassword ? "text" : "password"}
+            value={formData.confirmPassword}
+            onChange={onChange}
+            className="pl-10 w-full py-3 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+            placeholder="••••••••"
+            required
+          />
+          <button
+            type="button"
+            className="absolute inset-y-0 right-0 pr-3 flex items-center"
+            onClick={toggleShowConfirmPassword}
+          >
+            {showConfirmPassword ? (
+              <EyeOff className="h-5 w-5 text-gray-400" />
+            ) : (
+              <Eye className="h-5 w-5 text-gray-400" />
+            )}
+          </button>
+        </div>
+        {formData.password &&
+          formData.confirmPassword &&
+          formData.password !== formData.confirmPassword && (
+            <p className="mt-1 text-xs text-red-600">Passwords do not match</p>
+          )}
+      </div>
+
+      <div className="mb-8">
+        <label className="flex items-center">
+          <input
+            type="checkbox"
+            name="agreeToTerms"
+            checked={formData.agreeToTerms}
+            onChange={onChange}
+            className="h-4 w-4 text-blue-700 focus:ring-blue-500 border-gray-300 rounded"
+          />
+          <span className="ml-2 text-sm text-gray-600">
+            I agree to the{" "}
+            <Link
+              href="/terms"
+              className="text-blue-700 hover:text-blue-600 underline"
+            >
+              Terms of Service
+            </Link>{" "}
+            and{" "}
+            <Link
+              href="/privacy"
+              className="text-blue-700 hover:text-blue-600 underline"
+            >
+              Privacy Policy
+            </Link>
+          </span>
+        </label>
+      </div>
+
+      <div className="flex space-x-4">
+        <button
+          type="button"
+          onClick={onPrevious}
+          className="w-1/3 py-3 px-4 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+        >
+          Back
+        </button>
+
+        <button
+          type="submit"
+          disabled={isLoading}
+          className="group relative w-2/3 py-3 px-4 border border-transparent rounded-lg text-white bg-blue-700 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors disabled:opacity-70"
+        >
+          <span className="absolute inset-0 overflow-hidden rounded-lg">
+            <span className="absolute left-0 w-full h-full bg-amber-500 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300"></span>
+          </span>
+          <span className="relative flex justify-center items-center">
+            {isLoading ? "Creating account..." : "Create account"}
+          </span>
+        </button>
+      </div>
+    </motion.div>
+  );
+};
+
+export default SecurityStep;
