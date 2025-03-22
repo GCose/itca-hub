@@ -1,5 +1,3 @@
-"use client";
-
 import Head from "next/head";
 import { useEffect } from "react";
 import Header from "../components/landing-page/header";
@@ -10,6 +8,7 @@ import QuickLinks from "../components/landing-page/quick-links";
 import VirtualTour from "../components/landing-page/virtual-tour";
 import ResourcesSection from "../components/landing-page/resources-section";
 import Footer from "../components/landing-page/footer";
+import Link from "next/link";
 
 const HomePage = () => {
   // Smooth scroll implementation for navigation
@@ -54,14 +53,14 @@ const HomePage = () => {
           content="Information Technology Communication Association under the School of Information Communication and Technology"
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <Link rel="icon" href="/favicon.ico" />
+        <Link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
           rel="preconnect"
           crossOrigin="anonymous"
           href="https://fonts.gstatic.com"
         />
-        <link
+        <Link
           rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
         />
