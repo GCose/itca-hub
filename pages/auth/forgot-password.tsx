@@ -1,10 +1,15 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Mail, ArrowRight } from "lucide-react";
+import { Mail, AlertCircle, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 import AuthLayout from "@/components/ui/layouts/auth-layout";
 import AuthButton from "@/components/ui/auth-button";
+
+// Define the DTO for forgot password API call
+interface ForgotPasswordDTO {
+  schoolEmail: string;
+}
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -12,31 +17,59 @@ const ForgotPassword = () => {
   const [error, setError] = useState("");
   const [emailSent, setEmailSent] = useState(false);
 
+  // Validate UTG email format
+  const isValidUTGEmail = (email: string): boolean => {
+    return email.trim().toLowerCase().endsWith("@utg.edu.gm");
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
     if (!email) {
-      setError("Please enter your email address");
+      setError("Please enter your UTG email address");
+      return;
+    }
+
+    // Strict validation for UTG email format
+    if (!isValidUTGEmail(email)) {
+      setError(
+        "Please enter a valid UTG email address ending with @utg.edu.gm"
+      );
+      toast.error("Invalid email format", {
+        description: "Only UTG email addresses (@utg.edu.gm) are allowed",
+      });
       return;
     }
 
     try {
       setIsLoading(true);
+      const toastId = toast.loading("Sending reset code...");
+
+      // Prepare the DTO
+      const forgotPasswordData: ForgotPasswordDTO = {
+        schoolEmail: email, // Map email to schoolEmail as in RegisterUserDTO, basic stuffs
+      };
+
       // API call would go here - Ebrima Mbye
-      // Example: await api.forgotPassword({ email });
+      // Example: await api.forgotPassword(forgotPasswordData);
+      console.log("Sending to backend:", forgotPasswordData);
 
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1500));
 
       // Show success message
       setEmailSent(true);
-      toast.success("Password reset link sent to your email", {
-        description: "Please check your inbox and follow the instructions",
+      toast.success("Reset code sent to your UTG email", {
+        id: toastId,
+        description: "Please check your inbox, spam, and junk folders",
         duration: 5000,
       });
     } catch (err) {
       setError("An error occurred. Please try again.");
+      toast.error("Failed to send reset code", {
+        description: "Please try again later",
+      });
       console.error(err);
     } finally {
       setIsLoading(false);
@@ -53,8 +86,8 @@ const ForgotPassword = () => {
     >
       <h2 className="text-5xl font-bold mb-6">Reset Your Password</h2>
       <p className="text-lg text-white/80 mb-8">
-        We will send you instructions on how to reset your password so you can
-        get back to accessing all the ITCA resources.
+        We will send a verification code to your UTG email so you can reset your
+        password and access ITCA resources.
       </p>
 
       <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 max-w-md mx-auto">
@@ -63,9 +96,9 @@ const ForgotPassword = () => {
             <Mail className="h-6 w-6 text-amber-500" />
           </div>
           <div className="ml-4 text-left">
-            <h3 className="font-medium">Check Your Email</h3>
+            <h3 className="font-medium">Check Your UTG Email</h3>
             <p className="text-sm text-white/80">
-              After submitting, you will receive a password reset link
+              After submitting, you will receive a verification code
             </p>
           </div>
         </div>
@@ -75,9 +108,9 @@ const ForgotPassword = () => {
             <ArrowRight className="h-6 w-6 text-amber-500" />
           </div>
           <div className="ml-4 text-left">
-            <h3 className="font-medium">Follow the Link</h3>
+            <h3 className="font-medium">Enter the Code</h3>
             <p className="text-sm text-white/80">
-              Click the link in your email to create a new password
+              Use the code to create a new password
             </p>
           </div>
         </div>
@@ -96,13 +129,14 @@ const ForgotPassword = () => {
           Forgot Password
         </h1>
         <p className="text-gray-600 mb-8">
-          Enter your email address and we will send you a link to reset your
+          Enter your UTG email address and we will send you a code to reset your
           password
         </p>
 
         {error && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg">
-            {error}
+          <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg flex items-start">
+            <AlertCircle className="h-5 w-5 mr-2 mt-0.5 flex-shrink-0" />
+            <span>{error}</span>
           </div>
         )}
 
@@ -117,16 +151,26 @@ const ForgotPassword = () => {
               <Mail className="h-12 w-12 text-blue-600" />
             </div>
             <h2 className="text-xl font-semibold mb-2 text-gray-900">
-              Check your email
+              Check your UTG email
             </h2>
-            <p className="text-gray-600 mb-6">
-              We have sent a password reset link to {email}
+            <p className="text-gray-600 mb-4">
+              We have sent a reset code to:{" "}
+              <span className="font-medium">{email}</span>
             </p>
+            <div className="p-4 bg-amber-50 border border-amber-100 rounded-lg mb-6">
+              <div className="flex items-start">
+                <AlertCircle className="h-5 w-5 text-amber-600 mt-0.5 mr-2 flex-shrink-0" />
+                <p className="text-sm text-amber-800">
+                  Please check all folders including spam and junk. The code is
+                  valid for 15 minutes.
+                </p>
+              </div>
+            </div>
             <Link
-              href="/auth"
+              href="/auth/reset-password"
               className="text-blue-700 hover:text-blue-600 font-medium transition-colors"
             >
-              Return to sign in
+              <AuthButton>Continue to password reset</AuthButton>
             </Link>
           </motion.div>
         ) : (
@@ -136,7 +180,7 @@ const ForgotPassword = () => {
                 htmlFor="email"
                 className="block text-sm font-medium text-gray-700 mb-2"
               >
-                Email Address
+                UTG Email Address
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -157,9 +201,9 @@ const ForgotPassword = () => {
             <AuthButton
               type="submit"
               isLoading={isLoading}
-              loadingText="Sending reset link..."
+              loadingText="Sending reset code..."
             >
-              Send reset link
+              Send reset code
             </AuthButton>
           </form>
         )}
