@@ -1,70 +1,66 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { Eye, EyeOff, Lock, ShieldCheck, AlertTriangle } from "lucide-react";
-import { useRouter } from "next/router";
+import {
+  Eye,
+  EyeOff,
+  Lock,
+  ShieldCheck,
+  KeyRound,
+  AlertCircle,
+} from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 import AuthLayout from "@/components/ui/layouts/auth-layout";
 import AuthButton from "@/components/ui/auth-button";
 import PasswordStrengthIndicator from "@/components/ui/sign-up/password-strength-indicator";
 
-const ResetPassword = () => {
-  const router = useRouter();
-  const { token } = router.query;
+// Defining the DTO for reset password API call
+interface ResetPasswordDTO {
+  resetToken: string;
+  newPassword: string;
+}
 
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+const ResetPassword = () => {
+  const [resetToken, setResetToken] = useState("");
+  const [newPassword, setNewPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const [isTokenValid, setIsTokenValid] = useState(true);
   const [resetComplete, setResetComplete] = useState(false);
-
-  useEffect(() => {
-    // Verify token validity when component mounts
-    const verifyToken = async () => {
-      if (!token) return;
-
-      try {
-        // API call would go here to verify the token - Ebrima Mbye
-        // Example: const response = await api.verifyResetToken(token as string);
-
-        // Simulate API call
-        await new Promise((resolve) => setTimeout(resolve, 500));
-
-        // For demo purposes assume token is valid
-        setIsTokenValid(true);
-      } catch {
-        setIsTokenValid(false);
-        setError("This password reset link is invalid or has expired.");
-      }
-    };
-
-    if (token) {
-      verifyToken();
-    }
-  }, [token]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
-    if (password !== confirmPassword) {
-      setError("Passwords do not match");
+    if (!resetToken) {
+      setError("Please enter the reset code from your email");
+      toast.error("Reset code required", {
+        description: "Please check your email for the code",
+      });
       return;
     }
 
-    if (password.length < 8) {
+    if (!newPassword || newPassword.length < 8) {
       setError("Password must be at least 8 characters long");
+      toast.error("Password too short", {
+        description: "Please use at least 8 characters for security",
+      });
       return;
     }
 
     try {
       setIsLoading(true);
+      const toastId = toast.loading("Resetting password...");
 
-      // API call would go here
-      // Example: await api.resetPassword({ token: token as string, password });
+      // Prepare the DTO
+      const resetPasswordData: ResetPasswordDTO = {
+        resetToken,
+        newPassword,
+      };
+
+      // API call would go here - Ebrima Mbye
+      // Example: await api.resetPassword(resetPasswordData);
+      console.log("Sending to backend:", resetPasswordData);
 
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1500));
@@ -72,13 +68,15 @@ const ResetPassword = () => {
       // Show success message
       setResetComplete(true);
       toast.success("Password has been reset successfully", {
+        id: toastId,
         description: "You can now sign in with your new password",
         duration: 5000,
       });
     } catch (err) {
-      setError(
-        "An error occurred while resetting your password. Please try again."
-      );
+      setError("Invalid or expired reset code. Please try again.");
+      toast.error("Password reset failed", {
+        description: "Please check your code and try again",
+      });
       console.error(err);
     } finally {
       setIsLoading(false);
@@ -95,8 +93,8 @@ const ResetPassword = () => {
     >
       <h2 className="text-5xl font-bold mb-6">Secure Your Account</h2>
       <p className="text-lg text-white/80 mb-8">
-        Creating a strong password helps keep your ITCA account and personal
-        information secure.
+        Enter the verification code sent to your email and create a new secure
+        password for your ITCA account.
       </p>
 
       <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 text-left">
@@ -142,38 +140,18 @@ const ResetPassword = () => {
           Reset Password
         </h1>
         <p className="text-gray-600 mb-8">
-          Create a new secure password for your account
+          Enter the verification code from your email and create a new secure
+          password
         </p>
 
         {error && (
           <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg flex items-start">
-            <AlertTriangle className="h-5 w-5 mr-2 mt-0.5 flex-shrink-0" />
+            <AlertCircle className="h-5 w-5 mr-2 mt-0.5 flex-shrink-0" />
             <span>{error}</span>
           </div>
         )}
 
-        {!isTokenValid ? (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="text-center p-6 bg-amber-50 rounded-lg border border-amber-100"
-          >
-            <div className="mb-4 flex justify-center">
-              <AlertTriangle className="h-12 w-12 text-amber-600" />
-            </div>
-            <h2 className="text-xl font-semibold mb-2 text-gray-900">
-              Invalid or Expired Link
-            </h2>
-            <p className="text-gray-600 mb-6">
-              This password reset link is no longer valid. Please request a new
-              one.
-            </p>
-            <Link href="/auth/forgot-password">
-              <AuthButton>Request New Link</AuthButton>
-            </Link>
-          </motion.div>
-        ) : resetComplete ? (
+        {resetComplete ? (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -198,7 +176,33 @@ const ResetPassword = () => {
           <form onSubmit={handleSubmit}>
             <div className="mb-6">
               <label
-                htmlFor="password"
+                htmlFor="resetToken"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                Reset Code
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <KeyRound className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  required
+                  id="resetToken"
+                  value={resetToken}
+                  placeholder="Enter the code from your email"
+                  onChange={(e) => setResetToken(e.target.value)}
+                  className="pl-10 w-full py-3 px-4 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-all"
+                />
+              </div>
+              <p className="mt-1 text-xs text-gray-500">
+                Check your inbox, spam and junk folders for the verification
+                code
+              </p>
+            </div>
+
+            <div className="mb-8">
+              <label
+                htmlFor="newPassword"
                 className="block text-sm font-medium text-gray-700 mb-2"
               >
                 New Password
@@ -209,11 +213,11 @@ const ResetPassword = () => {
                 </div>
                 <input
                   required
-                  id="password"
-                  value={password}
+                  id="newPassword"
+                  value={newPassword}
                   placeholder="••••••••"
                   type={showPassword ? "text" : "password"}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => setNewPassword(e.target.value)}
                   className="pl-10 w-full py-3 px-4 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-all"
                 />
                 <button
@@ -230,46 +234,7 @@ const ResetPassword = () => {
               </div>
 
               {/* Password strength indicator */}
-              <PasswordStrengthIndicator password={password} />
-            </div>
-
-            <div className="mb-8">
-              <label
-                htmlFor="confirmPassword"
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
-                Confirm New Password
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  required
-                  id="confirmPassword"
-                  placeholder="••••••••"
-                  value={confirmPassword}
-                  type={showConfirmPassword ? "text" : "password"}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="pl-10 w-full py-3 px-4 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-all"
-                />
-                <button
-                  type="button"
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                >
-                  {showConfirmPassword ? (
-                    <EyeOff className="h-5 w-5 text-gray-400" />
-                  ) : (
-                    <Eye className="h-5 w-5 text-gray-400" />
-                  )}
-                </button>
-              </div>
-              {password && confirmPassword && password !== confirmPassword && (
-                <p className="mt-1 text-xs text-red-600">
-                  Passwords do not match
-                </p>
-              )}
+              <PasswordStrengthIndicator password={newPassword} />
             </div>
 
             <AuthButton
