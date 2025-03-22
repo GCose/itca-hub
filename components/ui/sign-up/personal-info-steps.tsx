@@ -2,6 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Mail, User } from "lucide-react";
 import { FormData } from "@/types/sign-up";
+import AuthButton from "../auth-button";
 
 interface PersonalInfoStepProps {
   formData: FormData;
@@ -41,7 +42,7 @@ const PersonalInfoStep = ({
               placeholder="John"
               onChange={onChange}
               value={formData.firstName}
-              className="pl-10 w-full py-3 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+              className="pl-10 w-full py-3 px-4 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-all"
             />
           </div>
         </div>
@@ -61,7 +62,7 @@ const PersonalInfoStep = ({
             placeholder="Doe"
             onChange={onChange}
             value={formData.lastName}
-            className="w-full py-3 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+            className="w-full py-3 px-4 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-all"
           />
         </div>
       </div>
@@ -85,23 +86,14 @@ const PersonalInfoStep = ({
             onChange={onChange}
             value={formData.email}
             placeholder="your.email@utg.edu.gm"
-            className="pl-10 w-full py-3 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+            className="pl-10 w-full py-3 px-4 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-all"
           />
         </div>
       </div>
 
-      <button
-        type="button"
-        onClick={onContinue}
-        className="group relative w-full py-3 px-4 border border-transparent rounded-lg text-white bg-blue-700 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
-      >
-        <span className="absolute inset-0 overflow-hidden rounded-lg">
-          <span className="absolute left-0 w-full h-full bg-amber-500 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300"></span>
-        </span>
-        <span className="relative flex justify-center items-center">
-          Continue
-        </span>
-      </button>
+      <AuthButton type="button" onClick={onContinue}>
+        Continue
+      </AuthButton>
     </motion.div>
   );
 };

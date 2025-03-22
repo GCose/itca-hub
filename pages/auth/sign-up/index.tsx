@@ -5,7 +5,7 @@ import Link from "next/link";
 import AuthLayout from "@/components/ui/layouts/auth-layout";
 
 // Import types
-import { FormData } from "@/types/sign-up";
+import { FormData, RegisterUserDTO } from "@/types/sign-up";
 
 // Import utilities
 import {
@@ -64,18 +64,32 @@ const SignUp = () => {
       setError(error);
       return;
     }
-
     setError("");
 
     try {
       setIsLoading(true);
-      // API Simulation call
+
+      // Changed the FormData to RegisterUserDTO as expected by the backend [Cough cough Jordan]
+      const registerData: RegisterUserDTO = {
+        schoolEmail: formData.email, // Map email to schoolEmail
+        password: formData.password,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        // The backend will handle defaults for optional fields so no need to place that here, I'm sure you already know that
+      };
+
+      // API call would go here - Ebrima Mbye
+      // Example: const response = await api.register(registerData);
+      console.log("Sending to backend:", registerData);
+
+      // Simulating API call for now
       await new Promise((resolve) => setTimeout(resolve, 1500));
 
       // Redirect to dashboard or home page after successful registration
       window.location.href = "/";
-    } catch {
+    } catch (err) {
       setError("An error occurred during registration");
+      console.error(err);
     } finally {
       setIsLoading(false);
     }
