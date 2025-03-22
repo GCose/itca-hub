@@ -1,13 +1,12 @@
-"use client";
-
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { Menu, X } from "lucide-react";
+import Link from "next/link";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState("");
 
   useEffect(() => {
     const handleScroll = () => {
@@ -20,13 +19,43 @@ const Header = () => {
 
     window.addEventListener("scroll", handleScroll);
 
+    // Set up intersection observer for each section
+    const sections = document.querySelectorAll("section[id]");
+    const observerOptions = {
+      root: null,
+      rootMargin: "-100px 0px -100px 0px",
+      threshold: 0.3,
+    };
+
+    const observerCallback = (entries: IntersectionObserverEntry[]) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          setActiveSection(entry.target.id);
+        }
+      });
+    };
+
+    const observer = new IntersectionObserver(
+      observerCallback,
+      observerOptions
+    );
+    sections.forEach((section) => {
+      observer.observe(section);
+    });
+
     return () => {
       window.removeEventListener("scroll", handleScroll);
+      observer.disconnect();
     };
   }, []);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+  };
+
+  // Helper function to determine if a link is active
+  const isActive = (sectionId: string) => {
+    return activeSection === sectionId ? "link-active" : "";
   };
 
   return (
@@ -50,12 +79,12 @@ const Header = () => {
           <ul className="flex space-x-8">
             <li>
               <a
-                href="#"
+                href="#hero-section"
                 className={`font-medium transition-colors ${
                   isScrolled
                     ? "text-gray-900 hover:text-blue-700"
                     : "text-white hover:text-amber-500"
-                }`}
+                } ${isActive("hero-section")}`}
               >
                 Home
               </a>
@@ -67,7 +96,7 @@ const Header = () => {
                   isScrolled
                     ? "text-gray-900 hover:text-blue-700"
                     : "text-white hover:text-amber-500"
-                }`}
+                } ${isActive("events")}`}
               >
                 Events
               </a>
@@ -79,7 +108,7 @@ const Header = () => {
                   isScrolled
                     ? "text-gray-900 hover:text-blue-700"
                     : "text-white hover:text-amber-500"
-                }`}
+                } ${isActive("degrees")}`}
               >
                 Degrees
               </a>
@@ -91,7 +120,7 @@ const Header = () => {
                   isScrolled
                     ? "text-gray-900 hover:text-blue-700"
                     : "text-white hover:text-amber-500"
-                }`}
+                } ${isActive("virtual-tour")}`}
               >
                 Virtual Tour
               </a>
@@ -103,7 +132,7 @@ const Header = () => {
                   isScrolled
                     ? "text-gray-900 hover:text-blue-700"
                     : "text-white hover:text-amber-500"
-                }`}
+                } ${isActive("resources")}`}
               >
                 Resources
               </a>
@@ -111,16 +140,27 @@ const Header = () => {
           </ul>
         </nav>
 
-        <div className="hidden md:block">
-          <button
+        <div className="hidden md:flex gap-2">
+          <Link
+            href={"/auth"}
+            className={`rounded-full px-6 py-2 font-medium transition-all ${
+              isScrolled
+                ? "text-gray-800 hover:bg-blue-600 hover:text-white"
+                : "text-white hover:bg-white/20"
+            }`}
+          >
+            Sign in
+          </Link>
+          <Link
+            href={"/auth/sign-up"}
             className={`rounded-full px-6 py-2 font-medium transition-all ${
               isScrolled
                 ? "bg-blue-700 text-white hover:bg-blue-600"
                 : "bg-white/10 text-white backdrop-blur-sm hover:bg-white/20"
             }`}
           >
-            Login
-          </button>
+            Sign Up
+          </Link>
         </div>
 
         <button
@@ -151,8 +191,10 @@ const Header = () => {
             <ul className="space-y-4">
               <li>
                 <a
-                  href="#"
-                  className="block font-medium text-gray-900 hover:text-blue-700"
+                  href="#hero-section"
+                  className={`block font-medium text-gray-900 hover:text-blue-700 ${isActive(
+                    "hero-section"
+                  )}`}
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Home
@@ -161,7 +203,9 @@ const Header = () => {
               <li>
                 <a
                   href="#events"
-                  className="block font-medium text-gray-900 hover:text-blue-700"
+                  className={`block font-medium text-gray-900 hover:text-blue-700 ${isActive(
+                    "events"
+                  )}`}
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Events
@@ -170,7 +214,9 @@ const Header = () => {
               <li>
                 <a
                   href="#degrees"
-                  className="block font-medium text-gray-900 hover:text-blue-700"
+                  className={`block font-medium text-gray-900 hover:text-blue-700 ${isActive(
+                    "degrees"
+                  )}`}
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Degrees
@@ -179,7 +225,9 @@ const Header = () => {
               <li>
                 <a
                   href="#virtual-tour"
-                  className="block font-medium text-gray-900 hover:text-blue-700"
+                  className={`block font-medium text-gray-900 hover:text-blue-700 ${isActive(
+                    "virtual-tour"
+                  )}`}
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Virtual Tour
@@ -188,16 +236,27 @@ const Header = () => {
               <li>
                 <a
                   href="#resources"
-                  className="block font-medium text-gray-900 hover:text-blue-700"
+                  className={`block font-medium text-gray-900 hover:text-blue-700 ${isActive(
+                    "resources"
+                  )}`}
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Resources
                 </a>
               </li>
-              <li className="pt-4">
-                <button className="w-full rounded-full bg-blue-700 px-6 py-2 font-medium text-white transition-all hover:bg-blue-600">
-                  Login
-                </button>
+              <li className="pt-4 space-y-2">
+                <Link
+                  href="/auth"
+                  className="block w-full rounded-full px-6 py-2 font-medium text-gray-800 transition-all hover:bg-blue-600 hover:text-white text-center"
+                >
+                  Sign in
+                </Link>
+                <Link
+                  href="/auth/sign-up"
+                  className="block w-full rounded-full bg-blue-700 px-6 py-2 font-medium text-white transition-all hover:bg-blue-600 text-center"
+                >
+                  Sign up
+                </Link>
               </li>
             </ul>
           </nav>

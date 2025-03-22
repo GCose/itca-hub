@@ -52,7 +52,7 @@ const QuickLinks = () => {
             Quick <span className="text-blue-700">Navigation</span>
           </h2>
           <p className="mx-auto max-w-2xl text-gray-600">
-            Find what you're looking for with our easy navigation shortcuts
+            Find what you are looking for with our easy navigation shortcuts
           </p>
         </motion.div>
 

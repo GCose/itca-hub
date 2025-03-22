@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { ArrowDownCircle, Target, Eye, ChevronRight } from "lucide-react";
+import Link from "next/link";
 
 const HeroSection = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -12,8 +13,11 @@ const HeroSection = () => {
   }, []);
 
   return (
-    <section className="relative h-screen w-full overflow-hidden bg-gradient-to-b from-gray-900 to-black">
-      {/*==================== Background video with overlay ====================*/}
+    <section
+      id="hero-section"
+      className="relative h-screen w-full overflow-hidden bg-gradient-to-b from-gray-900 to-black"
+    >
+      {/*==================== Background Video With Overlay ====================*/}
       <div className="absolute inset-0 z-0">
         <video
           loop
@@ -27,9 +31,9 @@ const HeroSection = () => {
         </video>
         <div className="absolute inset-0 bg-gradient-to-r from-gray-900/80 via-transparent to-gray-900/80"></div>
       </div>
-      {/*==================== End of Background video with overlay ====================*/}
+      {/*==================== End of Background Video With Overlay ====================*/}
 
-      {/*==================== Animated grid lines ====================*/}
+      {/*==================== Animated Grid Lines ====================*/}
       <div className="absolute inset-0 z-10 overflow-hidden">
         {/* Horizontal animated lines */}
         <div className="absolute top-1/4 left-0 h-[2px] w-full bg-gradient-to-r from-transparent via-amber-500/60 to-transparent animate-pulse"></div>
@@ -53,9 +57,9 @@ const HeroSection = () => {
           style={{ animationDelay: "2.5s" }}
         ></div>
       </div>
-      {/*==================== End of Animated grid lines ====================*/}
+      {/*==================== End of Animated Grid Lines ====================*/}
 
-      {/* Glowing dots at intersections */}
+      {/*==================== Glowing Dots At Intersections ====================*/}
       <div className="absolute inset-0 z-10">
         <div className="absolute top-1/4 left-1/4 h-3 w-3 rounded-full bg-blue-500/70 animate-pulse shadow-lg shadow-blue-500/50"></div>
         <div
@@ -93,7 +97,7 @@ const HeroSection = () => {
           style={{ animationDelay: "4s" }}
         ></div>
       </div>
-      {/*==================== End of Glowing dots at intersections ====================*/}
+      {/*==================== End of Glowing Dots At Intersections ====================*/}
 
       {/*==================== Content ====================*/}
       <div className="relative z-20 flex h-full flex-col items-center justify-center px-4 text-white">
@@ -155,17 +159,23 @@ const HeroSection = () => {
           className="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4"
         >
           <button className="group relative overflow-hidden rounded-full bg-blue-700 px-8 py-3 text-white transition-all duration-300 hover:bg-blue-600 hover:shadow-lg hover:shadow-blue-700/30">
-            <span className="relative z-10 flex items-center">
+            <Link
+              href={"/#degrees"}
+              className="relative z-10 flex items-center"
+            >
               Explore Programs
               <ChevronRight className="ml-1 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-            </span>
+            </Link>
             <span className="absolute inset-0 -z-10 translate-y-full bg-amber-500 transition-transform duration-300 group-hover:translate-y-0"></span>
           </button>
           <button className="group relative overflow-hidden rounded-full border-2 border-amber-500 bg-transparent px-8 py-3 text-amber-500 transition-all duration-300 hover:text-white hover:shadow-lg hover:shadow-amber-500/30">
-            <span className="relative z-10 flex items-center">
+            <Link
+              href={"/auth/sign-up"}
+              className="relative z-10 flex items-center"
+            >
               Join ITCA
               <ChevronRight className="ml-1 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-            </span>
+            </Link>
             <span className="absolute inset-0 -z-10 translate-y-full bg-amber-500 transition-transform duration-300 group-hover:translate-y-0"></span>
           </button>
         </motion.div>
