@@ -162,7 +162,7 @@ const ForgotPassword = () => {
                 <AlertCircle className="h-5 w-5 text-amber-600 mt-0.5 mr-2 flex-shrink-0" />
                 <p className="text-sm text-amber-800">
                   Please check all folders including spam and junk. The code is
-                  valid for 15 minutes.
+                  valid for 24 hours.
                 </p>
               </div>
             </div>
