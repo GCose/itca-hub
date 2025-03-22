@@ -38,23 +38,23 @@ const HeroSection = () => {
         {/* Horizontal animated lines */}
         <div className="absolute top-1/4 left-0 h-[2px] w-full bg-gradient-to-r from-transparent via-amber-500/60 to-transparent animate-pulse"></div>
         <div
-          className="absolute top-2/4 left-0 h-[2px] w-full bg-gradient-to-r from-transparent via-blue-700/60 to-transparent animate-pulse"
           style={{ animationDelay: "1s" }}
+          className="absolute top-2/4 left-0 h-[2px] w-full bg-gradient-to-r from-transparent via-blue-700/60 to-transparent animate-pulse"
         ></div>
         <div
-          className="absolute top-3/4 left-0 h-[2px] w-full bg-gradient-to-r from-transparent via-amber-500/60 to-transparent animate-pulse"
           style={{ animationDelay: "2s" }}
+          className="absolute top-3/4 left-0 h-[2px] w-full bg-gradient-to-r from-transparent via-amber-500/60 to-transparent animate-pulse"
         ></div>
 
         {/* Vertical animated lines */}
         <div className="absolute top-0 left-1/4 h-full w-[2px] bg-gradient-to-b from-transparent via-blue-700/60 to-transparent animate-pulse"></div>
         <div
-          className="absolute top-0 left-2/4 h-full w-[2px] bg-gradient-to-b from-transparent via-amber-500/60 to-transparent animate-pulse"
           style={{ animationDelay: "1.5s" }}
+          className="absolute top-0 left-2/4 h-full w-[2px] bg-gradient-to-b from-transparent via-amber-500/60 to-transparent animate-pulse"
         ></div>
         <div
-          className="absolute top-0 left-3/4 h-full w-[2px] bg-gradient-to-b from-transparent via-blue-700/60 to-transparent animate-pulse"
           style={{ animationDelay: "2.5s" }}
+          className="absolute top-0 left-3/4 h-full w-[2px] bg-gradient-to-b from-transparent via-blue-700/60 to-transparent animate-pulse"
         ></div>
       </div>
       {/*==================== End of Animated Grid Lines ====================*/}
