@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import AuthLayout from "@/components/ui/layouts/auth-layout";
 import AuthButton from "@/components/ui/auth-button";
 
-// Define the DTO for forgot password API call
+// Defining the DTO for forgot password API call
 interface ForgotPasswordDTO {
   schoolEmail: string;
 }
@@ -142,9 +142,9 @@ const ForgotPassword = () => {
 
         {emailSent ? (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
+            initial={{ opacity: 0, y: 20 }}
             className="text-center p-6 bg-blue-50 rounded-lg border border-blue-100"
           >
             <div className="mb-4 flex justify-center">
