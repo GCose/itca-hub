@@ -47,7 +47,7 @@ const HomePage = () => {
   return (
     <>
       <Head>
-        <title>ITCA | Information Technology Communication Association</title>
+        <title>ITCA Hub | Where Technology Meets Community</title>
         <meta
           name="description"
           content="Information Technology Communication Association under the School of Information Communication and Technology"
