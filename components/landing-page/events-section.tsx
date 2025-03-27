@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
-import { motion } from "framer-motion";
-import { Calendar, Clock, MapPin, ArrowRight } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Calendar, Clock, MapPin, ArrowRight, Bookmark } from "lucide-react";
 
 type Event = {
   id: number;
@@ -63,23 +63,103 @@ const events: Event[] = [
 
 const EventsSection = () => {
   const [activeFilter, setActiveFilter] = useState<string>("all");
+  const [animateCards, setAnimateCards] = useState(true);
 
   const filteredEvents =
     activeFilter === "all"
       ? events
       : events.filter((event) => event.category === activeFilter);
 
+  useEffect(() => {
+    // Reset animation state when filter changes
+    setAnimateCards(false);
+    setTimeout(() => setAnimateCards(true), 10);
+  }, [activeFilter]);
+
   return (
-    <section id="events" className="relative py-20">
-      {/* Background elements */}
-      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-white to-gray-100"></div>
+    <section
+      id="events"
+      className="relative py-24 overflow-hidden bg-gradient-to-b from-white to-gray-100"
+    >
+      {/*==================== Animated Grid Lines (Light Version) ====================*/}
+      <div className="absolute inset-0 z-10 overflow-hidden opacity-30">
+        {/* Horizontal animated lines */}
+        <div className="absolute top-1/4 left-0 h-[1px] sm:h-[2px] w-full bg-gradient-to-r from-transparent via-amber-500/60 to-transparent animate-pulse"></div>
+        <div
+          style={{ animationDelay: "1s" }}
+          className="absolute top-2/4 left-0 h-[1px] sm:h-[2px] w-full bg-gradient-to-r from-transparent via-blue-700/60 to-transparent animate-pulse"
+        ></div>
+        <div
+          style={{ animationDelay: "2s" }}
+          className="absolute top-3/4 left-0 h-[1px] sm:h-[2px] w-full bg-gradient-to-r from-transparent via-amber-500/60 to-transparent animate-pulse"
+        ></div>
+
+        {/* Vertical animated lines */}
+        <div className="absolute top-0 left-1/4 h-full w-[1px] sm:w-[2px] bg-gradient-to-b from-transparent via-blue-700/60 to-transparent animate-pulse"></div>
+        <div
+          style={{ animationDelay: "1.5s" }}
+          className="absolute top-0 left-2/4 h-full w-[1px] sm:w-[2px] bg-gradient-to-b from-transparent via-amber-500/60 to-transparent animate-pulse"
+        ></div>
+        <div
+          style={{ animationDelay: "2.5s" }}
+          className="absolute top-0 left-3/4 h-full w-[1px] sm:w-[2px] bg-gradient-to-b from-transparent via-blue-700/60 to-transparent animate-pulse"
+        ></div>
+      </div>
+      {/*==================== End of Animated Grid Lines ====================*/}
+
+      {/*==================== Light Background Elements ====================*/}
       <div className="absolute inset-0 -z-10 overflow-hidden">
         <div className="absolute -right-40 -top-40 h-80 w-80 rounded-full bg-blue-700/5"></div>
         <div className="absolute -left-20 top-60 h-60 w-60 rounded-full bg-amber-500/5"></div>
         <div className="absolute bottom-20 right-20 h-40 w-40 rounded-full bg-blue-700/5"></div>
       </div>
+      {/*==================== End of Light Background Elements ====================*/}
 
-      <div className="container mx-auto px-4">
+      {/*==================== Glowing Dots At Intersections (Light Version) ====================*/}
+      <div className="absolute inset-0 z-10 opacity-70">
+        {/* First row */}
+        <div className="absolute top-1/4 left-1/4 h-2 w-2 sm:h-3 sm:w-3 rounded-full bg-blue-500/40 animate-pulse shadow-sm shadow-blue-500/30"></div>
+        <div
+          className="absolute top-1/4 left-2/4 h-2 w-2 sm:h-3 sm:w-3 rounded-full bg-amber-500/40 animate-pulse shadow-sm shadow-amber-500/30"
+          style={{ animationDelay: "0.5s" }}
+        ></div>
+        <div
+          className="absolute top-1/4 left-3/4 h-2 w-2 sm:h-3 sm:w-3 rounded-full bg-blue-500/40 animate-pulse shadow-sm shadow-blue-500/30"
+          style={{ animationDelay: "1s" }}
+        ></div>
+
+        {/* Second row */}
+        <div
+          className="absolute top-2/4 left-1/4 h-2 w-2 sm:h-3 sm:w-3 rounded-full bg-amber-500/40 animate-pulse shadow-sm shadow-amber-500/30"
+          style={{ animationDelay: "1.5s" }}
+        ></div>
+        <div
+          className="absolute top-2/4 left-2/4 h-2 w-2 sm:h-3 sm:w-3 rounded-full bg-blue-500/40 animate-pulse shadow-sm shadow-blue-500/30"
+          style={{ animationDelay: "2s" }}
+        ></div>
+        <div
+          className="absolute top-2/4 left-3/4 h-2 w-2 sm:h-3 sm:w-3 rounded-full bg-amber-500/40 animate-pulse shadow-sm shadow-amber-500/30"
+          style={{ animationDelay: "2.5s" }}
+        ></div>
+
+        {/* Third row */}
+        <div
+          className="absolute top-3/4 left-1/4 h-2 w-2 sm:h-3 sm:w-3 rounded-full bg-blue-500/40 animate-pulse shadow-sm shadow-blue-500/30"
+          style={{ animationDelay: "3s" }}
+        ></div>
+        <div
+          className="absolute top-3/4 left-2/4 h-2 w-2 sm:h-3 sm:w-3 rounded-full bg-amber-500/40 animate-pulse shadow-sm shadow-amber-500/30"
+          style={{ animationDelay: "3.5s" }}
+        ></div>
+        <div
+          className="absolute top-3/4 left-3/4 h-2 w-2 sm:h-3 sm:w-3 rounded-full bg-blue-500/40 animate-pulse shadow-sm shadow-blue-500/30"
+          style={{ animationDelay: "4s" }}
+        ></div>
+      </div>
+      {/*==================== End of Glowing Dots At Intersections ====================*/}
+
+      <div className="container relative z-20 mx-auto px-4">
+        {/* Section Title */}
         <motion.div
           initial={{ opacity: 0, y: 70 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -90,137 +170,190 @@ const EventsSection = () => {
           <h2 className="mb-4 text-4xl font-bold text-gray-900 md:text-5xl">
             Upcoming <span className="text-blue-700">Events</span>
           </h2>
+          <div className="mx-auto h-1 w-24 bg-gradient-to-r from-blue-700 via-amber-500 to-blue-700 rounded-full mb-6"></div>
           <p className="mx-auto max-w-2xl text-lg text-gray-600">
             Stay updated with our latest workshops, conferences, and activities
             designed to enhance your skills and knowledge.
           </p>
         </motion.div>
 
+        {/* Filter Buttons */}
         <motion.div
           initial={{ opacity: 0, y: 70 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="mb-10 flex flex-wrap justify-center gap-4"
+          className="mb-12 flex flex-wrap justify-center gap-4"
         >
           <button
             onClick={() => setActiveFilter("all")}
-            className={`rounded-full px-6 py-2 text-sm font-medium transition-all ${
+            className={`group relative overflow-hidden rounded-full px-6 py-2.5 text-sm font-medium transition-all duration-300 ${
               activeFilter === "all"
-                ? "bg-blue-700 text-white"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                ? "bg-blue-700 text-white shadow-md shadow-blue-700/30"
+                : "bg-white/70 backdrop-blur-sm text-gray-700 border border-gray-200 hover:border-blue-700/50"
             }`}
           >
-            All Events
+            <span className="relative z-10">All Events</span>
+            {activeFilter !== "all" && (
+              <span className="absolute inset-0 -z-10 translate-y-full bg-blue-700 transition-transform duration-300 group-hover:translate-y-0"></span>
+            )}
           </button>
+
           <button
             onClick={() => setActiveFilter("workshop")}
-            className={`rounded-full px-6 py-2 text-sm font-medium transition-all ${
+            className={`group relative overflow-hidden rounded-full px-6 py-2.5 text-sm font-medium transition-all duration-300 ${
               activeFilter === "workshop"
-                ? "bg-blue-700 text-white"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                ? "bg-blue-700 text-white shadow-md shadow-blue-700/30"
+                : "bg-white/70 backdrop-blur-sm text-gray-700 border border-gray-200 hover:border-blue-700/50"
             }`}
           >
-            Workshops
+            <span className="relative z-10">Workshops</span>
+            {activeFilter !== "workshop" && (
+              <span className="absolute inset-0 -z-10 translate-y-full bg-blue-700 transition-transform duration-300 group-hover:translate-y-0"></span>
+            )}
           </button>
+
           <button
             onClick={() => setActiveFilter("conference")}
-            className={`rounded-full px-6 py-2 text-sm font-medium transition-all ${
+            className={`group relative overflow-hidden rounded-full px-6 py-2.5 text-sm font-medium transition-all duration-300 ${
               activeFilter === "conference"
-                ? "bg-blue-700 text-white"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                ? "bg-blue-700 text-white shadow-md shadow-blue-700/30"
+                : "bg-white/70 backdrop-blur-sm text-gray-700 border border-gray-200 hover:border-blue-700/50"
             }`}
           >
-            Conferences
+            <span className="relative z-10">Conferences</span>
+            {activeFilter !== "conference" && (
+              <span className="absolute inset-0 -z-10 translate-y-full bg-blue-700 transition-transform duration-300 group-hover:translate-y-0"></span>
+            )}
           </button>
+
           <button
             onClick={() => setActiveFilter("hackathon")}
-            className={`rounded-full px-6 py-2 text-sm font-medium transition-all ${
+            className={`group relative overflow-hidden rounded-full px-6 py-2.5 text-sm font-medium transition-all duration-300 ${
               activeFilter === "hackathon"
-                ? "bg-blue-700 text-white"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                ? "bg-blue-700 text-white shadow-md shadow-blue-700/30"
+                : "bg-white/70 backdrop-blur-sm text-gray-700 border border-gray-200 hover:border-blue-700/50"
             }`}
           >
-            Hackathons
+            <span className="relative z-10">Hackathons</span>
+            {activeFilter !== "hackathon" && (
+              <span className="absolute inset-0 -z-10 translate-y-full bg-blue-700 transition-transform duration-300 group-hover:translate-y-0"></span>
+            )}
           </button>
+
           <button
             onClick={() => setActiveFilter("seminar")}
-            className={`rounded-full px-6 py-2 text-sm font-medium transition-all ${
+            className={`group relative overflow-hidden rounded-full px-6 py-2.5 text-sm font-medium transition-all duration-300 ${
               activeFilter === "seminar"
-                ? "bg-blue-700 text-white"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                ? "bg-blue-700 text-white shadow-md shadow-blue-700/30"
+                : "bg-white/70 backdrop-blur-sm text-gray-700 border border-gray-200 hover:border-blue-700/50"
             }`}
           >
-            Seminars
+            <span className="relative z-10">Seminars</span>
+            {activeFilter !== "seminar" && (
+              <span className="absolute inset-0 -z-10 translate-y-full bg-blue-700 transition-transform duration-300 group-hover:translate-y-0"></span>
+            )}
           </button>
         </motion.div>
 
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-2">
-          {filteredEvents.map((event, index) => (
-            <motion.div
-              key={event.id}
-              initial={{ opacity: 0, y: 70 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.1 * index }}
-              className="group relative overflow-hidden rounded-xl bg-white shadow-lg transition-all duration-300 hover:shadow-xl"
-            >
-              <div className="flex flex-col md:flex-row">
-                <div className="relative h-60 w-full overflow-hidden md:h-auto md:w-2/5">
-                  <Image
-                    src={event.image || "/placeholder.svg"}
-                    alt={event.title}
-                    fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                  <div className="absolute bottom-4 left-4 rounded-full bg-amber-500 px-3 py-1 text-xs font-semibold uppercase text-white">
-                    {event.category}
-                  </div>
-                </div>
+        {/* Event Cards */}
+        <div className="grid gap-8 md:grid-cols-2">
+          <AnimatePresence>
+            {animateCards &&
+              filteredEvents.map((event, index) => (
+                <motion.div
+                  key={event.id}
+                  initial={{ opacity: 0, y: 50 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 50 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  className="group relative overflow-hidden rounded-xl border border-gray-200 bg-white/80 backdrop-blur-sm shadow-sm transition-all duration-300 hover:border-blue-700/30 hover:shadow-lg hover:shadow-blue-700/5"
+                >
+                  <div className="flex flex-col h-full">
+                    <div className="relative h-56 w-full overflow-hidden">
+                      <Image
+                        src={event.image || "/placeholder.svg"}
+                        alt={event.title}
+                        fill
+                        className="object-cover transition-transform duration-500 group-hover:scale-110"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
 
-                <div className="flex flex-1 flex-col justify-between p-6">
-                  <div>
-                    <h3 className="mb-2 text-xl font-bold text-gray-900 transition-colors group-hover:text-blue-700">
-                      {event.title}
-                    </h3>
-                    <p className="mb-4 text-gray-600">{event.description}</p>
+                      {/* Category Badge */}
+                      <div
+                        className={`absolute top-4 right-4 rounded-full px-3 py-1 text-xs font-semibold uppercase text-white backdrop-blur-sm ${
+                          event.category === "workshop"
+                            ? "bg-blue-700/80"
+                            : event.category === "conference"
+                              ? "bg-amber-500/80"
+                              : event.category === "hackathon"
+                                ? "bg-green-500/80"
+                                : "bg-purple-500/80"
+                        }`}
+                      >
+                        {event.category}
+                      </div>
 
-                    <div className="mb-1 flex items-center text-sm text-gray-500">
-                      <Calendar className="mr-2 h-4 w-4 text-amber-500" />
-                      {event.date}
+                      {/* Save/Bookmark Button */}
+                      <button className="absolute top-4 left-4 h-8 w-8 rounded-full bg-white/30 backdrop-blur-sm flex items-center justify-center text-white/90 hover:text-white transition-colors">
+                        <Bookmark className="h-4 w-4" />
+                      </button>
                     </div>
-                    <div className="mb-1 flex items-center text-sm text-gray-500">
-                      <Clock className="mr-2 h-4 w-4 text-amber-500" />
-                      {event.time}
-                    </div>
-                    <div className="flex items-center text-sm text-gray-500">
-                      <MapPin className="mr-2 h-4 w-4 text-amber-500" />
-                      {event.location}
-                    </div>
-                  </div>
 
-                  <div className="mt-4">
-                    <button className="group/btn flex items-center text-sm font-medium text-blue-700 transition-all hover:text-amber-500">
-                      Learn more
-                      <ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover/btn:translate-x-1" />
-                    </button>
+                    <div className="flex flex-1 flex-col justify-between p-6">
+                      <div>
+                        <h3 className="mb-3 text-xl font-bold text-gray-900 group-hover:text-blue-700 transition-colors">
+                          {event.title}
+                        </h3>
+                        <p className="mb-5 text-gray-600">
+                          {event.description}
+                        </p>
+
+                        <div className="space-y-2">
+                          <div className="flex items-center text-sm text-gray-500">
+                            <Calendar className="mr-3 h-4 w-4 text-amber-500" />
+                            {event.date}
+                          </div>
+                          <div className="flex items-center text-sm text-gray-500">
+                            <Clock className="mr-3 h-4 w-4 text-amber-500" />
+                            {event.time}
+                          </div>
+                          <div className="flex items-center text-sm text-gray-500">
+                            <MapPin className="mr-3 h-4 w-4 text-amber-500" />
+                            {event.location}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="mt-6">
+                        <button className="group/btn relative overflow-hidden rounded-full border border-blue-700/50 bg-transparent px-5 py-2 text-sm text-blue-700 transition-all hover:bg-blue-700 hover:text-white hover:border-blue-700 flex items-center">
+                          <span>Learn more</span>
+                          <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover/btn:translate-x-1" />
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Decorative Corner Glow */}
+                    <div className="absolute -bottom-2 -right-2 h-16 w-16 rounded-full bg-blue-700/5 blur-xl group-hover:bg-blue-700/10 transition-colors duration-300"></div>
                   </div>
-                </div>
-              </div>
-            </motion.div>
-          ))}
+                </motion.div>
+              ))}
+          </AnimatePresence>
         </div>
 
+        {/* View All Button */}
         <motion.div
           initial={{ opacity: 0, y: 70 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.4 }}
-          className="mt-12 text-center"
+          className="mt-16 text-center"
         >
-          <button className="group relative overflow-hidden rounded-full bg-blue-700 px-8 py-3 font-medium text-white transition-all hover:bg-blue-600">
-            <span className="relative z-10">View All Events</span>
+          <button className="group relative overflow-hidden rounded-full bg-blue-700 px-8 py-3 font-medium text-white transition-all duration-300 hover:shadow-lg hover:shadow-blue-700/30">
+            <span className="relative z-10 flex items-center justify-center">
+              View All Events
+              <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+            </span>
             <span className="absolute inset-0 -z-10 translate-y-full bg-amber-500 transition-transform duration-300 group-hover:translate-y-0"></span>
           </button>
         </motion.div>
