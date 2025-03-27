@@ -20,7 +20,7 @@ const PersonalInfoStep = ({
       exit={{ opacity: 0, x: -20 }}
       transition={{ duration: 0.3 }}
       animate={{ opacity: 1, x: 0 }}
-      initial={{ opacity: 0, x: 20 }}
+      initial={{ opacity: 0, x: 70 }}
     >
       <div className="grid grid-cols-2 gap-4 mb-6">
         <div>

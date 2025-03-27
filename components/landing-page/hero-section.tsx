@@ -111,13 +111,13 @@ const HeroSection = () => {
           className="mb-4 sm:mb-6 md:mb-8 text-center text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight"
         >
           <span className="text-blue-700">Information</span>{" "}
-          <span className="block xs:inline">Technology</span>{" "}
+          <span className="xs:inline">Technology</span>{" "}
           <span className="text-amber-500">Communication</span>{" "}
           <span className="block xs:inline">Association</span>
         </motion.h1>
 
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 70 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.5 }}
           className="mb-6 sm:mb-8 md:mb-12 grid gap-4 sm:gap-6 md:gap-8 md:grid-cols-2 w-full max-w-4xl px-2 sm:px-4"
@@ -162,7 +162,7 @@ const HeroSection = () => {
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 70 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.7 }}
           className="flex sm:flex-col w-full max-w-xs sm:max-w-md space-y-3 sm:space-y-4 xs:space-y-0 xs:space-x-3 sm:space-x-4 justify-center"

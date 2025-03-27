@@ -42,7 +42,7 @@ const QuickLinks = () => {
 
       <div className="container mx-auto px-4">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 70 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
@@ -60,7 +60,7 @@ const QuickLinks = () => {
           {links.map((link, index) => (
             <motion.div
               key={link.title}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 70 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}

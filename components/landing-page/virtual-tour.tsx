@@ -107,7 +107,7 @@ const VirtualTour = () => {
 
       <div className="container mx-auto px-4">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 70 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
@@ -124,7 +124,7 @@ const VirtualTour = () => {
 
         <motion.div
           ref={containerRef}
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 70 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.2 }}
@@ -164,8 +164,8 @@ const VirtualTour = () => {
                       {currentLocation.type === "image"
                         ? "Photo"
                         : currentLocation.type === "video"
-                        ? "Video"
-                        : "3D Model"}
+                          ? "Video"
+                          : "3D Model"}
                     </span>
                   </div>
                   <h3 className="text-2xl font-bold">{currentLocation.name}</h3>
@@ -203,7 +203,7 @@ const VirtualTour = () => {
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 70 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.4 }}
