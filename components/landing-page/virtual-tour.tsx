@@ -1,6 +1,6 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   ChevronLeft,
   ChevronRight,
@@ -8,6 +8,9 @@ import {
   Maximize2,
   Camera,
   CuboidIcon as Cube,
+  Pause,
+  Globe,
+  Map,
 } from "lucide-react";
 
 type TourLocation = {
@@ -15,6 +18,7 @@ type TourLocation = {
   name: string;
   description: string;
   image: string;
+  videoSrc?: string;
   type: "image" | "video" | "3d";
 };
 
@@ -41,6 +45,7 @@ const tourLocations: TourLocation[] = [
     description:
       "A dedicated space for students to work on projects and collaborate with industry partners.",
     image: "/images/main-building.jpeg",
+    videoSrc: "/videos/hero-vid.mp4",
     type: "video",
   },
   {
@@ -64,21 +69,57 @@ const tourLocations: TourLocation[] = [
 const VirtualTour = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+  const [isVideoLoaded, setIsVideoLoaded] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   const currentLocation = tourLocations[currentIndex];
 
+  // Handle exiting fullscreen when pressing escape
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      if (!document.fullscreenElement) {
+        setIsFullscreen(false);
+      }
+    };
+
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+
+    return () => {
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
+    };
+  }, []);
+
+  // Reset video state when location changes
+  useEffect(() => {
+    setIsVideoPlaying(false);
+    setIsVideoLoaded(false);
+  }, [currentIndex]);
+
   const goToNext = () => {
+    if (isVideoPlaying && videoRef.current) {
+      videoRef.current.pause();
+      setIsVideoPlaying(false);
+    }
     setCurrentIndex((prev) => (prev + 1) % tourLocations.length);
   };
 
   const goToPrevious = () => {
+    if (isVideoPlaying && videoRef.current) {
+      videoRef.current.pause();
+      setIsVideoPlaying(false);
+    }
     setCurrentIndex(
       (prev) => (prev - 1 + tourLocations.length) % tourLocations.length
     );
   };
 
   const goToLocation = (index: number) => {
+    if (isVideoPlaying && videoRef.current) {
+      videoRef.current.pause();
+      setIsVideoPlaying(false);
+    }
     setCurrentIndex(index);
   };
 
@@ -96,16 +137,107 @@ const VirtualTour = () => {
     }
   };
 
+  const handleToggleVideo = () => {
+    if (currentLocation.type === "video" && videoRef.current) {
+      if (isVideoPlaying) {
+        videoRef.current.pause();
+        setIsVideoPlaying(false);
+      } else {
+        // Only try to play if video is loaded
+        if (isVideoLoaded) {
+          videoRef.current
+            .play()
+            .then(() => {
+              setIsVideoPlaying(true);
+            })
+            .catch((error) => {
+              console.error("Error playing video:", error);
+              setIsVideoPlaying(false);
+            });
+        }
+      }
+    }
+  };
+
+  const handleVideoLoaded = () => {
+    setIsVideoLoaded(true);
+  };
+
   return (
-    <section id="virtual-tour" className="relative py-20">
-      {/* Background elements */}
+    <section id="virtual-tour" className="relative py-24 overflow-hidden">
+      {/* Background Elements - Unique to Virtual Tour */}
       <div className="absolute inset-0 -z-10 bg-gradient-to-b from-gray-50 to-white"></div>
-      <div className="absolute inset-0 -z-10 overflow-hidden">
-        <div className="absolute -right-40 -top-40 h-80 w-80 rounded-full bg-blue-700/5"></div>
-        <div className="absolute -left-20 top-60 h-60 w-60 rounded-full bg-amber-500/5"></div>
+
+      {/* Enhanced Top-Left Background Elements */}
+      <div className="absolute top-0 left-0 w-1/2 h-1/2 overflow-hidden opacity-30 -z-5">
+        <div className="absolute top-0 left-0 h-full w-full">
+          {/* Latitude Lines */}
+          {Array.from({ length: 5 }).map((_, index) => (
+            <div
+              key={`lat-${index}`}
+              className="absolute h-px bg-blue-700/40"
+              style={{
+                top: `${20 + index * 15}%`,
+                left: "0",
+                width: "100%",
+                transform: `rotate(${index * 3 - 6}deg)`,
+                transformOrigin: "center left",
+              }}
+            ></div>
+          ))}
+
+          {/* Longitude Lines */}
+          {Array.from({ length: 5 }).map((_, index) => (
+            <div
+              key={`long-${index}`}
+              className="absolute w-px bg-blue-700/40"
+              style={{
+                left: `${20 + index * 15}%`,
+                top: "0",
+                height: "100%",
+                transform: `rotate(${index * 3 - 6}deg)`,
+                transformOrigin: "top center",
+              }}
+            ></div>
+          ))}
+
+          {/* Globe Icon */}
+          <div className="absolute top-[15%] left-[15%] opacity-10">
+            <Globe className="w-40 h-40 text-blue-700" strokeWidth={1} />
+          </div>
+        </div>
       </div>
 
-      <div className="container mx-auto px-4">
+      {/* Enhanced Bottom-Right Background Elements */}
+      <div className="absolute bottom-0 right-0 w-1/2 h-1/2 overflow-hidden opacity-30 -z-5">
+        <div className="absolute bottom-0 right-0 w-full h-full">
+          {/* Circular Map References */}
+          <div className="absolute bottom-20 right-20 h-64 w-64 rounded-full border border-dashed border-amber-500/30"></div>
+          <div className="absolute bottom-[25%] right-[25%] h-48 w-48 rounded-full border border-dashed border-blue-700/20"></div>
+          <div className="absolute bottom-[30%] right-[30%] h-32 w-32 rounded-full border border-dashed border-amber-500/30"></div>
+
+          {/* Compass Lines */}
+          <div className="absolute bottom-[25%] right-[25%] h-80 w-1 bg-gradient-to-t from-transparent via-amber-500/20 to-transparent transform rotate-45"></div>
+          <div className="absolute bottom-[25%] right-[25%] h-80 w-1 bg-gradient-to-t from-transparent via-blue-700/20 to-transparent transform rotate-135"></div>
+
+          {/* Map Icon */}
+          <div className="absolute bottom-[15%] right-[15%] opacity-10">
+            <Map className="w-40 h-40 text-amber-500" strokeWidth={1} />
+          </div>
+        </div>
+      </div>
+
+      {/* Subtle dot pattern */}
+      <div
+        className="absolute inset-0 -z-5 opacity-10"
+        style={{
+          backgroundImage:
+            "radial-gradient(circle at 1px 1px, rgba(0,0,0,0.05) 1px, transparent 0)",
+          backgroundSize: "30px 30px",
+        }}
+      ></div>
+
+      <div className="container relative z-10 mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 70 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -116,6 +248,7 @@ const VirtualTour = () => {
           <h2 className="mb-4 text-4xl font-bold text-gray-900 md:text-5xl">
             Virtual <span className="text-blue-700">Tour</span>
           </h2>
+          <div className="mx-auto h-1 w-24 bg-gradient-to-r from-blue-700 via-amber-500 to-blue-700 rounded-full mb-6"></div>
           <p className="mx-auto max-w-2xl text-lg text-gray-600">
             Explore our facilities and get a feel for the ITCA environment
             without leaving your home.
@@ -131,23 +264,64 @@ const VirtualTour = () => {
           className="relative mb-8 overflow-hidden rounded-xl bg-black shadow-xl"
         >
           <div className="relative aspect-video w-full">
-            <Image
-              src={currentLocation.image || "/placeholder.svg"}
-              alt={currentLocation.name}
-              fill
-              className="object-cover"
-            />
+            {/* Always render video element if current location is video type, but hide it */}
+            {currentLocation.type === "video" && (
+              <div
+                className={`absolute inset-0 z-0 ${isVideoPlaying ? "block" : "hidden"}`}
+              >
+                <video
+                  ref={videoRef}
+                  className="h-full w-full object-cover"
+                  playsInline
+                  controls={false}
+                  preload="auto"
+                  onLoadedData={handleVideoLoaded}
+                >
+                  <source
+                    src={currentLocation.videoSrc || "/videos/hero-vid.mp4"}
+                    type="video/mp4"
+                  />
+                </video>
+              </div>
+            )}
+
+            {/* Show image when video is not playing */}
+            <AnimatePresence mode="wait">
+              {(!isVideoPlaying || currentLocation.type !== "video") && (
+                <motion.div
+                  key={`image-${currentIndex}`}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.5 }}
+                  className="absolute inset-0 z-0"
+                >
+                  <Image
+                    src={currentLocation.image || "/placeholder.svg"}
+                    alt={currentLocation.name}
+                    fill
+                    className="object-cover"
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {currentLocation.type === "video" && (
               <button
-                className="absolute left-1/2 top-1/2 flex h-16 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-blue-700/80 text-white transition-transform hover:scale-110"
-                aria-label="Play video"
+                onClick={handleToggleVideo}
+                className="absolute left-1/2 top-1/2 flex h-16 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-blue-700/80 text-white transition-transform hover:scale-110 z-10"
+                aria-label={isVideoPlaying ? "Pause video" : "Play video"}
+                disabled={currentLocation.type === "video" && !isVideoLoaded}
               >
-                <Play className="h-8 w-8" />
+                {isVideoPlaying ? (
+                  <Pause className="h-8 w-8" />
+                ) : (
+                  <Play className="h-8 w-8" />
+                )}
               </button>
             )}
 
-            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6 text-white">
+            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6 text-white z-20">
               <div className="flex items-center justify-between">
                 <div>
                   <div className="mb-1 flex items-center">
@@ -186,7 +360,7 @@ const VirtualTour = () => {
 
             <button
               onClick={goToPrevious}
-              className="absolute left-4 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-sm transition-colors hover:bg-white/30"
+              className="absolute left-4 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-sm transition-colors hover:bg-white/30 z-10"
               aria-label="Previous location"
             >
               <ChevronLeft className="h-6 w-6" />
@@ -194,7 +368,7 @@ const VirtualTour = () => {
 
             <button
               onClick={goToNext}
-              className="absolute right-4 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-sm transition-colors hover:bg-white/30"
+              className="absolute right-4 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-sm transition-colors hover:bg-white/30 z-10"
               aria-label="Next location"
             >
               <ChevronRight className="h-6 w-6" />
@@ -203,16 +377,18 @@ const VirtualTour = () => {
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, y: 70 }}
+          initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.4 }}
           className="flex flex-wrap justify-center gap-2"
         >
           {tourLocations.map((location, index) => (
-            <button
+            <motion.button
               key={location.id}
               onClick={() => goToLocation(index)}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.98 }}
               className={`relative h-16 w-24 overflow-hidden rounded-md transition-all ${
                 currentIndex === index
                   ? "ring-2 ring-blue-700 ring-offset-2"
@@ -236,7 +412,7 @@ const VirtualTour = () => {
                   )}
                 </div>
               )}
-            </button>
+            </motion.button>
           ))}
         </motion.div>
       </div>
