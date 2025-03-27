@@ -47,13 +47,13 @@ const HomePage = () => {
   return (
     <>
       <Head>
-        <title>ITCA - Information Technology Communication Association</title>
+        <title>ITCA | Information Technology Communication Association</title>
         <meta
           name="description"
           content="Information Technology Communication Association under the School of Information Communication and Technology"
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <Link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/images/logo.jpg" />
         <Link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
           rel="preconnect"
@@ -70,10 +70,12 @@ const HomePage = () => {
       <main className="min-h-screen font-['Inter',sans-serif]">
         <HeroSection />
         {/* <QuickLinks /> */}
-        <EventsSection />
-        <DegreesSection />
-        <VirtualTour />
-        <ResourcesSection />
+        <div className="sm:px-0 lg:px-20">
+          <EventsSection />
+          <DegreesSection />
+          <VirtualTour />
+          <ResourcesSection />
+        </div>
         <Footer />
       </main>
     </>

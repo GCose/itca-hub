@@ -21,7 +21,8 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({
   return (
     <>
       <Head>
-        <title>{title} | ITCA</title>
+        <title>ITCA | {title}</title>
+        <link rel="icon" href="/images/logo.jpg" />
         <meta name="description" content={description} />
       </Head>
 
@@ -62,7 +63,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({
               className="backdrop-blur-xl"
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 70 }}
             >
               {children}
             </motion.div>

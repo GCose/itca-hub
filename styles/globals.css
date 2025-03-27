@@ -159,7 +159,7 @@ body {
 }
 
 .link-active {
-  color: gold;
+  color: #f59e0b;
 }
 
 @layer base {

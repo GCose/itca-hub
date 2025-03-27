@@ -98,7 +98,7 @@ const SignUp = () => {
   // Right side content that will be displayed in the AuthLayout
   const rightSideContent = (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 70 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.2 }}
       className="max-w-4xl text-center"
@@ -213,7 +213,7 @@ const SignUp = () => {
             Already have an account?{" "}
             <Link
               href="/auth"
-              className="text-blue-700 hover:text-blue-600 font-medium transition-colors"
+              className="text-blue-700 hover:text-blue-600 font-medium transition-colors hover:cursor-pointer"
             >
               Sign in
             </Link>
