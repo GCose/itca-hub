@@ -163,10 +163,10 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({
             <div className="mb-8 flex justify-center md:justify-start">
               <Link href="/">
                 <Image
-                  src="/images/logo.jpg"
-                  alt="ITCA Logo"
                   width={150}
                   height={50}
+                  alt="ITCA Logo"
+                  src="/images/logo.jpg"
                   className="h-12 w-auto"
                 />
               </Link>

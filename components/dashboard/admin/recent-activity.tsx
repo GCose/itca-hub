@@ -145,7 +145,7 @@ const RecentActivity = () => {
   }
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white shadow-sm">
+    <div className="rounded-2xl bg-white">
       <div className="p-4">
         {activities.map((activity) => (
           <div

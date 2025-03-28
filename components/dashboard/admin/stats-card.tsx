@@ -20,7 +20,7 @@ const StatsCard = ({
   valueClassName = "text-gray-900",
 }: StatsCardProps) => {
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm transition-all hover:shadow-md">
+    <div className="rounded-2xl bg-white p-5 transition-all hover:-translate-y-2 duration-500">
       <div className="flex justify-between">
         <div>
           <h3 className="text-sm font-medium text-gray-500">{title}</h3>
@@ -45,30 +45,30 @@ const StatsCard = ({
             >
               {trendDirection === "up" && (
                 <svg
-                  className="mr-1 h-3 w-3"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
+                  className="mr-1 h-3 w-3"
                 >
                   <path
+                    strokeWidth={2}
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    strokeWidth={2}
                     d="M5 10l7-7m0 0l7 7m-7-7v18"
                   />
                 </svg>
               )}
               {trendDirection === "down" && (
                 <svg
-                  className="mr-1 h-3 w-3"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
+                  className="mr-1 h-3 w-3"
                 >
                   <path
+                    strokeWidth={2}
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    strokeWidth={2}
                     d="M19 14l-7 7m0 0l-7-7m7 7V3"
                   />
                 </svg>

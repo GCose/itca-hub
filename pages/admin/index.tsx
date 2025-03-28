@@ -60,41 +60,41 @@ const AdminDashboard = () => {
       {/*==================== Stats Cards ====================*/}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <StatsCard
+          trend={"+5.2%"}
           title="Total Users"
+          trendDirection="up"
+          isLoading={isLoading}
           value={stats.totalUsers}
           icon={<Users className="h-6 w-6 text-blue-600" />}
-          trend={"+5.2%"}
-          trendDirection="up"
-          isLoading={isLoading}
         />
         <StatsCard
-          title="Active Events"
-          value={stats.totalEvents}
-          icon={<Calendar className="h-6 w-6 text-amber-500" />}
           trend={"+2.4%"}
           trendDirection="up"
+          title="Active Events"
           isLoading={isLoading}
+          value={stats.totalEvents}
+          icon={<Calendar className="h-6 w-6 text-amber-500" />}
         />
         <StatsCard
-          title="Resources"
-          value={stats.totalResources}
-          icon={<FileText className="h-6 w-6 text-green-500" />}
           trend={"+8.1%"}
+          title="Resources"
           trendDirection="up"
           isLoading={isLoading}
+          value={stats.totalResources}
+          icon={<FileText className="h-6 w-6 text-green-500" />}
         />
         <StatsCard
-          title="Active Users"
-          value={stats.activeUsers}
-          icon={<PieChart className="h-6 w-6 text-purple-500" />}
           trend={"-1.8%"}
+          title="Active Users"
           trendDirection="down"
           isLoading={isLoading}
+          value={stats.activeUsers}
+          icon={<PieChart className="h-6 w-6 text-purple-500" />}
         />
       </div>
       {/*==================== End of Stats Cards ====================*/}
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pt-4">
         {/*==================== Recent User Activity ====================*/}
         <div className="lg:col-span-2">
           <h2 className="text-lg font-semibold mb-4">Recent Registrations</h2>
