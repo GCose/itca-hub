@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import AuthLayout from "@/components/ui/layouts/auth-layout";
 import AuthButton from "@/components/ui/auth-button";
 import PasswordStrengthIndicator from "@/components/ui/sign-up/password-strength-indicator";
+import useTimedError from "@/hooks/timed-error";
 
 // Defining the DTO for reset password API call
 interface ResetPasswordDTO {
@@ -25,7 +26,7 @@ const ResetPassword = () => {
   const [newPassword, setNewPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useTimedError();
   const [resetComplete, setResetComplete] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {

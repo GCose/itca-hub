@@ -5,6 +5,7 @@ import Link from "next/link";
 import { toast } from "sonner";
 import AuthLayout from "@/components/ui/layouts/auth-layout";
 import AuthButton from "@/components/ui/auth-button";
+import useTimedError from "@/hooks/timed-error";
 
 // Defining the DTO for forgot password API call
 interface ForgotPasswordDTO {
@@ -14,7 +15,7 @@ interface ForgotPasswordDTO {
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useTimedError();
   const [emailSent, setEmailSent] = useState(false);
 
   // Validate UTG email format
