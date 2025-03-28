@@ -69,7 +69,6 @@ const HomePage = () => {
 
       <main className="min-h-screen font-['Inter',sans-serif]">
         <HeroSection />
-        {/* <QuickLinks /> */}
         <div className="sm:px-0 lg:px-20">
           <EventsSection />
           <DegreesSection />
