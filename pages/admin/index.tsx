@@ -24,7 +24,7 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     // Fetch dashboard data from API
-    // This would be replaced with actual API calls
+    // This would be replaced with actual API calls -Ebrima Mbye
     const fetchDashboardData = async () => {
       setIsLoading(true);
       try {
