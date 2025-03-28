@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -9,6 +9,9 @@ import {
   Code,
   Database,
   Radio,
+  Users,
+  GraduationCap,
+  ArrowRight,
 } from "lucide-react";
 
 type Degree = {
@@ -78,13 +81,22 @@ const degrees: Degree[] = [
 
 const DegreesSection = () => {
   const [selectedDegree, setSelectedDegree] = useState<Degree | null>(null);
+  const [hoveredTab, setHoveredTab] = useState<number | null>(null);
+  const tabRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  // Initialize with first degree on component mount
+  useEffect(() => {
+    if (!selectedDegree && degrees.length > 0) {
+      setSelectedDegree(degrees[0]);
+    }
+  }, [selectedDegree]);
 
   return (
     <section id="degrees" className="relative py-24 overflow-hidden">
-      {/* Dynamic Background with geometric shapes */}
+      {/*==================== Dynamic Background with geometric shapes ====================*/}
       <div className="absolute inset-0 -z-10 bg-gradient-to-br from-gray-50 to-gray-100"></div>
 
-      {/* Prominent Geometric Elements - Top Right */}
+      {/*==================== Prominent Geometric Elements - Top Right ====================*/}
       <div className="absolute top-0 right-0 w-2/3 h-full overflow-hidden -z-5">
         <div className="absolute top-10 right-0 w-full h-full">
           <div className="absolute top-10 right-[-200px] h-[500px] w-[500px] rounded-full border-[40px] border-amber-500/5 animate-pulse"></div>
@@ -98,8 +110,9 @@ const DegreesSection = () => {
           ></div>
         </div>
       </div>
+      {/*==================== End of Prominent Geometric Elements - Top Right ====================*/}
 
-      {/* Prominent Geometric Elements - Bottom Left (as requested) */}
+      {/*==================== Prominent Geometric Elements - Bottom Left ====================*/}
       <div className="absolute bottom-0 left-0 w-2/3 h-full overflow-hidden -z-5">
         <div className="absolute bottom-10 left-0 w-full h-full">
           <div
@@ -116,12 +129,13 @@ const DegreesSection = () => {
           ></div>
         </div>
       </div>
+      {/*==================== End of Prominent Geometric Elements - Bottom Left ====================*/}
 
       <div className="absolute -bottom-20 -left-20 w-96 h-96 bg-gradient-to-br from-blue-700/5 to-transparent rounded-full blur-3xl"></div>
       <div className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-tr from-amber-500/5 to-transparent rounded-full blur-2xl"></div>
       <div className="absolute bottom-40 right-10 w-64 h-64 bg-gradient-to-tl from-blue-700/5 to-transparent rounded-full blur-2xl"></div>
 
-      {/* Pattern Background */}
+      {/*==================== Pattern Background ====================*/}
       <div
         className="absolute inset-0 -z-5 opacity-20"
         style={{
@@ -130,6 +144,7 @@ const DegreesSection = () => {
           backgroundSize: "40px 40px",
         }}
       ></div>
+      {/*==================== End of Pattern Background ====================*/}
 
       <div className="container relative z-10 mx-auto px-4">
         <motion.div
@@ -152,89 +167,75 @@ const DegreesSection = () => {
           </p>
         </motion.div>
 
-        {/* Icon-only Navigation */}
+        {/*==================== Tab Navigation ====================*/}
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="mb-12"
+          className="mb-16 relative"
         >
-          <div className="flex justify-center max-w-3xl mx-auto">
+          <div className="relative flex justify-center mx-auto max-w-4xl backdrop-blur-sm rounded-2xl p-2 bg-white/30 border border-white/40 shadow-lg shadow-blue-700/5">
+            {/*==================== Active Tab Indicator - Animated Background ====================*/}
+            {selectedDegree && (
+              <motion.div
+                initial={false}
+                animate={{
+                  x: tabRefs.current[selectedDegree.id - 1]?.offsetLeft || 0,
+                  width:
+                    tabRefs.current[selectedDegree.id - 1]?.offsetWidth || 0,
+                }}
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                className="absolute top-0 left-0 h-full z-0 rounded-xl bg-gradient-to-r from-blue-700/90 to-blue-600/90 shadow-md"
+              />
+            )}
+
             {degrees.map((degree, index) => (
               <motion.div
                 key={degree.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.2 }}
-                className={`relative group cursor-pointer transition-all duration-300 ${
-                  selectedDegree?.id === degree.id
-                    ? "flex-1 max-w-[180px]"
-                    : "flex-1 max-w-[150px]"
-                }`}
+                ref={(el) => {
+                  tabRefs.current[index] = el;
+                }}
+                className={`relative z-10 px-8 py-4 cursor-pointer transition-all duration-300 flex-1 flex flex-col items-center rounded-xl
+                  ${selectedDegree?.id === degree.id ? "text-white" : "text-gray-700 hover:text-blue-700"}`}
                 onClick={() => setSelectedDegree(degree)}
+                onMouseEnter={() => setHoveredTab(degree.id)}
+                onMouseLeave={() => setHoveredTab(null)}
+                whileTap={{ scale: 0.98 }}
               >
-                <div className="relative flex flex-col items-center px-2">
-                  {/* Icon Circle - Smaller and More Compact */}
+                <div
+                  className={`flex items-center justify-center mb-2 transition-all duration-300 ${
+                    selectedDegree?.id === degree.id
+                      ? "scale-110"
+                      : hoveredTab === degree.id
+                        ? "scale-105"
+                        : ""
+                  }`}
+                >
                   <div
-                    className={`flex items-center justify-center w-14 h-14 rounded-full transition-all duration-300 ${
+                    className={`p-2 rounded-lg ${
                       selectedDegree?.id === degree.id
-                        ? "bg-blue-700 text-white shadow-lg shadow-blue-700/30"
-                        : "bg-white text-gray-500 border-2 border-gray-200 group-hover:border-blue-700/50 group-hover:text-blue-700"
+                        ? "bg-white/20"
+                        : "bg-blue-100"
                     }`}
                   >
                     {degree.icon}
                   </div>
+                </div>
 
-                  {/* Pulse Animation when selected */}
-                  {selectedDegree?.id === degree.id && (
-                    <div className="absolute inset-0 -z-10 flex items-center justify-center">
-                      <div
-                        className="absolute w-14 h-14 rounded-full bg-blue-700/20 animate-pulse"
-                        style={{
-                          transformOrigin: "center",
-                          transform: "scale(1.2)",
-                        }}
-                      ></div>
-                      <div
-                        className="absolute w-14 h-14 rounded-full bg-blue-700/10 animate-pulse"
-                        style={{
-                          animationDelay: "0.5s",
-                          transformOrigin: "center",
-                          transform: "scale(1.4)",
-                        }}
-                      ></div>
-                    </div>
-                  )}
+                <h3 className="font-bold text-lg">{degree.title}</h3>
 
-                  {/* Title - More Compact */}
-                  <h4
-                    className={`text-center font-bold text-sm mt-2 transition-colors ${
-                      selectedDegree?.id === degree.id
-                        ? "text-blue-700"
-                        : "text-gray-800 group-hover:text-blue-700"
-                    }`}
-                  >
-                    {degree.title}
-                  </h4>
-
-                  {/* Duration - Smaller and Inline */}
-                  <div className="flex items-center mt-1 text-xs text-gray-500">
-                    <Clock className="w-3 h-3 mr-1" />
-                    <span className="whitespace-nowrap">{degree.duration}</span>
-                  </div>
-
-                  {/* Active Indicator Line */}
-                  {selectedDegree?.id === degree.id && (
-                    <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-12 h-1 bg-blue-700 rounded-full"></div>
-                  )}
+                <div className="flex items-center mt-1 text-xs opacity-80">
+                  <Clock className="w-3 h-3 mr-1" />
+                  <span>{degree.duration}</span>
                 </div>
               </motion.div>
             ))}
           </div>
         </motion.div>
+        {/*==================== End of Tab Navigation ====================*/}
 
-        {/* Program Details View */}
+        {/*==================== Program Details ====================*/}
         <AnimatePresence mode="wait">
           {selectedDegree ? (
             <motion.div
@@ -243,7 +244,7 @@ const DegreesSection = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.5 }}
-              className="bg-white rounded-2xl shadow-xl overflow-hidden mx-auto max-w-5xl"
+              className="bg-white/80 backdrop-blur-md rounded-2xl shadow-xl overflow-hidden mx-auto max-w-5xl border border-white/50"
             >
               <div className="flex flex-col lg:flex-row">
                 <div className="lg:w-2/5 relative">
@@ -254,53 +255,93 @@ const DegreesSection = () => {
                       fill
                       className="object-cover"
                     />
+
+                    {/*==================== Dark gradient overlay ====================*/}
                     <div className="absolute inset-0 bg-gradient-to-r from-black/80 to-transparent lg:bg-gradient-to-t"></div>
+
+                    {/*==================== Content overlay ====================*/}
                     <div className="absolute bottom-0 left-0 w-full p-6 z-10">
-                      <div className="mb-2 inline-block rounded-full bg-blue-700 px-3 py-1 text-xs font-semibold uppercase text-white">
+                      <div className="mb-2 inline-block px-3 py-1.5 rounded-lg bg-gradient-to-r from-blue-700 to-blue-600 text-xs font-semibold uppercase text-white shadow-md">
                         {selectedDegree.level}
                       </div>
-                      <h3 className="text-3xl font-bold text-white">
+
+                      <h3 className="text-3xl font-bold text-white mb-1 drop-shadow-md">
                         {selectedDegree.title}
                       </h3>
-                      <div className="mt-2 flex items-center text-sm text-gray-200">
-                        <Clock className="mr-2 h-4 w-4 text-amber-400" />
-                        <span>Duration: {selectedDegree.duration}</span>
+
+                      <div className="mt-3 flex items-center text-sm">
+                        <div className="flex items-center px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full">
+                          <Clock className="mr-2 h-4 w-4 text-amber-400" />
+                          <span className="text-white font-medium">
+                            Duration: {selectedDegree.duration}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full ml-2">
+                          <Users className="mr-2 h-4 w-4 text-amber-400" />
+                          <span className="text-white font-medium">
+                            200+ Students
+                          </span>
+                        </div>
                       </div>
                     </div>
+                    {/*==================== End of Content overlay ====================*/}
                   </div>
                 </div>
 
                 <div className="lg:w-3/5 p-8">
                   <div className="mb-6">
-                    <h4 className="text-xl font-bold text-gray-900 mb-4">
-                      Program Overview
-                    </h4>
+                    <div className="flex items-center mb-4">
+                      <GraduationCap className="w-6 h-6 text-blue-700 mr-2" />
+                      <h4 className="text-xl font-bold text-gray-900">
+                        Program Overview
+                      </h4>
+                    </div>
                     <p className="text-gray-700 leading-relaxed">
                       {selectedDegree.description}
                     </p>
                   </div>
 
                   <div className="mb-6">
-                    <h4 className="text-xl font-bold text-gray-900 mb-4">
+                    <h4 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
+                      <BookOpen className="w-5 h-5 text-amber-500 mr-2" />
                       What You{"'"}ll Learn
                     </h4>
-                    <ul className="space-y-3">
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       {selectedDegree.highlights.map((highlight, i) => (
-                        <li key={i} className="flex items-start">
-                          <Check className="mr-3 h-5 w-5 text-amber-500 flex-shrink-0" />
-                          <span className="text-gray-700">{highlight}</span>
-                        </li>
+                        <motion.div
+                          key={i}
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ duration: 0.3, delay: i * 0.1 }}
+                          className="flex items-start p-3 rounded-lg bg-gradient-to-r from-gray-50 to-white border border-gray-100"
+                        >
+                          <div className="mr-3 mt-0.5 h-5 w-5 rounded-full bg-green-500/10 flex items-center justify-center flex-shrink-0">
+                            <Check className="h-3 w-3 text-green-600" />
+                          </div>
+                          <span className="text-gray-700 text-sm">
+                            {highlight}
+                          </span>
+                        </motion.div>
                       ))}
-                    </ul>
+                    </div>
                   </div>
 
-                  <div className="pt-4 border-t border-gray-200">
-                    <button className="group relative overflow-hidden rounded-full bg-amber-500 px-6 py-3 font-medium text-white transition-all hover:shadow-lg hover:shadow-amber-500/30">
+                  <div className="pt-4 border-t border-gray-200 flex justify-between items-center">
+                    <button className="group relative overflow-hidden rounded-lg bg-gradient-to-r from-blue-700 to-blue-600 px-6 py-3 font-medium text-white transition-all hover:shadow-lg hover:shadow-blue-500/30 flex items-center">
                       <span className="relative z-10 flex items-center">
-                        Learn more about this program
+                        Program Details
                         <ChevronRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                       </span>
-                      <span className="absolute inset-0 -z-10 translate-y-full bg-blue-700 transition-transform duration-300 group-hover:translate-y-0"></span>
+                      <span className="absolute inset-0 -z-10 translate-y-full bg-gradient-to-r from-amber-500 to-amber-400 transition-transform duration-300 group-hover:translate-y-0"></span>
+                    </button>
+
+                    <button className="group px-6 py-3 font-medium text-blue-700 hover:text-blue-600 transition-all flex items-center">
+                      <span className="relative z-10 flex items-center">
+                        Download Brochure
+                        <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                      </span>
                     </button>
                   </div>
                 </div>
@@ -324,6 +365,7 @@ const DegreesSection = () => {
             </motion.div>
           )}
         </AnimatePresence>
+        {/*==================== End of Program Details ====================*/}
       </div>
     </section>
   );
