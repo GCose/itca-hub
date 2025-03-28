@@ -3,8 +3,8 @@ import { motion } from "framer-motion";
 import { Mail, AlertCircle, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
-import AuthLayout from "@/components/ui/layouts/auth-layout";
-import AuthButton from "@/components/ui/auth-button";
+import AuthLayout from "@/components/authentication/auth-layout";
+import AuthButton from "@/components/authentication/auth-button";
 import useTimedError from "@/hooks/timed-error";
 
 // Defining the DTO for forgot password API call

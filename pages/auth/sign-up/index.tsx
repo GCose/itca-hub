@@ -2,15 +2,15 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { CheckCircle } from "lucide-react";
 import Link from "next/link";
-import AuthLayout from "@/components/ui/layouts/auth-layout";
+import AuthLayout from "@/components/authentication/auth-layout";
 import { FormData, RegisterUserDTO } from "@/types/sign-up";
 import {
   validatePersonalInfo,
   validateSecurity,
 } from "@/utils/sign-up/validation";
-import PersonalInfoStep from "@/components/ui/sign-up/personal-info-steps";
-import SecurityStep from "@/components/ui/sign-up/security-step";
-import StepIndicator from "@/components/ui/sign-up/step-indicator";
+import PersonalInfoStep from "@/components/authentication/sign-up/personal-info-steps";
+import SecurityStep from "@/components/authentication/sign-up/security-step";
+import StepIndicator from "@/components/authentication/sign-up/step-indicator";
 import useTimedError from "@/hooks/timed-error";
 
 const SignUp = () => {

@@ -10,9 +10,9 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
-import AuthLayout from "@/components/ui/layouts/auth-layout";
-import AuthButton from "@/components/ui/auth-button";
-import PasswordStrengthIndicator from "@/components/ui/sign-up/password-strength-indicator";
+import AuthLayout from "@/components/authentication/auth-layout";
+import AuthButton from "@/components/authentication/auth-button";
+import PasswordStrengthIndicator from "@/components/authentication/sign-up/password-strength-indicator";
 import useTimedError from "@/hooks/timed-error";
 
 // Defining the DTO for reset password API call
