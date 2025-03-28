@@ -116,7 +116,7 @@ const UserTable = ({ limit }: UserTableProps) => {
 
   if (isLoading) {
     return (
-      <div className="rounded-lg border border-gray-200 bg-white shadow-sm">
+      <div className="rounded-2xl bg-white">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
@@ -187,10 +187,10 @@ const UserTable = ({ limit }: UserTableProps) => {
   }
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white shadow-sm">
+    <div className="rounded-2xl bg-white">
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+          <thead className="bg-gray-50 rounded-2xl">
             <tr>
               <th
                 scope="col"
@@ -224,6 +224,7 @@ const UserTable = ({ limit }: UserTableProps) => {
               </th>
             </tr>
           </thead>
+
           <tbody className="divide-y divide-gray-200 bg-white">
             {users.map((user) => (
               <tr key={user.id} className="hover:bg-gray-50">

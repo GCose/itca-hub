@@ -100,7 +100,6 @@ const Sidebar = ({ open, setOpen }: SidebarProps) => {
   const navItems = isAdmin ? adminNavItems : studentNavItems;
 
   const handleLogout = () => {
-    // TODO: Implement logout functionality
     console.log("Logging out...");
     router.push("/auth");
   };
@@ -112,38 +111,36 @@ const Sidebar = ({ open, setOpen }: SidebarProps) => {
 
   return (
     <>
-      {/* Mobile sidebar backdrop */}
+      {/*==================== Mobile sidebar backdrop ====================*/}
       <AnimatePresence>
         {open && (
           <motion.div
+            exit={{ opacity: 0 }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-40 bg-gray-600 bg-opacity-75 md:hidden"
             onClick={() => setOpen(false)}
+            className="fixed inset-0 z-40 bg-gray-600 bg-opacity-75 md:hidden"
           />
         )}
       </AnimatePresence>
+      {/*==================== End of Mobile sidebar backdrop ====================*/}
 
-      {/* Sidebar */}
+      {/*==================== Sidebar ====================*/}
       <div
         className={`fixed inset-y-0 left-0 z-50 w-64 transform overflow-y-auto bg-white shadow-lg transition-transform ease-in-out duration-300 
                     ${open ? "translate-x-0" : "-translate-x-full"} 
                     md:translate-x-0 md:static md:z-0`}
       >
-        {/* Mobile close button */}
+        {/*==================== Mobile close button ====================*/}
         <div className="flex justify-between items-center p-4 md:hidden">
           <Link href="/" className="flex items-center">
             <Image
-              src="/images/logo.jpg"
+              width={150}
+              height={150}
               alt="ITCA Logo"
-              width={40}
-              height={40}
               className="mr-2"
+              src="/images/logo.jpg"
             />
-            <span className="text-xl font-semibold text-gray-900">
-              ITCA Hub
-            </span>
           </Link>
           <button
             onClick={() => setOpen(false)}
@@ -152,22 +149,21 @@ const Sidebar = ({ open, setOpen }: SidebarProps) => {
             <X className="h-5 w-5" />
           </button>
         </div>
+        {/*==================== End of Mobile close button ====================*/}
 
-        {/* Desktop logo */}
+        {/*==================== Desktop logo ====================*/}
         <div className="hidden md:flex items-center p-4">
-          <Link href="/" className="flex items-center">
+          <Link href="/admin" className="flex items-center">
             <Image
-              src="/images/logo.jpg"
+              width={150}
+              height={150}
               alt="ITCA Logo"
-              width={40}
-              height={40}
               className="mr-2"
+              src="/images/logo.jpg"
             />
-            <span className="text-xl font-semibold text-gray-900">
-              ITCA Hub
-            </span>
           </Link>
         </div>
+        {/*==================== End of Desktop logo ====================*/}
 
         <div className="px-2 py-4">
           <div className="space-y-1">
@@ -188,7 +184,7 @@ const Sidebar = ({ open, setOpen }: SidebarProps) => {
           </div>
         </div>
 
-        {/* Bottom section with logout */}
+        {/*==================== Bottom section with logout ====================*/}
         <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200">
           <button
             onClick={handleLogout}
@@ -198,7 +194,9 @@ const Sidebar = ({ open, setOpen }: SidebarProps) => {
             <span>Logout</span>
           </button>
         </div>
+        {/*==================== End of Bottom section with logout ====================*/}
       </div>
+      {/*==================== End of Sidebar ====================*/}
     </>
   );
 };

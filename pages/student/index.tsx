@@ -1,7 +1,213 @@
-import React from "react";
+import { useState, useEffect } from "react";
+import StatsCard from "@/components/dashboard/student/stats-card";
+import { BookOpen, Calendar, FileText, Award } from "lucide-react";
+import Link from "next/link";
+import DashboardLayout from "@/components/dashboard/dashboard-layout";
+import CourseList from "@/components/dashboard/student/course/course-list";
+import UpcomingEvents from "@/components/dashboard/student/upcoming-events";
+import ResourceList from "@/components/dashboard/student/resource/resource-list";
 
-const index = () => {
-  return <div>index</div>;
+// Types for student dashboard data
+interface StudentDashboardData {
+  coursesEnrolled: number;
+  eventsRegistered: number;
+  resourcesAccessed: number;
+  completionRate: number;
+  upcomingEvents: Array<{
+    id: number;
+    title: string;
+    date: string;
+    time: string;
+    location: string;
+  }>;
+  recentResources: Array<{
+    id: number;
+    title: string;
+    type: string;
+    date: string;
+  }>;
+  courses: Array<{
+    id: number;
+    title: string;
+    instructor: string;
+    progress: number;
+    totalResources: number;
+    totalStudents: number;
+  }>;
+}
+
+const StudentDashboard = () => {
+  const [dashboardData, setDashboardData] = useState<StudentDashboardData>({
+    coursesEnrolled: 0,
+    eventsRegistered: 0,
+    resourcesAccessed: 0,
+    completionRate: 0,
+    upcomingEvents: [],
+    recentResources: [],
+    courses: [],
+  });
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Fetch student dashboard data
+    const fetchDashboardData = async () => {
+      setIsLoading(true);
+      try {
+        // Simulate API call
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+
+        // Mock data
+        setDashboardData({
+          coursesEnrolled: 3,
+          eventsRegistered: 2,
+          resourcesAccessed: 15,
+          completionRate: 68,
+          upcomingEvents: [
+            {
+              id: 1,
+              title: "Web Development Workshop",
+              date: "Oct 25, 2023",
+              time: "2:00 PM",
+              location: "Lab 302",
+            },
+            {
+              id: 2,
+              title: "AI & Machine Learning Seminar",
+              date: "Nov 10, 2023",
+              time: "3:00 PM",
+              location: "Virtual (Zoom)",
+            },
+          ],
+          recentResources: [
+            {
+              id: 1,
+              title: "Introduction to Python Programming",
+              type: "PDF",
+              date: "Oct 15, 2023",
+            },
+            {
+              id: 2,
+              title: "Database Design Principles",
+              type: "PPTX",
+              date: "Oct 12, 2023",
+            },
+            {
+              id: 3,
+              title: "Web Security Best Practices",
+              type: "PDF",
+              date: "Oct 8, 2023",
+            },
+          ],
+          courses: [
+            {
+              id: 1,
+              title: "Introduction to Web Development",
+              instructor: "Dr. Sarah Johnson",
+              progress: 75,
+              totalResources: 12,
+              totalStudents: 45,
+            },
+            {
+              id: 2,
+              title: "Data Structures and Algorithms",
+              instructor: "Prof. Michael Chen",
+              progress: 60,
+              totalResources: 18,
+              totalStudents: 32,
+            },
+            {
+              id: 3,
+              title: "Mobile App Development with React Native",
+              instructor: "Dr. David Wilson",
+              progress: 40,
+              totalResources: 15,
+              totalStudents: 28,
+            },
+          ],
+        });
+      } catch (error) {
+        console.error("Error fetching student dashboard data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
+
+  return (
+    <DashboardLayout title="Student Dashboard">
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">
+          Student Dashboard
+        </h1>
+        <p className="text-gray-600">Welcome back, John Doe</p>
+      </div>
+
+      {/*==================== Stats Cards ====================*/}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <StatsCard
+          title="Courses Enrolled"
+          value={dashboardData.coursesEnrolled}
+          icon={<BookOpen className="h-6 w-6 text-blue-600" />}
+          isLoading={isLoading}
+        />
+        <StatsCard
+          title="Upcoming Events"
+          value={dashboardData.eventsRegistered}
+          icon={<Calendar className="h-6 w-6 text-amber-500" />}
+          isLoading={isLoading}
+        />
+        <StatsCard
+          title="Resources Accessed"
+          value={dashboardData.resourcesAccessed}
+          icon={<FileText className="h-6 w-6 text-green-500" />}
+          isLoading={isLoading}
+        />
+        <StatsCard
+          title="Overall Progress"
+          value={`${dashboardData.completionRate}%`}
+          icon={<Award className="h-6 w-6 text-purple-500" />}
+          isLoading={isLoading}
+          valueClassName="text-purple-600"
+        />
+      </div>
+
+      {/*==================== Courses Section ====================*/}
+      <div className="mb-8">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-lg font-semibold">My Courses</h2>
+          <Link
+            href="/student/courses"
+            className="text-sm font-medium text-blue-600 hover:text-blue-800"
+          >
+            View all
+          </Link>
+        </div>
+        <CourseList courses={dashboardData.courses} isLoading={isLoading} />
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/*==================== Upcoming Events ====================*/}
+        <div className="lg:col-span-2">
+          <h2 className="text-lg font-semibold mb-4">Upcoming Events</h2>
+          <UpcomingEvents
+            events={dashboardData.upcomingEvents}
+            isLoading={isLoading}
+          />
+        </div>
+
+        {/*==================== Recent Resources ====================*/}
+        <div>
+          <h2 className="text-lg font-semibold mb-4">Recent Resources</h2>
+          <ResourceList
+            isLoading={isLoading}
+            resources={dashboardData.recentResources}
+          />
+        </div>
+      </div>
+    </DashboardLayout>
+  );
 };
 
-export default index;
+export default StudentDashboard;

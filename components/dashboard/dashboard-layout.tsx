@@ -23,7 +23,27 @@ const DashboardLayout = ({
         <link rel="icon" href="/images/logo.jpg" />
       </Head>
 
-      <div className="flex h-screen overflow-hidden bg-gray-50">
+      <div className="flex h-screen overflow-hidden bg-gray-100 relative">
+        {/*==================== Background Elements ====================*/}
+        <div className="absolute inset-0 pointer-events-none z-0">
+          {/*==================== Prominent Geometric Elements - Top Right ====================*/}
+          <div className="absolute top-0 right-0 w-2/3 h-full overflow-hidden">
+            <div className="absolute top-10 right-0 w-full h-full">
+              <div className="absolute top-10 right-[-200px] h-[500px] w-[500px] rounded-full border-[40px] border-amber-500/5 animate-pulse"></div>
+              <div
+                className="absolute top-40 right-[-150px] h-[400px] w-[400px] rounded-full border-[30px] border-blue-700/5 animate-pulse"
+                style={{ animationDelay: "1s" }}
+              ></div>
+              <div
+                className="absolute top-60 right-[-100px] h-[300px] w-[300px] rounded-full border-[20px] border-amber-500/5 animate-pulse"
+                style={{ animationDelay: "2s" }}
+              ></div>
+            </div>
+          </div>
+          {/*==================== End of Prominent Geometric Elements - Top Right ====================*/}
+        </div>
+        {/*==================== End of Background Elements ====================*/}
+
         {/*==================== Sidebar ====================*/}
         <Sidebar open={sidebarOpen} setOpen={setSidebarOpen} />
 
@@ -33,9 +53,9 @@ const DashboardLayout = ({
 
           <main className="flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-6 lg:p-8">
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
+              initial={{ opacity: 0, y: 20 }}
             >
               {children}
             </motion.div>

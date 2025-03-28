@@ -34,10 +34,10 @@ const AuthButton = ({
           fullWidth ? "w-full" : ""
         } py-3 px-4 border-0 rounded-lg text-white bg-blue-700 hover:bg-blue-700 focus:outline-none transition-colors cursor-pointer disabled:opacity-70 overflow-hidden ${className}`}
       >
-        {/* Amber overlay that slides in */}
+        {/*==================== Amber overlay that slides in ====================*/}
         <span className="absolute inset-0 bg-amber-500 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300 rounded-lg"></span>
 
-        {/* Button text */}
+        {/*==================== Button text ====================*/}
         <span className="relative flex justify-center items-center z-10">
           {isLoading ? loadingText : children}
         </span>

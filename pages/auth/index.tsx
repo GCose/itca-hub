@@ -28,7 +28,7 @@ const SignIn = () => {
       await new Promise((resolve) => setTimeout(resolve, 1500));
 
       // Redirect to dashboard or home page after successful login
-      window.location.href = "/admin";
+      window.location.href = "/student";
     } catch {
       setError("Invalid email or password");
     } finally {
@@ -141,8 +141,8 @@ const SignIn = () => {
               />
               <button
                 type="button"
-                className="absolute inset-y-0 right-0 pr-3 flex items-center"
                 onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center"
               >
                 {showPassword ? (
                   <EyeOff className="h-5 w-5 text-gray-400" />
