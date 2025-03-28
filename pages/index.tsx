@@ -4,7 +4,6 @@ import Header from "../components/landing-page/header";
 import HeroSection from "../components/landing-page/hero-section";
 import EventsSection from "../components/landing-page/events-section";
 import DegreesSection from "../components/landing-page/degrees-section";
-// import QuickLinks from "../components/landing-page/quick-links";
 import VirtualTour from "../components/landing-page/virtual-tour";
 import ResourcesSection from "../components/landing-page/resources-section";
 import Footer from "../components/landing-page/footer";

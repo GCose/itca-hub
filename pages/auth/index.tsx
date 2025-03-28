@@ -2,8 +2,8 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Eye, EyeOff, Lock, Mail } from "lucide-react";
 import Link from "next/link";
-import AuthLayout from "@/components/ui/layouts/auth-layout";
-import AuthButton from "@/components/ui/auth-button";
+import AuthLayout from "@/components/authentication/auth-layout";
+import AuthButton from "@/components/authentication/auth-button";
 import useTimedError from "@/hooks/timed-error";
 
 const SignIn = () => {
@@ -28,7 +28,7 @@ const SignIn = () => {
       await new Promise((resolve) => setTimeout(resolve, 1500));
 
       // Redirect to dashboard or home page after successful login
-      window.location.href = "/";
+      window.location.href = "/admin";
     } catch {
       setError("Invalid email or password");
     } finally {
