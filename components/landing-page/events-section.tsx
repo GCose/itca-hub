@@ -81,9 +81,9 @@ const EventsSection = () => {
       id="events"
       className="relative py-24 overflow-hidden bg-gradient-to-b from-white to-gray-100"
     >
-      {/*==================== Animated Grid Lines (Light Version) ====================*/}
+      {/*==================== Animated Grid Lines ====================*/}
       <div className="absolute inset-0 z-10 overflow-hidden opacity-30">
-        {/* Horizontal animated lines */}
+        {/*==================== Horizontal Animated lines ====================*/}
         <div className="absolute top-1/4 left-0 h-[1px] sm:h-[2px] w-full bg-gradient-to-r from-transparent via-amber-500/60 to-transparent animate-pulse"></div>
         <div
           style={{ animationDelay: "1s" }}
@@ -94,7 +94,7 @@ const EventsSection = () => {
           className="absolute top-3/4 left-0 h-[1px] sm:h-[2px] w-full bg-gradient-to-r from-transparent via-amber-500/60 to-transparent animate-pulse"
         ></div>
 
-        {/* Vertical animated lines */}
+        {/*==================== Vertical Animated lines ====================*/}
         <div className="absolute top-0 left-1/4 h-full w-[1px] sm:w-[2px] bg-gradient-to-b from-transparent via-blue-700/60 to-transparent animate-pulse"></div>
         <div
           style={{ animationDelay: "1.5s" }}
@@ -115,9 +115,9 @@ const EventsSection = () => {
       </div>
       {/*==================== End of Light Background Elements ====================*/}
 
-      {/*==================== Glowing Dots At Intersections (Light Version) ====================*/}
+      {/*==================== Glowing Dots At Intersections ====================*/}
       <div className="absolute inset-0 z-10 opacity-70">
-        {/* First row */}
+        {/*==================== First Row ====================*/}
         <div className="absolute top-1/4 left-1/4 h-2 w-2 sm:h-3 sm:w-3 rounded-full bg-blue-500/40 animate-pulse shadow-sm shadow-blue-500/30"></div>
         <div
           className="absolute top-1/4 left-2/4 h-2 w-2 sm:h-3 sm:w-3 rounded-full bg-amber-500/40 animate-pulse shadow-sm shadow-amber-500/30"
@@ -127,8 +127,9 @@ const EventsSection = () => {
           className="absolute top-1/4 left-3/4 h-2 w-2 sm:h-3 sm:w-3 rounded-full bg-blue-500/40 animate-pulse shadow-sm shadow-blue-500/30"
           style={{ animationDelay: "1s" }}
         ></div>
+        {/*==================== End of First Row ====================*/}
 
-        {/* Second row */}
+        {/*==================== Second Row ====================*/}
         <div
           className="absolute top-2/4 left-1/4 h-2 w-2 sm:h-3 sm:w-3 rounded-full bg-amber-500/40 animate-pulse shadow-sm shadow-amber-500/30"
           style={{ animationDelay: "1.5s" }}
@@ -141,8 +142,9 @@ const EventsSection = () => {
           className="absolute top-2/4 left-3/4 h-2 w-2 sm:h-3 sm:w-3 rounded-full bg-amber-500/40 animate-pulse shadow-sm shadow-amber-500/30"
           style={{ animationDelay: "2.5s" }}
         ></div>
+        {/*==================== End of Second Row ====================*/}
 
-        {/* Third row */}
+        {/*==================== Third row ====================*/}
         <div
           className="absolute top-3/4 left-1/4 h-2 w-2 sm:h-3 sm:w-3 rounded-full bg-blue-500/40 animate-pulse shadow-sm shadow-blue-500/30"
           style={{ animationDelay: "3s" }}
@@ -155,11 +157,12 @@ const EventsSection = () => {
           className="absolute top-3/4 left-3/4 h-2 w-2 sm:h-3 sm:w-3 rounded-full bg-blue-500/40 animate-pulse shadow-sm shadow-blue-500/30"
           style={{ animationDelay: "4s" }}
         ></div>
+        {/*==================== End of Third row ====================*/}
       </div>
       {/*==================== End of Glowing Dots At Intersections ====================*/}
 
       <div className="container relative z-20 mx-auto px-4">
-        {/* Section Title */}
+        {/*==================== Section Title ====================*/}
         <motion.div
           initial={{ opacity: 0, y: 70 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -176,8 +179,9 @@ const EventsSection = () => {
             designed to enhance your skills and knowledge.
           </p>
         </motion.div>
+        {/*==================== End of Section Title ====================*/}
 
-        {/* Filter Buttons */}
+        {/*==================== Filter Buttons ====================*/}
         <motion.div
           initial={{ opacity: 0, y: 70 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -255,8 +259,9 @@ const EventsSection = () => {
             )}
           </button>
         </motion.div>
+        {/*==================== End of Filter Buttons ====================*/}
 
-        {/* Event Cards */}
+        {/*==================== Event Cards ====================*/}
         <div className="grid gap-8 md:grid-cols-2">
           <AnimatePresence>
             {animateCards &&
@@ -279,7 +284,7 @@ const EventsSection = () => {
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
 
-                      {/* Category Badge */}
+                      {/*==================== Category Badge ====================*/}
                       <div
                         className={`absolute top-4 right-4 rounded-full px-3 py-1 text-xs font-semibold uppercase text-white backdrop-blur-sm ${
                           event.category === "workshop"
@@ -294,10 +299,11 @@ const EventsSection = () => {
                         {event.category}
                       </div>
 
-                      {/* Save/Bookmark Button */}
+                      {/*==================== Save/Bookmark Button ====================*/}
                       <button className="absolute top-4 left-4 h-8 w-8 rounded-full bg-white/30 backdrop-blur-sm flex items-center justify-center text-white/90 hover:text-white transition-colors">
                         <Bookmark className="h-4 w-4" />
                       </button>
+                      {/*==================== End of Save/Bookmark Button ====================*/}
                     </div>
 
                     <div className="flex flex-1 flex-col justify-between p-6">
@@ -333,15 +339,16 @@ const EventsSection = () => {
                       </div>
                     </div>
 
-                    {/* Decorative Corner Glow */}
+                    {/*==================== Decorative Corner Glow ====================*/}
                     <div className="absolute -bottom-2 -right-2 h-16 w-16 rounded-full bg-blue-700/5 blur-xl group-hover:bg-blue-700/10 transition-colors duration-300"></div>
                   </div>
                 </motion.div>
               ))}
           </AnimatePresence>
         </div>
+        {/*==================== End of Event Cards ====================*/}
 
-        {/* View All Button */}
+        {/*==================== View All Button ====================*/}
         <motion.div
           initial={{ opacity: 0, y: 70 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -357,6 +364,7 @@ const EventsSection = () => {
             <span className="absolute inset-0 -z-10 translate-y-full bg-amber-500 transition-transform duration-300 group-hover:translate-y-0"></span>
           </button>
         </motion.div>
+        {/*==================== End of View All Button ====================*/}
       </div>
     </section>
   );

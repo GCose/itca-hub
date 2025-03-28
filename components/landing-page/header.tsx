@@ -106,7 +106,7 @@ const Header = () => {
           />
         </Link>
 
-        {/* Desktop Menu (visible above 1050px) */}
+        {/*==================== Desktop Menu (Visible above 1050px) ====================*/}
         {!isMobile && (
           <nav className="hidden md:block">
             <ul className="flex space-x-8">
@@ -127,8 +127,9 @@ const Header = () => {
             </ul>
           </nav>
         )}
+        {/*==================== End of Desktop Menu (Visible Above 1050px) ====================*/}
 
-        {/* Sign In/Up buttons - always visible on desktop */}
+        {/*==================== Sign In/Up buttons - Always Visible on Desktop ====================*/}
         <div className="hidden md:flex gap-2">
           <Link
             href="/auth"
@@ -151,8 +152,9 @@ const Header = () => {
             Sign Up
           </Link>
         </div>
+        {/*==================== End of Sign In/Up buttons - Always Visible on Desktop ====================*/}
 
-        {/* Mobile Menu Toggle Button */}
+        {/*==================== Mobile Menu Toggle Button ====================*/}
         <button
           onClick={() => setIsMenuOpen(!isMenuOpen)}
           className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 backdrop-blur-sm md:hidden"
@@ -172,8 +174,9 @@ const Header = () => {
             />
           )}
         </button>
+        {/*==================== End of Mobile Menu Toggle Button ====================*/}
 
-        {/* Mobile Menu */}
+        {/*==================== Mobile Menu ====================*/}
         {isMenuOpen && !isMobile && (
           <div className="absolute left-0 top-full w-full bg-white py-4 shadow-lg md:hidden">
             <nav className="container mx-auto px-4">
@@ -209,8 +212,9 @@ const Header = () => {
             </nav>
           </div>
         )}
+        {/*==================== End of Mobile Menu ====================*/}
 
-        {/* Mobile Menu with Animations (only on screens below 1050px) */}
+        {/*==================== Mobile Menu with Animations Oonly on Screens Below 1050px) ====================*/}
         <AnimatePresence>
           {isMenuOpen && isMobile && (
             <motion.div
@@ -220,6 +224,13 @@ const Header = () => {
               transition={{ duration: 0.3 }}
               className="fixed inset-0 bg-gray-900/95 backdrop-blur-md z-40"
             >
+              <button
+                aria-label="Close menu"
+                onClick={() => setIsMenuOpen(false)}
+                className="absolute top-4 right-4 flex h-10 w-10 items-center justify-center rounded-full bg-gray-700/50 text-white hover:bg-gray-600/50 transition-all z-50"
+              >
+                <X className="h-6 w-6" />
+              </button>
               <motion.nav
                 initial={{ x: "100%" }}
                 animate={{ x: 0 }}
@@ -324,6 +335,7 @@ const Header = () => {
             </motion.div>
           )}
         </AnimatePresence>
+        {/*==================== End of Mobile Menu with Animations (Only on Screens Below 1050px) ====================*/}
       </div>
     </header>
   );
