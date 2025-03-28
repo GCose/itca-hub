@@ -4,13 +4,14 @@ import { Eye, EyeOff, Lock, Mail } from "lucide-react";
 import Link from "next/link";
 import AuthLayout from "@/components/ui/layouts/auth-layout";
 import AuthButton from "@/components/ui/auth-button";
+import useTimedError from "@/hooks/timed-error";
 
 const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useTimedError();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -3,11 +3,7 @@ import { motion } from "framer-motion";
 import { CheckCircle } from "lucide-react";
 import Link from "next/link";
 import AuthLayout from "@/components/ui/layouts/auth-layout";
-
-// Import types
 import { FormData, RegisterUserDTO } from "@/types/sign-up";
-
-// Import utilities
 import {
   validatePersonalInfo,
   validateSecurity,
@@ -15,6 +11,7 @@ import {
 import PersonalInfoStep from "@/components/ui/sign-up/personal-info-steps";
 import SecurityStep from "@/components/ui/sign-up/security-step";
 import StepIndicator from "@/components/ui/sign-up/step-indicator";
+import useTimedError from "@/hooks/timed-error";
 
 const SignUp = () => {
   // State management
@@ -29,7 +26,7 @@ const SignUp = () => {
     agreeToTerms: false,
   });
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useTimedError();
   const [step, setStep] = useState(1);
 
   // Event handlers
