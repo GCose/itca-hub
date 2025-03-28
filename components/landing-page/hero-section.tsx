@@ -65,7 +65,7 @@ const HeroSection = () => {
 
       {/*==================== Animated Grid Lines ====================*/}
       <div className="absolute inset-0 z-10 overflow-hidden">
-        {/* Horizontal animated lines */}
+        {/*==================== Horizontal animated lines ====================*/}
         <div className="absolute top-1/4 left-0 h-[1px] sm:h-[2px] w-full bg-gradient-to-r from-transparent via-amber-500/60 to-transparent animate-pulse"></div>
         <div
           style={{ animationDelay: "1s" }}
@@ -76,7 +76,7 @@ const HeroSection = () => {
           className="absolute top-3/4 left-0 h-[1px] sm:h-[2px] w-full bg-gradient-to-r from-transparent via-amber-500/60 to-transparent animate-pulse"
         ></div>
 
-        {/* Vertical animated lines */}
+        {/*==================== Vertical animated lines ====================*/}
         <div className="absolute top-0 left-1/4 h-full w-[1px] sm:w-[2px] bg-gradient-to-b from-transparent via-blue-700/60 to-transparent animate-pulse"></div>
         <div
           style={{ animationDelay: "1.5s" }}
@@ -91,7 +91,7 @@ const HeroSection = () => {
 
       {/*==================== Glowing Dots At Intersections ====================*/}
       <div className="absolute inset-0 z-10">
-        {/* First row */}
+        {/*==================== First row ====================*/}
         <div className="absolute top-1/4 left-1/4 h-2 w-2 sm:h-3 sm:w-3 rounded-full bg-blue-500/70 animate-pulse shadow-lg shadow-blue-500/50"></div>
         <div
           className="absolute top-1/4 left-2/4 h-2 w-2 sm:h-3 sm:w-3 rounded-full bg-amber-500/70 animate-pulse shadow-lg shadow-amber-500/50"
@@ -102,7 +102,7 @@ const HeroSection = () => {
           style={{ animationDelay: "1s" }}
         ></div>
 
-        {/* Second row */}
+        {/*==================== Second row ====================*/}
         <div
           className="absolute top-2/4 left-1/4 h-2 w-2 sm:h-3 sm:w-3 rounded-full bg-amber-500/70 animate-pulse shadow-lg shadow-amber-500/50"
           style={{ animationDelay: "1.5s" }}
@@ -116,7 +116,7 @@ const HeroSection = () => {
           style={{ animationDelay: "2.5s" }}
         ></div>
 
-        {/* Third row */}
+        {/*==================== Third row ====================*/}
         <div
           className="absolute top-3/4 left-1/4 h-2 w-2 sm:h-3 sm:w-3 rounded-full bg-blue-500/70 animate-pulse shadow-lg shadow-blue-500/50"
           style={{ animationDelay: "3s" }}
@@ -134,7 +134,7 @@ const HeroSection = () => {
 
       {/*==================== Content ====================*/}
       <div className="relative z-20 flex h-full min-h-screen flex-col items-center justify-center px-4 py-16 sm:py-24 md:py-32 text-white">
-        {/* Welcome Subtitle */}
+        {/*==================== Welcome Subtitle ====================*/}
         <motion.p
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
