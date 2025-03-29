@@ -1,4 +1,4 @@
-import { useState, useEffect, JSX } from "react";
+import { JSX, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import Image from "next/image";
@@ -31,14 +31,9 @@ type NavItem = {
 
 const Sidebar = ({ open, setOpen }: SidebarProps) => {
   const router = useRouter();
-  const [isAdmin, setIsAdmin] = useState(false);
+  const isAdminRef = useRef(false);
 
-  useEffect(() => {
-    // Check if current route is in admin section
-    setIsAdmin(router.pathname.startsWith("/admin"));
-  }, [router.pathname]);
-
-  // Define navigation items based on role
+  // Define navigation items outside of component render
   const adminNavItems: NavItem[] = [
     { name: "Dashboard", href: "/admin", icon: <Home className="h-5 w-5" /> },
     {
@@ -97,7 +92,11 @@ const Sidebar = ({ open, setOpen }: SidebarProps) => {
     },
   ];
 
-  const navItems = isAdmin ? adminNavItems : studentNavItems;
+  // Determine NavItems
+  const getNavItems = () => {
+    isAdminRef.current = router.pathname.startsWith("/admin");
+    return isAdminRef.current ? adminNavItems : studentNavItems;
+  };
 
   const handleLogout = () => {
     console.log("Logging out...");
@@ -106,6 +105,11 @@ const Sidebar = ({ open, setOpen }: SidebarProps) => {
 
   // Check if a nav item is active
   const isActive = (href: string) => {
+    // For dashboard routes, only exact match
+    if (href === "/admin" || href === "/student") {
+      return router.pathname === href;
+    }
+    // For other routes, either exact match or starts with the path
     return router.pathname === href || router.pathname.startsWith(`${href}/`);
   };
 
@@ -127,7 +131,7 @@ const Sidebar = ({ open, setOpen }: SidebarProps) => {
 
       {/*==================== Sidebar ====================*/}
       <div
-        className={`fixed inset-y-0 left-0 z-50 w-64 transform overflow-y-auto bg-white shadow-lg transition-transform ease-in-out duration-300 
+        className={`fixed inset-y-0 left-0 z-50 w-64 transform overflow-y-auto bg-white shadow-md transition-transform ease-in-out duration-300 
                     ${open ? "translate-x-0" : "-translate-x-full"} 
                     md:translate-x-0 md:static md:z-0`}
       >
@@ -153,7 +157,10 @@ const Sidebar = ({ open, setOpen }: SidebarProps) => {
 
         {/*==================== Desktop logo ====================*/}
         <div className="hidden md:flex items-center p-4">
-          <Link href="/admin" className="flex items-center">
+          <Link
+            href={router.pathname.startsWith("/admin") ? "/admin" : "/student"}
+            className="flex items-center"
+          >
             <Image
               width={150}
               height={150}
@@ -167,11 +174,11 @@ const Sidebar = ({ open, setOpen }: SidebarProps) => {
 
         <div className="px-2 py-4">
           <div className="space-y-1">
-            {navItems.map((item) => (
+            {getNavItems().map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
-                className={`flex items-center px-4 py-2.5 text-sm font-medium rounded-lg transition-colors ${
+                className={`flex items-center px-4 py-2.5 text-sm font-medium rounded-lg ${
                   isActive(item.href)
                     ? "bg-blue-50 text-blue-700"
                     : "text-gray-700 hover:bg-gray-100"
@@ -188,7 +195,7 @@ const Sidebar = ({ open, setOpen }: SidebarProps) => {
         <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200">
           <button
             onClick={handleLogout}
-            className="flex w-full items-center px-4 py-2.5 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-100 transition-colors"
+            className="flex w-full items-center px-4 py-2.5 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-100"
           >
             <LogOut className="mr-3 h-5 w-5 text-gray-500" />
             <span>Logout</span>
