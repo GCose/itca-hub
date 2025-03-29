@@ -14,8 +14,15 @@ const AdminUsersPage = () => {
       <div className="mb-8">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">
-              User Management
+            <h1 className="text-2xl font-bold text-gray-900 mb-2 flex items-center">
+              <span className="text-blue-700 mr-2">User</span>
+              <span className="text-amber-500">Management</span>
+              <span className="ml-3 relative">
+                <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
+                </span>
+              </span>
             </h1>
             <p className="text-gray-600">
               Manage user accounts, roles, and permissions
