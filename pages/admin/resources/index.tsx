@@ -97,11 +97,11 @@ const AdminResourcesPage = () => {
       </div>
 
       <ResourceTable
+        isError={isError}
         resources={resources}
         isLoading={isLoading}
-        isError={isError}
-        onRefresh={() => fetchResources(false)}
         onDeleteClick={handleDeleteClick}
+        onRefresh={() => fetchResources(false)}
       />
 
       {/*==================== Delete confirmation modal ====================*/}

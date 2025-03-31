@@ -205,7 +205,7 @@ const ResourceUploader = ({
               onChange={(e) => setVisibility(e.target.value as Visibility)}
               className="w-full rounded-lg border border-gray-200 p-2.5 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
             >
-              <option value="students">For Students</option>
+              <option value="all">All</option>
               <option value="admin">For Administrators</option>
             </select>
           </div>
