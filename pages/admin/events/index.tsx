@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import DashboardLayout from "@/components/dashboard/dashboard-layout";
+import DashboardLayout from "@/components/dashboard/layout/dashboard-layout";
 import { Calendar, Search, ListFilter } from "lucide-react";
 import Link from "next/link";
 import DeleteEventModal from "@/components/dashboard/admin/events/delete-event-modal";
@@ -180,7 +180,7 @@ const AdminEventsPage = () => {
               <div className="mt-4 sm:mt-0 flex space-x-2">
                 <Link
                   href="/admin/events/new"
-                  className="group inline-flex items-center rounded-lg bg-gradient-to-r from-blue-700 to-blue-600 px-4 py-2 text-sm font-medium text-white hover:from-blue-800 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-300 shadow-md hover:shadow-lg"
+                  className="group inline-flex items-center rounded-lg bg-gradient-to-r from-blue-700 to-blue-600 px-4 py-2 text-sm font-medium text-white hover:from-blue-800 hover:to-blue-700 focus:outline-none  focus:ring-blue-500 focus:ring-offset-2 transition-all duration-300 shadow-md hover:shadow-lg"
                 >
                   <span className="mr-2 text-lg font-bold transition-transform duration-300 group-hover:rotate-90">
                     +
@@ -199,7 +199,7 @@ const AdminEventsPage = () => {
                   </div>
                   <input
                     type="search"
-                    className="w-full rounded-lg border border-gray-200 bg-white pl-10 pr-4 py-2.5 text-sm text-gray-700 focus:border-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-600 transition-colors"
+                    className="w-full rounded-lg border border-gray-200 bg-white pl-10 pr-4 py-2.5 text-sm text-gray-700 focus:border-blue-600 focus:outline-none  focus:ring-blue-600 transition-colors"
                     placeholder="Search events by title, description, or location..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -213,7 +213,7 @@ const AdminEventsPage = () => {
                     <ListFilter className="h-5 w-5 text-gray-400" />
                   </div>
                   <select
-                    className="w-full rounded-lg border border-gray-200 bg-white py-2.5 pl-10 pr-8 text-sm text-gray-700 focus:border-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-600 appearance-none cursor-pointer transition-colors"
+                    className="w-full rounded-lg border border-gray-200 bg-white py-2.5 pl-10 pr-8 text-sm text-gray-700 focus:border-blue-600 focus:outline-none  focus:ring-blue-600 appearance-none cursor-pointer transition-colors"
                     value={status}
                     onChange={(e) => setStatus(e.target.value)}
                   >

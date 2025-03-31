@@ -1,18 +1,19 @@
 import { useState, useEffect } from "react";
-import { useResources } from "@/hooks/use-resources";
-import { Upload } from "lucide-react";
-import DashboardLayout from "@/components/dashboard/dashboard-layout";
+import { useResources } from "@/hooks/admin/use-resources";
+import { Upload, Trash2 } from "lucide-react";
 import Link from "next/link";
-import ResourceTable from "@/components/dashboard/admin/resources/resource-table";
-import DeleteResourceModal from "@/components/dashboard/admin/resources/delete-resource-modal";
+import ResourceTable from "@/components/dashboard/admin/resources/table/resource-table";
+import DeleteResourceModal from "@/components/dashboard/admin/resources/modals/delete-resource-modal";
+import DashboardLayout from "@/components/dashboard/layout/dashboard-layout";
 
 const AdminResourcesPage = () => {
   const {
     resources,
     isLoading,
     isDeleting,
+    isError,
     fetchResources,
-    deleteResource,
+    moveToRecycleBin,
     handleDeleteSuccess,
   } = useResources();
 
@@ -22,7 +23,8 @@ const AdminResourcesPage = () => {
   >(null);
 
   useEffect(() => {
-    fetchResources();
+    // Only fetch non-deleted resources for the main page
+    fetchResources(false);
   }, [fetchResources]);
 
   // Handle resource deletion
@@ -35,8 +37,8 @@ const AdminResourcesPage = () => {
     if (!resourceToDelete) return;
 
     try {
-      const success = await deleteResource(
-        resourceToDelete.fileName,
+      const success = await moveToRecycleBin(
+        resourceToDelete.id,
         resourceToDelete.title
       );
 
@@ -46,8 +48,7 @@ const AdminResourcesPage = () => {
         setResourceToDelete(null);
       }
     } catch (err) {
-      console.error("Error in delete confirmation:", err);
-      // No need to display error here as deleteResource already does this
+      console.error("Error moving resource to recycle bin:", err);
     }
   };
 
@@ -71,14 +72,26 @@ const AdminResourcesPage = () => {
             </p>
           </div>
 
-          <div className="mt-4 sm:mt-0">
+          <div className="mt-4 sm:mt-0 flex space-x-3">
+            {/*==================== Recycle Bin Link ====================*/}
+            <Link
+              href="/admin/resources/recycle-bin"
+              className="inline-flex items-center rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+            >
+              <Trash2 className="mr-2 h-4 w-4" />
+              Recycle Bin
+            </Link>
+            {/*==================== End of Recycle Bin Link ====================*/}
+
+            {/*==================== Upload Resource Link ====================*/}
             <Link
               href="/admin/resources/upload"
-              className="group inline-flex items-center rounded-lg bg-gradient-to-r from-blue-700 to-blue-600 px-4 py-2 text-sm font-medium text-white hover:from-blue-800 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-300 shadow-md hover:shadow-lg"
+              className="group inline-flex items-center rounded-lg bg-gradient-to-r from-blue-700 to-blue-600 px-4 py-2 text-sm font-medium text-white hover:from-blue-800 hover:to-blue-700 focus:outline-none focus:ring-blue-500 focus:ring-offset-2 transition-all duration-300 shadow-md hover:shadow-lg"
             >
               <Upload className="mr-2 h-4 w-4 transition-transform group-hover:translate-y-[-2px]" />
               Upload Resource
             </Link>
+            {/*==================== End of Upload Resource Link ====================*/}
           </div>
         </div>
       </div>
@@ -86,20 +99,22 @@ const AdminResourcesPage = () => {
       <ResourceTable
         resources={resources}
         isLoading={isLoading}
+        isError={isError}
+        onRefresh={() => fetchResources(false)}
         onDeleteClick={handleDeleteClick}
-        onRefresh={fetchResources}
       />
 
-      {/* Delete confirmation modal */}
+      {/*==================== Delete confirmation modal ====================*/}
       {showDeleteModal && resourceToDelete && (
         <DeleteResourceModal
-          resource={resourceToDelete}
-          isOpen={showDeleteModal}
           isDeleting={isDeleting}
-          onClose={() => setShowDeleteModal(false)}
+          isOpen={showDeleteModal}
+          resource={resourceToDelete}
           onConfirm={handleDeleteConfirm}
+          onClose={() => setShowDeleteModal(false)}
         />
       )}
+      {/*==================== End of Delete confirmation modal ====================*/}
     </DashboardLayout>
   );
 };

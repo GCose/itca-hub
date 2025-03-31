@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Calendar, Users, FileText, PieChart } from "lucide-react";
-import DashboardLayout from "@/components/dashboard/dashboard-layout";
+import DashboardLayout from "@/components/dashboard/layout/dashboard-layout";
 import StatsCard from "@/components/dashboard/admin/stats-card";
 import UserTable from "@/components/dashboard/admin/user-table";
 import RecentActivity from "@/components/dashboard/admin/recent-activity";

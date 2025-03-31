@@ -1,3 +1,4 @@
+import useResourceUploader from "@/hooks/admin/use-resource-uploader";
 import {
   Upload,
   FileText,
@@ -6,7 +7,9 @@ import {
   FileType,
   Loader,
 } from "lucide-react";
-import { useResourceUpload } from "@/hooks/use-resource-upload";
+
+// Define proper types
+type Visibility = "students" | "admin";
 
 interface ResourceUploaderProps {
   onUploadComplete?: (fileData: {
@@ -35,9 +38,12 @@ const ResourceUploader = ({
     setTitle,
     setDescription,
     setCategory,
-    resetForm,
     formatFileSize,
-  } = useResourceUpload({ onUploadComplete, onError });
+    visibility,
+    setVisibility,
+    department,
+    setDepartment,
+  } = useResourceUploader({ onUploadComplete, onError });
 
   // Function to get file icon based on mime type
   const getFileIcon = () => {
@@ -62,13 +68,18 @@ const ResourceUploader = ({
     return <FileType className="h-6 w-6 text-gray-500" />;
   };
 
+  // Check if form is valid
+  const isFormValid =
+    file && title.trim() && description.trim() && category && department;
+
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+    <div className="rounded-2xl bg-white p-6">
       <h3 className="text-lg font-medium text-gray-900 mb-4">
         Upload New Resource
       </h3>
 
       <form onSubmit={handleSubmit}>
+        {/*==================== File Upload Section ====================*/}
         <div className="mb-6">
           <label
             htmlFor="file-upload"
@@ -82,8 +93,8 @@ const ResourceUploader = ({
               {getFileIcon()}
 
               {file ? (
-                <div className="mt-2 text-center">
-                  <p className="text-sm font-medium text-gray-900">
+                <div className="mt-2 text-center w-full px-4">
+                  <p className="text-sm font-medium text-gray-900 truncate">
                     {file.name}
                   </p>
                   <p className="text-xs text-gray-500 mt-1">
@@ -111,7 +122,9 @@ const ResourceUploader = ({
             />
           </label>
         </div>
+        {/*==================== End of File Upload Section ====================*/}
 
+        {/*==================== Title and Category Section ====================*/}
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <div>
             <label
@@ -127,7 +140,7 @@ const ResourceUploader = ({
               value={title}
               placeholder="Enter resource title"
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full rounded-lg border border-gray-200 p-2.5 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="w-full rounded-lg border border-gray-200 p-2.5 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
             />
           </div>
 
@@ -139,11 +152,11 @@ const ResourceUploader = ({
               Category <span className="text-red-500">*</span>
             </label>
             <select
+              required
               id="category"
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="w-full rounded-lg border border-gray-200 p-2.5 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-              required
+              className="w-full rounded-lg border border-gray-200 p-2.5 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
             >
               <option value="">Select category</option>
               {categories.map((cat) => (
@@ -154,38 +167,78 @@ const ResourceUploader = ({
             </select>
           </div>
         </div>
+        {/*==================== End of Title and Category Section ====================*/}
 
+        {/*==================== Description Section ====================*/}
         <div className="mt-4">
           <label
             htmlFor="description"
             className="block text-sm font-medium text-gray-700 mb-1"
           >
-            Description
+            Description <span className="text-red-500">*</span>
           </label>
           <textarea
+            required
+            rows={3}
             id="description"
             value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            className="w-full rounded-lg border border-gray-200 p-2.5 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             placeholder="Enter resource description"
-            rows={3}
+            onChange={(e) => setDescription(e.target.value)}
+            className="w-full rounded-lg border border-gray-200 p-2.5 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
           />
         </div>
+        {/*==================== End of Description Section ====================*/}
 
+        {/*==================== Visibility and Department Section ====================*/}
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 mt-4">
+          <div>
+            <label
+              htmlFor="visibility"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Visibility <span className="text-red-500">*</span>
+            </label>
+            <select
+              required
+              id="visibility"
+              value={visibility}
+              onChange={(e) => setVisibility(e.target.value as Visibility)}
+              className="w-full rounded-lg border border-gray-200 p-2.5 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+            >
+              <option value="students">For Students</option>
+              <option value="admin">For Administrators</option>
+            </select>
+          </div>
+
+          <div>
+            <label
+              htmlFor="department"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Department <span className="text-red-500">*</span>
+            </label>
+            <select
+              required
+              id="department"
+              value={department}
+              onChange={(e) => setDepartment(e.target.value)}
+              className="w-full rounded-lg border border-gray-200 p-2.5 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+            >
+              <option value="">Select Department</option>
+              <option value="computer-science">Computer Science</option>
+              <option value="information-systems">Information Systems</option>
+              <option value="telecommunications">Telecommunications</option>
+            </select>
+          </div>
+        </div>
+        {/*==================== End of Visibility and Department Section ====================*/}
+
+        {/*==================== Submit Button ====================*/}
         <div className="mt-6 flex justify-end space-x-3">
           <button
-            type="button"
-            onClick={resetForm}
-            className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
-            disabled={isUploading}
-          >
-            Cancel
-          </button>
-
-          <button
             type="submit"
-            className="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-            disabled={isUploading || !file}
+            disabled={isUploading || !isFormValid}
+            className="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
           >
             {isUploading ? (
               <>
@@ -200,6 +253,7 @@ const ResourceUploader = ({
             )}
           </button>
         </div>
+        {/*==================== End of Submit Button ====================*/}
       </form>
     </div>
   );

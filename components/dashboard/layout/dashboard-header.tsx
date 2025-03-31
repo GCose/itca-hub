@@ -17,19 +17,8 @@ interface HeaderProps {
 }
 
 const Header = ({ sidebarOpen, setSidebarOpen }: HeaderProps) => {
-  const [isScrolled, setIsScrolled] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
-
-  // Handle scroll effect
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   // Close dropdowns when clicking outside
   useEffect(() => {
@@ -54,12 +43,8 @@ const Header = ({ sidebarOpen, setSidebarOpen }: HeaderProps) => {
   }, []);
 
   return (
-    <header
-      className={`sticky top-0 z-20 flex h-16 items-center justify-between bg-white px-4 transition-shadow duration-200 md:px-6 ${
-        isScrolled ? "shadow-md" : "shadow-sm"
-      }`}
-    >
-      {/*==================== Left: Mobile menu button and search ====================*/}
+    <header className="sticky top-0 z-20 flex h-16 items-center justify-between bg-white px-4 transition-shadow duration-200 md:px-6">
+      {/*==================== Mobile menu button and search ====================*/}
       <div className="flex items-center space-x-4">
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -75,12 +60,13 @@ const Header = ({ sidebarOpen, setSidebarOpen }: HeaderProps) => {
             </div>
             <input
               type="search"
-              className="w-full rounded-lg border border-gray-200 bg-gray-50 py-2 pl-10 pr-4 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               placeholder="Search..."
+              className="w-full rounded-lg border border-gray-200 bg-gray-50 py-2 pl-10 pr-4 text-sm text-gray-700 focus:border-blue-500 focus:outline-none  focus:ring-blue-500"
             />
           </div>
         </div>
       </div>
+      {/*==================== End of Mobile menu button and search ====================*/}
 
       {/*==================== Right: Notifications and user menu ====================*/}
       <div className="flex items-center space-x-4">
@@ -144,7 +130,9 @@ const Header = ({ sidebarOpen, setSidebarOpen }: HeaderProps) => {
               </div>
             </motion.div>
           )}
+          {/*==================== End of Notification Dropdown ====================*/}
         </div>
+        {/*==================== End of Notifications ====================*/}
 
         {/*==================== User Menu ====================*/}
         <div className="relative">

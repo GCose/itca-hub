@@ -1,6 +1,6 @@
 import { AlertTriangle, X, Loader } from "lucide-react";
 import { useEffect } from "react";
-import { Resource } from "@/hooks/use-resources";
+import { Resource } from "@/hooks/admin/use-resources";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface DeleteResourceModalProps {
@@ -61,11 +61,11 @@ const DeleteResourceModal = ({
             <div className="relative p-6">
               <div className="mb-5 flex justify-between items-center">
                 <div className="flex items-center">
-                  <div className="mr-3 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-red-100">
-                    <AlertTriangle className="h-5 w-5 text-red-600" />
+                  <div className="mr-3 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-amber-100">
+                    <AlertTriangle className="h-5 w-5 text-amber-600" />
                   </div>
                   <h3 className="text-lg font-medium text-gray-900">
-                    Delete Resource
+                    Move to Recycle Bin
                   </h3>
                 </div>
 
@@ -81,8 +81,8 @@ const DeleteResourceModal = ({
 
               <div className="mb-6">
                 <p className="text-sm text-gray-600 mb-2">
-                  Are you sure you want to delete this resource? This action
-                  cannot be undone.
+                  Are you sure you want to move this resource to the recycle
+                  bin? You can restore it later if needed.
                 </p>
 
                 <div className="mt-4 p-3 bg-gray-50 rounded-lg">
@@ -99,7 +99,7 @@ const DeleteResourceModal = ({
               <div className="flex justify-end space-x-3">
                 <button
                   type="button"
-                  className="inline-flex justify-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  className="inline-flex justify-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-blue-500 focus:ring-offset-2"
                   onClick={onClose}
                   disabled={isDeleting}
                 >
@@ -107,17 +107,17 @@ const DeleteResourceModal = ({
                 </button>
                 <button
                   type="button"
-                  className="inline-flex justify-center rounded-lg bg-gradient-to-r from-red-600 to-red-500 px-4 py-2 text-sm font-medium text-white hover:from-red-700 hover:to-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all duration-300 shadow-md hover:shadow-lg disabled:opacity-70"
+                  className="inline-flex justify-center rounded-lg bg-amber-500 px-4 py-2 text-sm font-medium text-white hover:bg-amber-600 focus:outline-none focus:ring-amber-500 focus:ring-offset-2 transition-all duration-300 shadow-md hover:shadow-lg disabled:opacity-70"
                   onClick={onConfirm}
                   disabled={isDeleting}
                 >
                   {isDeleting ? (
                     <>
                       <Loader className="mr-2 h-4 w-4 animate-spin" />
-                      Deleting...
+                      Moving...
                     </>
                   ) : (
-                    "Delete Resource"
+                    "Move to Recycle Bin"
                   )}
                 </button>
               </div>
