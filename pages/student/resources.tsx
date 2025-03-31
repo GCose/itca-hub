@@ -1,4 +1,4 @@
-import DashboardLayout from "@/components/dashboard/dashboard-layout";
+import DashboardLayout from "@/components/dashboard/layout/dashboard-layout";
 import ResourceManager from "@/components/dashboard/student/resource/resource-manager";
 
 const StudentResourcesPage = () => {

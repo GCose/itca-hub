@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import StatsCard from "@/components/dashboard/student/stats-card";
 import { BookOpen, Calendar, FileText, Award } from "lucide-react";
 import Link from "next/link";
-import DashboardLayout from "@/components/dashboard/dashboard-layout";
+import DashboardLayout from "@/components/dashboard/layout/dashboard-layout";
 import CourseList from "@/components/dashboard/student/course/course-list";
 import UpcomingEvents from "@/components/dashboard/student/upcoming-events";
 import ResourceList from "@/components/dashboard/student/resource/resource-list";
