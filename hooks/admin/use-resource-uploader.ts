@@ -18,11 +18,10 @@ interface ResourceMetadata {
   title: string;
   description: string;
   category: string;
-  visibility: "public" | "students" | "admin";
+  visibility: "all" | "admin";
   featuredOnLanding?: boolean;
   academicLevel?: "undergraduate" | "postgraduate" | "all";
   department?: string;
-  status?: "active" | "archived";
   isDeleted?: boolean;
   deletedAt?: string;
   deletedBy?: string;
@@ -34,6 +33,7 @@ const useResourceUploader = ({
 }: ResourceUploadHookProps) => {
   const [file, setFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [isCheckingDuplicate, setIsCheckingDuplicate] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Basic fields
@@ -42,9 +42,7 @@ const useResourceUploader = ({
   const [category, setCategory] = useState("");
 
   // Additional fields
-  const [visibility, setVisibility] = useState<"public" | "students" | "admin">(
-    "students"
-  );
+  const [visibility, setVisibility] = useState<"all" | "admin">("all");
   const [featuredOnLanding, setFeaturedOnLanding] = useState(false);
   const [academicLevel, setAcademicLevel] = useState<
     "undergraduate" | "postgraduate" | "all"
@@ -62,27 +60,67 @@ const useResourceUploader = ({
   ];
 
   // Function to check if a file with similar title already exists
-  const checkForDuplicates = (fileName: string, fileTitle: string): boolean => {
-    // Get existing metadata from localStorage
-    const storedMetadata = localStorage.getItem("resourceMetadata");
-    if (!storedMetadata) return false;
+  // This should ideally be a backend call but I will be using the local storage for now
+  const checkForDuplicates = async (
+    fileName: string,
+    fileTitle: string
+  ): Promise<boolean> => {
+    setIsCheckingDuplicate(true);
 
-    const metadataMap: Record<string, ResourceMetadata> =
-      JSON.parse(storedMetadata);
+    try {
+      // BACKEND API IMPLEMENTATION (Commented out until backend is ready)
+      /*
+      // Check with backend if a similar resource exists
+      const response = await fetch('https://api.itca-hub.edu/api/resources/check-duplicate', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          fileName,
+          title: fileTitle,
+          category: category
+        }),
+      });
 
-    // Check for duplicate file names (case insensitive)
-    const hasDuplicateFileName = Object.keys(metadataMap).some(
-      (key) => key.toLowerCase() === fileName.toLowerCase()
-    );
+      if (!response.ok) {
+        throw new Error("Failed to check for duplicate resources");
+      }
 
-    // Check for duplicate titles (case insensitive)
-    const hasDuplicateTitle = Object.values(metadataMap).some(
-      (metadata: ResourceMetadata) =>
-        metadata.title &&
-        metadata.title.toLowerCase() === fileTitle.toLowerCase()
-    );
+      const data = await response.json();
+      return data.isDuplicate;
+      */
 
-    return hasDuplicateFileName || hasDuplicateTitle;
+      // TEMPORARY IMPLEMENTATION (localStorage)
+      // Get existing metadata from localStorage
+      const storedMetadata = localStorage.getItem("resourceMetadata");
+      if (!storedMetadata) return false;
+
+      const metadataMap: Record<string, ResourceMetadata> =
+        JSON.parse(storedMetadata);
+
+      // Check for duplicate file names (case insensitive)
+      const hasDuplicateFileName = Object.keys(metadataMap).some(
+        (key) => key.toLowerCase() === fileName.toLowerCase()
+      );
+
+      // Check for duplicate titles (case insensitive)
+      const hasDuplicateTitle = Object.values(metadataMap).some(
+        (metadata: ResourceMetadata) =>
+          metadata.title &&
+          metadata.title.toLowerCase() === fileTitle.toLowerCase()
+      );
+
+      return hasDuplicateFileName || hasDuplicateTitle;
+    } catch (error) {
+      console.error("Error checking for duplicates:", error);
+      // Default to false on error to not block upload
+      // In production, I might have to handle this differently
+      return false;
+    } finally {
+      setIsCheckingDuplicate(false);
+    }
   };
 
   // Function to format file size
@@ -177,8 +215,9 @@ const useResourceUploader = ({
     const folderName = category.toLowerCase().replace(/\s+/g, "-");
     const potentialFileName = `${folderName}/${file.name}`;
 
-    // Check for duplicate files
-    if (checkForDuplicates(potentialFileName, title)) {
+    // First check for duplicates before starting the upload
+    const isDuplicate = await checkForDuplicates(potentialFileName, title);
+    if (isDuplicate) {
       toast.error("Duplicate resource", {
         description:
           "A resource with the same name or title already exists. Please rename your file or choose a different title.",
@@ -193,11 +232,12 @@ const useResourceUploader = ({
       const formData = new FormData();
       formData.append("file", file);
 
-      // Add the category as a folder parameter if available
+      // Add the category as a folder parameter with itca prefix
       if (category) {
-        // Convert category to folder name (lowercase, hyphenated)
-        const folderName = category.toLowerCase().replace(/\s+/g, "-");
+        const folderName = `itca/${category.toLowerCase().replace(/\s+/g, "-")}`;
         formData.append("folder", folderName);
+      } else {
+        formData.append("folder", "itca");
       }
 
       // Upload the file to Jeetix API
@@ -230,9 +270,9 @@ const useResourceUploader = ({
         featuredOnLanding: featuredOnLanding,
         academicLevel: academicLevel,
         department: department,
-        status: "active",
       };
 
+      // TEMPORARY IMPLEMENTATION (localStorage)
       // Store in localStorage for now until the backend API is available
       const existingMetadata = localStorage.getItem("resourceMetadata");
       const metadataMap: Record<string, ResourceMetadata> = existingMetadata
@@ -240,6 +280,39 @@ const useResourceUploader = ({
         : {};
       metadataMap[uploadData.data.fileName] = metadataPayload;
       localStorage.setItem("resourceMetadata", JSON.stringify(metadataMap));
+
+      // BACKEND API IMPLEMENTATION (Commented out until backend is ready)
+      /*
+      // Create metadata on backend
+      const metadataResponse = await fetch('https://api.itca-hub.edu/api/resources/metadata', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          fileName: uploadData.data.fileName,
+          fileUrl: uploadData.data.fileUrl,
+          title: title,
+          description: description,
+          category: category,
+          visibility: visibility,
+          department: department,
+          academicLevel: academicLevel,
+          featuredOnLanding: featuredOnLanding
+        }),
+      });
+
+      if (!metadataResponse.ok) {
+        // Handle case where file was uploaded but metadata failed
+        // Ideally cleanup the uploaded file
+        await fetch(`https://jeetix-file-service.onrender.com/api/storage/delete/${encodeURIComponent(uploadData.data.fileName)}`, {
+          method: 'DELETE'
+        });
+        
+        throw new Error("Failed to save resource metadata");
+      }
+      */
 
       // Call the onUploadComplete callback with the file data
       if (onUploadComplete) {
@@ -256,7 +329,8 @@ const useResourceUploader = ({
 
       // Show success toast
       toast.success("Resource uploaded successfully!", {
-        description: "Your file has been uploaded and is now pending approval.",
+        description:
+          "Your file has been uploaded and is now available in the resource library.",
       });
     } catch (err) {
       console.error("Error uploading resource:", err);
@@ -281,7 +355,7 @@ const useResourceUploader = ({
     setTitle("");
     setDescription("");
     setCategory("");
-    setVisibility("students");
+    setVisibility("all");
     setFeaturedOnLanding(false);
     setAcademicLevel("all");
     setDepartment("");
@@ -298,6 +372,7 @@ const useResourceUploader = ({
     description,
     category,
     isUploading,
+    isCheckingDuplicate,
     fileInputRef,
     categories,
     handleFileChange,

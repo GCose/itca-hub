@@ -130,7 +130,7 @@ const RecentActivity = () => {
 
   if (isLoading) {
     return (
-      <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+      <div className="rounded-2xl bg-white p-4">
         {[...Array(5)].map((_, index) => (
           <div key={index} className="mb-4 flex items-start">
             <div className="mr-3 h-8 w-8 rounded-full bg-gray-200 animate-pulse"></div>

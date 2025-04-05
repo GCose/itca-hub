@@ -23,24 +23,38 @@ const DashboardLayout = ({
         <link rel="icon" href="/images/logo.jpg" />
       </Head>
 
-      <div className="flex h-screen overflow-hidden bg-gray-200/60 relative">
+      <div className="flex h-screen overflow-hidden bg-gray-100 relative">
         {/*==================== Background Elements ====================*/}
         <div className="absolute inset-0 pointer-events-none z-0">
           {/*==================== Prominent Geometric Elements - Top Right ====================*/}
           <div className="absolute top-0 right-0 w-2/3 h-full overflow-hidden">
             <div className="absolute top-10 right-0 w-full h-full">
-              <div className="absolute top-10 right-[-200px] h-[500px] w-[500px] rounded-full border-[40px] border-amber-500/7 animate-pulse"></div>
+              <div className="absolute top-10 right-[-200px] h-[500px] w-[500px] rounded-full border-[40px] border-amber-500/8 animate-pulse"></div>
               <div
-                className="absolute top-40 right-[-150px] h-[400px] w-[400px] rounded-full border-[30px] border-blue-700/7 animate-pulse"
+                className="absolute top-40 right-[-150px] h-[400px] w-[400px] rounded-full border-[30px] border-blue-700/8 animate-pulse"
                 style={{ animationDelay: "1s" }}
               ></div>
               <div
-                className="absolute top-60 right-[-100px] h-[300px] w-[300px] rounded-full border-[20px] border-amber-500/7 animate-pulse"
+                className="absolute top-60 right-[-100px] h-[300px] w-[300px] rounded-full border-[20px] border-amber-500/8 animate-pulse"
                 style={{ animationDelay: "2s" }}
               ></div>
             </div>
           </div>
           {/*==================== End of Prominent Geometric Elements - Top Right ====================*/}
+
+          {/*==================== Angular Elements - Bottom Left ====================*/}
+          <div className="hidden md:block absolute bottom-10 left-15 w-2/5 h-2/5">
+            <div className="absolute bottom-10 left-70 w-[200px] h-[200px] origin-center rotate-45 bg-blue-700/8 rounded-xl animate-pulse"></div>
+            <div
+              className="absolute top-10 left-50 w-[160px] h-[160px] origin-center rotate-[30deg] bg-amber-500/8 rounded-xl animate-pulse"
+              style={{ animationDelay: "0.8s" }}
+            ></div>
+            <div
+              className="absolute top-40 left-100 w-[120px] h-[120px] origin-center rotate-20 bg-amber-700/8 rounded-xl animate-pulse"
+              style={{ animationDelay: "1.2s" }}
+            ></div>
+          </div>
+          {/*==================== End of Angular Elements - Bottom Left ====================*/}
         </div>
         {/*==================== End of Background Elements ====================*/}
 
@@ -51,7 +65,7 @@ const DashboardLayout = ({
         <div className="flex flex-1 flex-col overflow-hidden">
           <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
-          <main className="flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-6 lg:p-8">
+          <main className="flex-1 overflow-y-auto overflow-x-hidden px-9 pr-7 py-12">
             <motion.div
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}

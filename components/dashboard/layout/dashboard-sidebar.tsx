@@ -15,6 +15,7 @@ import {
   BookOpen,
   BarChart2,
   X,
+  LayoutDashboardIcon,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -35,7 +36,11 @@ const Sidebar = ({ open, setOpen }: SidebarProps) => {
 
   // Navigation items
   const adminNavItems: NavItem[] = [
-    { name: "Dashboard", href: "/admin", icon: <Home className="h-5 w-5" /> },
+    {
+      name: "Overview",
+      href: "/admin",
+      icon: <LayoutDashboardIcon className="h-5 w-5" />,
+    },
     {
       name: "Users",
       href: "/admin/users",
@@ -123,7 +128,7 @@ const Sidebar = ({ open, setOpen }: SidebarProps) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             onClick={() => setOpen(false)}
-            className="fixed inset-0 z-40 bg-gray-600 bg-opacity-75 md:hidden"
+            className="fixed inset-0 z-40 bg-gray-600 bg-opacity-75 max-[967px]:block hidden"
           />
         )}
       </AnimatePresence>
@@ -131,9 +136,9 @@ const Sidebar = ({ open, setOpen }: SidebarProps) => {
 
       {/*==================== Sidebar ====================*/}
       <div
-        className={`fixed inset-y-0 left-0 z-50 w-64 transform overflow-hidden bg-white transition-transform ease-in-out duration-300 
+        className={`fixed my-10 ml-2 rounded-4xl inset-y-0 z-50 w-60 transform overflow-hidden max-[968px]:bg-white lg:bg-white transition-transform ease-in-out duration-300 
                     ${open ? "translate-x-0" : "-translate-x-full"} 
-                    md:translate-x-0 md:static md:z-0 border-r border-gray-100`}
+                    min-[968px]:translate-x-0 min-[968px]:static min-[968px]:z-0`}
       >
         {/*==================== Decorative Elements  ====================*/}
         <div className="absolute inset-0 pointer-events-none">
@@ -144,21 +149,13 @@ const Sidebar = ({ open, setOpen }: SidebarProps) => {
             <div className="absolute top-6 right-11 w-4 h-4 rounded-full bg-blue-500/10"></div>
           </div>
           {/*==================== End of Top Right - Tech Circuit Pattern ====================*/}
-
-          {/*==================== Bottom Left - Inverted Pattern  ====================*/}
-          <div className="absolute bottom-20 left-8">
-            <div className="w-8 h-8 rounded-full bg-blue-500/15 float-slow"></div>
-            <div className="absolute top-4 left-4 w-6 h-6 rounded-full bg-amber-500/15 float-medium"></div>
-            <div className="absolute top-6 left-11 w-4 h-4 rounded-full bg-blue-500/10 float-fast"></div>
-          </div>
-          {/*==================== End of Bottom Left - Inverted Pattern  ====================*/}
         </div>
         {/*==================== End of Decorative Elements ====================*/}
 
         {/*==================== Sidebar Content Container ====================*/}
         <div className="relative h-full z-10 flex flex-col">
           {/*==================== Mobile close button ====================*/}
-          <div className="flex justify-between items-center p-4 md:hidden">
+          <div className="justify-between items-center p-4 max-[967px]:flex hidden">
             <Link href="/" className="flex items-center">
               <Image
                 width={150}
@@ -178,7 +175,7 @@ const Sidebar = ({ open, setOpen }: SidebarProps) => {
           {/*==================== End of Mobile close button ====================*/}
 
           {/*==================== Desktop logo ====================*/}
-          <div className="hidden md:flex items-center p-4 border-b border-gray-100">
+          <div className="hidden min-[968px]:flex items-center p-4 border-b border-gray-100">
             <Link
               href={
                 router.pathname.startsWith("/admin") ? "/admin" : "/student"
@@ -198,12 +195,12 @@ const Sidebar = ({ open, setOpen }: SidebarProps) => {
 
           {/*==================== Navigation Items ====================*/}
           <div className="px-2 py-4 flex-1 overflow-y-auto">
-            <div className="space-y-1">
+            <div className="space-y-3">
               {getNavItems().map((item) => (
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`flex items-center px-4 py-2.5 text-sm font-medium  ${
+                  className={`flex items-center px-4 py-3 text-md font-medium  ${
                     isActive(item.href)
                       ? "bg-gradient-to-r from-amber-50 to-blue-50 text-blue-700 border-l-2 border-l-amber-500 rounded-r-lg"
                       : "text-gray-700 hover:bg-amber-50/50 hover:text-blue-700"
@@ -216,7 +213,7 @@ const Sidebar = ({ open, setOpen }: SidebarProps) => {
                   </span>
                   <span>{item.name}</span>
                   {isActive(item.href) && (
-                    <span className="ml-auto w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                    <span className="ml-auto w-2 h-2 rounded-full bg-amber-500"></span>
                   )}
                 </Link>
               ))}

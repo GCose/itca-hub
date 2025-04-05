@@ -8,6 +8,13 @@ import {
   X,
   AlertTriangle,
   Loader,
+  BookOpen,
+  FileQuestion,
+  GraduationCap,
+  BookMarked,
+  ScrollText,
+  FileCode,
+  File,
 } from "lucide-react";
 import Link from "next/link";
 import { NetworkError } from "@/components/error-message";
@@ -107,6 +114,26 @@ const RecycleBinPage = () => {
     return date.toLocaleDateString() + " " + date.toLocaleTimeString();
   };
 
+  // Get category icon
+  const getCategoryIcon = (category: string) => {
+    switch (category) {
+      case "Lecture Notes":
+        return <BookOpen className="h-4 w-4 text-blue-500 mr-1" />;
+      case "Assignments":
+        return <ScrollText className="h-4 w-4 text-green-500 mr-1" />;
+      case "Past Papers":
+        return <FileQuestion className="h-4 w-4 text-orange-500 mr-1" />;
+      case "Tutorials":
+        return <GraduationCap className="h-4 w-4 text-purple-500 mr-1" />;
+      case "Textbooks":
+        return <BookMarked className="h-4 w-4 text-red-500 mr-1" />;
+      case "Research Papers":
+        return <FileCode className="h-4 w-4 text-indigo-500 mr-1" />;
+      default:
+        return <File className="h-4 w-4 text-gray-500 mr-1" />;
+    }
+  };
+
   // Close modal on escape key
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -130,7 +157,13 @@ const RecycleBinPage = () => {
   return (
     <DashboardLayout title="Recycle Bin">
       <div className="mb-8">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center">
+          <Link
+            href="/admin/resources"
+            className="mr-3 inline-flex items-center rounded-lg bg-white p-2 text-sm text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-gray-500 focus:ring-offset-2 transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </Link>
           <div>
             <h1 className="text-2xl font-bold text-gray-900 mb-2 flex items-center">
               <span className="text-blue-700 mr-2">Recycle</span>
@@ -147,16 +180,16 @@ const RecycleBinPage = () => {
               before being permanently removed.
             </p>
           </div>
+        </div>
 
-          <div className="mt-4 sm:mt-0">
-            <button
-              onClick={() => fetchResources(true)}
-              className="inline-flex items-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-            >
-              <RefreshCw className="mr-2 h-4 w-4" />
-              Refresh
-            </button>
-          </div>
+        <div className="flex justify-end mt-4">
+          <button
+            onClick={() => fetchResources(true)}
+            className="inline-flex items-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+          >
+            <RefreshCw className="mr-2 h-4 w-4" />
+            Refresh
+          </button>
         </div>
       </div>
 
@@ -171,7 +204,7 @@ const RecycleBinPage = () => {
 
       {/*==================== Empty State ====================*/}
       {!isError && !isLoading && deletedResources.length === 0 && (
-        <div className="rounded-2xl bg-white p-8 text-center shadow-sm">
+        <div className="rounded-2xl bg-white p-8 text-center">
           <Trash2 className="mx-auto h-12 w-12 text-gray-400 mb-3" />
           <h3 className="text-lg font-medium text-gray-900 mb-1">
             Recycle Bin is Empty
@@ -194,7 +227,7 @@ const RecycleBinPage = () => {
 
       {/*==================== Resource List ====================*/}
       {!isError && !isLoading && deletedResources.length > 0 && (
-        <div className="rounded-2xl bg-white shadow-sm">
+        <div className="rounded-2xl bg-white">
           <div className="px-5 py-4 border-b border-gray-200">
             <h3 className="text-lg font-medium text-gray-900">
               Deleted Resources
@@ -215,6 +248,12 @@ const RecycleBinPage = () => {
                     className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
                   >
                     Department
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                  >
+                    Category
                   </th>
                   <th
                     scope="col"
@@ -244,6 +283,12 @@ const RecycleBinPage = () => {
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                       <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-blue-100 text-blue-800">
                         {formatDepartment(resource.department)}
+                      </span>
+                    </td>
+                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                      <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-gray-100 text-gray-800">
+                        {getCategoryIcon(resource.category)}
+                        {resource.category}
                       </span>
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
@@ -345,6 +390,12 @@ const RecycleBinPage = () => {
                       Type: {selectedResource.type.toUpperCase()} • Size:{" "}
                       {selectedResource.fileSize}
                     </p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Category: {selectedResource.category} • Visibility:{" "}
+                      {selectedResource.visibility === "all"
+                        ? "All Users"
+                        : "Admin Only"}
+                    </p>
                   </div>
                 </div>
 
@@ -439,6 +490,12 @@ const RecycleBinPage = () => {
                     <p className="text-xs text-gray-500 mt-1">
                       Type: {selectedResource.type.toUpperCase()} • Size:{" "}
                       {selectedResource.fileSize}
+                    </p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Category: {selectedResource.category} • Visibility:{" "}
+                      {selectedResource.visibility === "all"
+                        ? "All Users"
+                        : "Admin Only"}
                     </p>
                   </div>
                 </div>

@@ -264,7 +264,7 @@ const UserTable = ({ limit }: UserTableProps) => {
                     </button>
 
                     {selectedUser === user.id && (
-                      <div className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5">
+                      <div className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white ring-1 ring-black ring-opacity-5">
                         <div className="py-1">
                           <Link
                             href={`/admin/users/${user.id}`}
@@ -321,7 +321,7 @@ const UserTable = ({ limit }: UserTableProps) => {
             </div>
             <div>
               <nav
-                className="isolate inline-flex -space-x-px rounded-md shadow-sm"
+                className="isolate inline-flex -space-x-px rounded-md"
                 aria-label="Pagination"
               >
                 <a

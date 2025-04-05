@@ -1,54 +1,49 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useResources } from "@/hooks/admin/use-resources";
 import { Upload, Trash2 } from "lucide-react";
 import Link from "next/link";
 import ResourceTable from "@/components/dashboard/admin/resources/table/resource-table";
-import DeleteResourceModal from "@/components/dashboard/admin/resources/modals/delete-resource-modal";
 import DashboardLayout from "@/components/dashboard/layout/dashboard-layout";
 
 const AdminResourcesPage = () => {
   const {
     resources,
     isLoading,
-    isDeleting,
     isError,
     fetchResources,
     moveToRecycleBin,
-    handleDeleteSuccess,
+    batchMoveToRecycleBin,
   } = useResources();
-
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [resourceToDelete, setResourceToDelete] = useState<
-    (typeof resources)[0] | null
-  >(null);
 
   useEffect(() => {
     // Only fetch non-deleted resources for the main page
     fetchResources(false);
   }, [fetchResources]);
 
-  // Handle resource deletion
-  const handleDeleteClick = (resource: (typeof resources)[0]) => {
-    setResourceToDelete(resource);
-    setShowDeleteModal(true);
+  // Handle deleting a single resource
+  const handleDeleteResource = async (resourceId: string): Promise<boolean> => {
+    try {
+      // Find the resource to get its title
+      const resource = resources.find((r) => r.id === resourceId);
+      if (!resource) return false;
+
+      // Call the move to recycle bin function
+      return await moveToRecycleBin(resourceId, resource.title);
+    } catch (err) {
+      console.error("Error deleting resource:", err);
+      return false;
+    }
   };
 
-  const handleDeleteConfirm = async () => {
-    if (!resourceToDelete) return;
-
+  // Handle deleting multiple resources
+  const handleDeleteMultiple = async (
+    resourceIds: string[]
+  ): Promise<boolean> => {
     try {
-      const success = await moveToRecycleBin(
-        resourceToDelete.id,
-        resourceToDelete.title
-      );
-
-      if (success) {
-        handleDeleteSuccess(resourceToDelete.id);
-        setShowDeleteModal(false);
-        setResourceToDelete(null);
-      }
+      return await batchMoveToRecycleBin(resourceIds);
     } catch (err) {
-      console.error("Error moving resource to recycle bin:", err);
+      console.error("Error deleting multiple resources:", err);
+      return false;
     }
   };
 
@@ -56,6 +51,7 @@ const AdminResourcesPage = () => {
     <DashboardLayout title="Resource Management">
       <div className="mb-8">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+          {/*==================== Page Title Header ====================*/}
           <div>
             <h1 className="text-2xl font-bold text-gray-900 mb-2 flex items-center">
               <span className="text-blue-700 mr-2">Resource</span>
@@ -71,6 +67,7 @@ const AdminResourcesPage = () => {
               Upload and manage educational resources and materials
             </p>
           </div>
+          {/*==================== End of Page Title Header ====================*/}
 
           <div className="mt-4 sm:mt-0 flex space-x-3">
             {/*==================== Recycle Bin Link ====================*/}
@@ -96,25 +93,16 @@ const AdminResourcesPage = () => {
         </div>
       </div>
 
+      {/*==================== Resource Table ====================*/}
       <ResourceTable
         isError={isError}
         resources={resources}
         isLoading={isLoading}
-        onDeleteClick={handleDeleteClick}
+        onDeleteResource={handleDeleteResource}
+        onDeleteMultiple={handleDeleteMultiple}
         onRefresh={() => fetchResources(false)}
       />
-
-      {/*==================== Delete confirmation modal ====================*/}
-      {showDeleteModal && resourceToDelete && (
-        <DeleteResourceModal
-          isDeleting={isDeleting}
-          isOpen={showDeleteModal}
-          resource={resourceToDelete}
-          onConfirm={handleDeleteConfirm}
-          onClose={() => setShowDeleteModal(false)}
-        />
-      )}
-      {/*==================== End of Delete confirmation modal ====================*/}
+      {/*==================== End of Resource Table ====================*/}
     </DashboardLayout>
   );
 };

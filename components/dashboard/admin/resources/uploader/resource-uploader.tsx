@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 
 // Define proper types
-type Visibility = "students" | "admin";
+type Visibility = "all" | "admin";
 
 interface ResourceUploaderProps {
   onUploadComplete?: (fileData: {
@@ -73,7 +73,7 @@ const ResourceUploader = ({
     file && title.trim() && description.trim() && category && department;
 
   return (
-    <div className="rounded-2xl bg-white p-6">
+    <div className="rounded-2xl bg-white/50 p-6">
       <h3 className="text-lg font-medium text-gray-900 mb-4">
         Upload New Resource
       </h3>
@@ -94,7 +94,7 @@ const ResourceUploader = ({
 
               {file ? (
                 <div className="mt-2 text-center w-full px-4">
-                  <p className="text-sm font-medium text-gray-900 truncate">
+                  <p className="text-sm font-medium text-gray-900 break-words overflow-hidden line-clamp-2">
                     {file.name}
                   </p>
                   <p className="text-xs text-gray-500 mt-1">
@@ -103,7 +103,7 @@ const ResourceUploader = ({
                 </div>
               ) : (
                 <>
-                  <p className="mb-2 text-sm text-gray-500">
+                  <p className="mb-2 text-md text-gray-500">
                     <span className="font-medium">Click to upload</span> or drag
                     and drop
                   </p>
@@ -129,7 +129,7 @@ const ResourceUploader = ({
           <div>
             <label
               htmlFor="title"
-              className="block text-sm font-medium text-gray-700 mb-1"
+              className="block text-md font-medium text-gray-700 mb-1"
             >
               Title <span className="text-red-500">*</span>
             </label>
@@ -140,14 +140,14 @@ const ResourceUploader = ({
               value={title}
               placeholder="Enter resource title"
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full rounded-lg border border-gray-200 p-2.5 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+              className="w-full rounded-lg bg-gray-100 p-2.5 text-md text-gray-700 focus:bg-gray-200/50 focus:outline-none"
             />
           </div>
 
           <div>
             <label
               htmlFor="category"
-              className="block text-sm font-medium text-gray-700 mb-1"
+              className="block text-md font-medium text-gray-700 mb-1"
             >
               Category <span className="text-red-500">*</span>
             </label>
@@ -156,7 +156,7 @@ const ResourceUploader = ({
               id="category"
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="w-full rounded-lg border border-gray-200 p-2.5 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+              className="w-full rounded-lg bg-gray-100 p-2.5 text-md text-gray-700 focus:bg-gray-200/50 focus:outline-none"
             >
               <option value="">Select category</option>
               {categories.map((cat) => (
@@ -170,10 +170,10 @@ const ResourceUploader = ({
         {/*==================== End of Title and Category Section ====================*/}
 
         {/*==================== Description Section ====================*/}
-        <div className="mt-4">
+        <div className="mt-6">
           <label
             htmlFor="description"
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className="block text-md font-medium text-gray-700 mb-1"
           >
             Description <span className="text-red-500">*</span>
           </label>
@@ -184,7 +184,7 @@ const ResourceUploader = ({
             value={description}
             placeholder="Enter resource description"
             onChange={(e) => setDescription(e.target.value)}
-            className="w-full rounded-lg border border-gray-200 p-2.5 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+            className="w-full rounded-lg bg-gray-100 p-2.5 text-md text-gray-700 focus:bg-gray-200/50 focus:outline-none resize-none"
           />
         </div>
         {/*==================== End of Description Section ====================*/}
@@ -194,7 +194,7 @@ const ResourceUploader = ({
           <div>
             <label
               htmlFor="visibility"
-              className="block text-sm font-medium text-gray-700 mb-1"
+              className="block text-md font-medium text-gray-700 mb-1"
             >
               Visibility <span className="text-red-500">*</span>
             </label>
@@ -203,17 +203,17 @@ const ResourceUploader = ({
               id="visibility"
               value={visibility}
               onChange={(e) => setVisibility(e.target.value as Visibility)}
-              className="w-full rounded-lg border border-gray-200 p-2.5 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+              className="w-full rounded-lg bg-gray-100 p-2.5 text-md text-gray-700 focus:bg-gray-200/50 focus:outline-none"
             >
-              <option value="all">All</option>
-              <option value="admin">For Administrators</option>
+              <option value="all">All Users</option>
+              <option value="admin">Administrators Only</option>
             </select>
           </div>
 
           <div>
             <label
               htmlFor="department"
-              className="block text-sm font-medium text-gray-700 mb-1"
+              className="block text-md font-medium text-gray-700 mb-1"
             >
               Department <span className="text-red-500">*</span>
             </label>
@@ -222,7 +222,7 @@ const ResourceUploader = ({
               id="department"
               value={department}
               onChange={(e) => setDepartment(e.target.value)}
-              className="w-full rounded-lg border border-gray-200 p-2.5 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+              className="w-full rounded-lg bg-gray-100 p-2.5 text-md text-gray-700 focus:bg-gray-200/50 focus:outline-none"
             >
               <option value="">Select Department</option>
               <option value="computer-science">Computer Science</option>
@@ -238,7 +238,7 @@ const ResourceUploader = ({
           <button
             type="submit"
             disabled={isUploading || !isFormValid}
-            className="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
+            className="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 text-md font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-offset-2 disabled:opacity-50"
           >
             {isUploading ? (
               <>

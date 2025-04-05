@@ -112,6 +112,7 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
+  width: 0.5rem;
   border-radius: 10rem;
   background: var(--color-body);
 }
