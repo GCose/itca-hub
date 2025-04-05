@@ -1,18 +1,22 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { toast } from "sonner";
 import { Resource } from "./use-resources";
 import useResourceAnalytics from "./use-resource-analytics";
+import { useRouter } from "next/router";
 
 const useResourceTable = (
   resources: Resource[],
   onRefresh: () => void,
-  onDeleteClick: (resource: Resource) => void
+  onDeleteResource: (resourceId: string) => Promise<boolean>,
+  onDeleteMultiple: (resourceIds: string[]) => Promise<boolean>
 ) => {
-  // All the state definitions with their setters
+  const router = useRouter();
+
+  // Basic state definitions
   const [searchTerm, setSearchTerm] = useState("");
   const [department, setDepartment] = useState("all");
   const [fileType, setFileType] = useState("all");
-  const [status, setStatus] = useState("all");
+  const [category, setCategory] = useState("all");
   const [visibility, setVisibility] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedResource, setSelectedResource] = useState<Resource | null>(
@@ -21,18 +25,57 @@ const useResourceTable = (
   const [showAnalytics, setShowAnalytics] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
-  const itemsPerPage = 5;
+  // Selection state
+  const [selectedResources, setSelectedResources] = useState<
+    Record<string, boolean>
+  >({});
+  const itemsPerPage = 10;
 
   // Using the analytics hooks
   const { trackResourceDownload } = useResourceAnalytics();
 
-  // Get unique file types
+  /**=======================
+   * Get unique file types
+   =======================*/
   const fileTypes = useMemo(() => {
     return [...new Set(resources.map((resource) => resource.type))].sort();
   }, [resources]);
 
-  // Filter resources based on search, department, type, status, and visibility
+  /**=======================
+   * Get unique categories
+   =======================*/
+  const categories = useMemo(() => {
+    return [...new Set(resources.map((resource) => resource.category))].sort();
+  }, [resources]);
+
+  /**===========================================
+   * Calculate how many resources are selected
+   ===========================================*/
+  const selectedCount = useMemo(
+    () => Object.values(selectedResources).filter(Boolean).length,
+    [selectedResources]
+  );
+
+  // Check if multiple resources are selected
+  const hasMultipleSelected = useMemo(() => selectedCount > 1, [selectedCount]);
+
+  /**====================================
+   * Get array of selected resource IDs
+   ====================================*/
+  const selectedResourceIds = useMemo(
+    () =>
+      Object.entries(selectedResources)
+        .filter((entry) => entry[1]) // Use entry[1] which is the boolean value
+        .map((entry) => entry[0]), // Use entry[0] which is the ID
+    [selectedResources]
+  );
+
+  /**===============================================================================
+   * Filter resources based on search, department, type, category, and visibility
+   ===============================================================================*/
   const filteredResources = useMemo(() => {
     return resources.filter((resource) => {
       const matchesSearch =
@@ -44,7 +87,8 @@ const useResourceTable = (
 
       const matchesType = fileType === "all" || resource.type === fileType;
 
-      const matchesStatus = status === "all" || resource.status === status;
+      const matchesCategory =
+        category === "all" || resource.category === category;
 
       const matchesVisibility =
         visibility === "all" || resource.visibility === visibility;
@@ -53,18 +97,15 @@ const useResourceTable = (
         matchesSearch &&
         matchesDepartment &&
         matchesType &&
-        matchesStatus &&
+        matchesCategory &&
         matchesVisibility
       );
     });
-  }, [resources, searchTerm, department, fileType, status, visibility]);
+  }, [resources, searchTerm, department, fileType, category, visibility]);
 
-  // Reset to page 1 when filters change
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchTerm, department, fileType, status, visibility]);
-
-  // Get current page items
+  /**=========================
+   * Get current page items
+   =========================*/
   const currentItems = useMemo(() => {
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -74,35 +115,204 @@ const useResourceTable = (
   // Calculate total pages
   const totalPages = Math.ceil(filteredResources.length / itemsPerPage);
 
-  // Change page
+  // Clear all selections - define this before the useEffect that uses it
+  const clearSelection = useCallback(() => {
+    setSelectedResources({});
+  }, []);
+
+  // Reset selection when page changes or filters change
+  useEffect(() => {
+    clearSelection();
+  }, [
+    currentPage,
+    searchTerm,
+    department,
+    fileType,
+    category,
+    visibility,
+    clearSelection,
+  ]);
+
+  /**=======================================
+   * Handle single row selection (toggle)
+   =======================================*/
+  const toggleSelection = useCallback(
+    (resource: Resource, event: React.MouseEvent) => {
+      // Check if Ctrl/Cmd key is pressed for multi-select
+      const isMultiSelectKey = event.ctrlKey || event.metaKey;
+
+      setSelectedResources((prev) => {
+        const newSelection = { ...prev };
+
+        // If multi-select key is not pressed, clear other selections
+        if (!isMultiSelectKey) {
+          // If the resource is already the only one selected, toggle it off
+          if (
+            prev[resource.id] &&
+            Object.values(prev).filter(Boolean).length === 1
+          ) {
+            newSelection[resource.id] = false;
+            return newSelection;
+          }
+
+          // Otherwise clear everything and select just this one
+          Object.keys(newSelection).forEach((id) => {
+            newSelection[id] = false;
+          });
+        }
+
+        // Toggle the clicked resource
+        newSelection[resource.id] = !prev[resource.id];
+        return newSelection;
+      });
+    },
+    []
+  );
+
+  /**=======================================
+   * Select all resources on current page
+   =======================================*/
+  const selectAll = useCallback(() => {
+    const newSelection = { ...selectedResources };
+
+    // Check if all current items are already selected
+    const allSelected = currentItems.every(
+      (item) => selectedResources[item.id]
+    );
+
+    // Toggle: select all if not all selected, otherwise deselect all
+    currentItems.forEach((item) => {
+      newSelection[item.id] = !allSelected;
+    });
+
+    setSelectedResources(newSelection);
+  }, [currentItems, selectedResources]);
+
+  /**====================================================
+   * Handle double-click to navigate to resource viewer
+   ====================================================*/
+  const handleDoubleClick = useCallback(
+    (resource: Resource) => {
+      router.push(
+        `/admin/resources/view/${encodeURIComponent(resource.fileName)}`
+      );
+    },
+    [router]
+  );
+
+  /**=============
+   * Change page
+   =============*/
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
   const nextPage = () =>
     setCurrentPage((prev) => Math.min(prev + 1, totalPages));
   const prevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
 
-  // Download resource
-  const handleDownload = (resource: Resource) => {
-    trackResourceDownload(resource.id);
-    window.open(resource.fileUrl, "_blank");
+  /**====================
+   * Download resource
+   ====================*/
+  const handleDownload = async (resource: Resource, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation(); // Prevent row selection
+
+    try {
+      // Track the download for analytics
+      await trackResourceDownload(resource.id);
+
+      // Use API to initiate the download
+      const link = document.createElement("a");
+      link.href = `/api/resources/download/${resource.id}`;
+      link.download = resource.fileName || resource.title || "resource";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error("Error downloading resource:", error);
+      toast.error("Failed to download resource");
+    }
   };
 
-  // View resource analytics
-  const handleViewAnalytics = (resource: Resource) => {
+  /**==========================
+   * View resource analytics
+   ==========================*/
+  const handleViewAnalytics = (resource: Resource, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation(); // Prevent row selection
+
     setSelectedResource(resource);
     setShowAnalytics(true);
   };
 
-  // Edit resource
-  const handleEditResource = (resource: Resource) => {
+  /**===============
+   * Edit resource
+   ===============*/
+  const handleEditResource = (resource: Resource, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation(); // Prevent row selection
+
     setSelectedResource(resource);
     setShowEditModal(true);
   };
 
-  // Save edited resource
+  /**===========================
+   * Delete a single resource
+   ===========================*/
+  const handleDeleteResource = async (
+    resource: Resource,
+    e?: React.MouseEvent
+  ) => {
+    if (e) e.stopPropagation(); // Prevent row selection
+
+    setSelectedResource(resource);
+    setShowDeleteModal(true);
+  };
+
+  /**============================
+   * Delete multiple resources
+   ============================*/
+  const handleDeleteSelected = () => {
+    if (selectedCount > 0) {
+      setShowDeleteModal(true);
+    }
+  };
+
+  /**===============================================
+   * Confirm delete (for both single and multiple)
+   ===============================================*/
+  const confirmDelete = async () => {
+    setIsDeleting(true);
+
+    try {
+      let success = false;
+
+      // Single resource deletion
+      if (selectedResource && !hasMultipleSelected) {
+        success = await onDeleteResource(selectedResource.id);
+      }
+      // Multiple resource deletion
+      else if (hasMultipleSelected) {
+        success = await onDeleteMultiple(selectedResourceIds);
+      }
+
+      if (success) {
+        // Clear selection and modals
+        clearSelection();
+        setShowDeleteModal(false);
+        setSelectedResource(null);
+      }
+    } catch (error) {
+      console.error("Error deleting resource(s):", error);
+      toast.error("Failed to delete resource(s)");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  /**======================
+   * Save edited resource
+   ======================*/
   const handleSaveResource = async (updatedResource: Resource) => {
     setIsEditing(true);
     try {
       // LOCALSTORAGE IMPLEMENTATION (TEMPORARY)
+
       // Get existing metadata
       const storedMetadata = localStorage.getItem("resourceMetadata");
       const metadataMap = storedMetadata ? JSON.parse(storedMetadata) : {};
@@ -115,33 +325,11 @@ const useResourceTable = (
         description: updatedResource.description,
         department: updatedResource.department,
         visibility: updatedResource.visibility,
-        status: updatedResource.status,
+        category: updatedResource.category,
       };
 
       // Save back to localStorage
       localStorage.setItem("resourceMetadata", JSON.stringify(metadataMap));
-
-      // BACKEND API IMPLEMENTATION (I WILL UNCOMMENT THIS OUT WHEN BACKEND IS READY)
-      /*
-      const response = await fetch(`/api/resources/metadata/${encodeURIComponent(updatedResource.fileName)}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          title: updatedResource.title,
-          description: updatedResource.description,
-          department: updatedResource.department,
-          visibility: updatedResource.visibility,
-          status: updatedResource.status,
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to update resource metadata');
-      }
-      */
 
       // Show success message
       toast.success("Resource updated successfully");
@@ -158,10 +346,12 @@ const useResourceTable = (
     }
   };
 
-  // Generate pagination information
+  /**==================================
+   * Generate pagination information
+   ==================================*/
   const getPaginationInfo = () => {
-    // Pagination with limit of 5 page buttons
-    const maxButtons = 5;
+    // Pagination with limit of buttons
+    const maxButtons = 10;
     let startPage = Math.max(1, currentPage - Math.floor(maxButtons / 2));
     const endPage = Math.min(totalPages, startPage + maxButtons - 1);
 
@@ -172,7 +362,17 @@ const useResourceTable = (
     return { startPage, endPage };
   };
 
-  // Return all state variables, setters, and functions
+  /**====================
+   * Clear all filters
+   ====================*/
+  const clearFilters = () => {
+    setSearchTerm("");
+    setDepartment("all");
+    setFileType("all");
+    setCategory("all");
+    setVisibility("all");
+  };
+
   return {
     searchTerm,
     setSearchTerm,
@@ -180,8 +380,8 @@ const useResourceTable = (
     setDepartment,
     fileType,
     setFileType,
-    status,
-    setStatus,
+    category,
+    setCategory,
     visibility,
     setVisibility,
     currentPage,
@@ -192,23 +392,36 @@ const useResourceTable = (
     setShowAnalytics,
     showEditModal,
     setShowEditModal,
+    showDeleteModal,
+    setShowDeleteModal,
+    isDeleting,
     isEditing,
-    setIsEditing,
     itemsPerPage,
     fileTypes,
+    categories,
     filteredResources,
     currentItems,
     totalPages,
     handleDownload,
     handleViewAnalytics,
     handleEditResource,
+    handleDeleteResource,
+    handleDeleteSelected,
+    confirmDelete,
     handleSaveResource,
     getPaginationInfo,
     paginate,
     nextPage,
     prevPage,
-    isLoading: false,
-    onDeleteClick,
+    clearFilters,
+    selectedResources,
+    selectedCount,
+    hasMultipleSelected,
+    selectedResourceIds,
+    toggleSelection,
+    selectAll,
+    clearSelection,
+    handleDoubleClick,
   };
 };
 

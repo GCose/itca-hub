@@ -20,7 +20,7 @@ const StatsCard = ({
   valueClassName = "text-gray-900",
 }: StatsCardProps) => {
   return (
-    <div className="rounded-2xl bg-white p-5 transition-all hover:-translate-y-2 duration-500">
+    <div className="rounded-2xl bg-white p-5 z-1 transition-all hover:-translate-y-2 duration-500">
       <div className="flex justify-between">
         <div>
           <h3 className="text-sm font-medium text-gray-500">{title}</h3>

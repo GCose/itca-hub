@@ -20,8 +20,18 @@ const ResourceEditModal = ({
   const [description, setDescription] = useState(resource.description);
   const [department, setDepartment] = useState(resource.department || "");
   const [visibility, setVisibility] = useState(resource.visibility);
-  const [status, setStatus] = useState(resource.status);
+  const [category, setCategory] = useState(resource.category);
   const [isSaving, setIsSaving] = useState(false);
+
+  // Available categories
+  const categories = [
+    "Lecture Notes",
+    "Assignments",
+    "Past Papers",
+    "Tutorials",
+    "Textbooks",
+    "Research Papers",
+  ];
 
   // Handle save
   const handleSave = async () => {
@@ -37,8 +47,8 @@ const ResourceEditModal = ({
         title,
         description,
         department,
-        visibility: visibility as "students" | "admin",
-        status: status as "active" | "archived",
+        visibility: visibility as "all" | "admin",
+        category,
       };
 
       await onSave(updatedResource);
@@ -188,12 +198,12 @@ const ResourceEditModal = ({
                       id="visibility"
                       value={visibility}
                       onChange={(e) =>
-                        setVisibility(e.target.value as "students" | "admin")
+                        setVisibility(e.target.value as "all" | "admin")
                       }
                       className="w-full rounded-lg border border-gray-200 p-2.5 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
                       required
                     >
-                      <option value="students">Students Only</option>
+                      <option value="all">All Users</option>{" "}
                       <option value="admin">Admin Only</option>
                     </select>
                   </div>
@@ -201,27 +211,29 @@ const ResourceEditModal = ({
                 </div>
                 {/*==================== End of Department and Visibility Container ====================*/}
 
-                {/*==================== Status ====================*/}
+                {/*==================== Category (replaced Status) ====================*/}
                 <div className="mb-4">
                   <label
-                    htmlFor="status"
+                    htmlFor="category"
                     className="block text-sm font-medium text-gray-700 mb-1"
                   >
-                    Status
+                    Category <span className="text-red-500">*</span>
                   </label>
                   <select
-                    id="status"
-                    value={status}
-                    onChange={(e) =>
-                      setStatus(e.target.value as "active" | "archived")
-                    }
+                    id="category"
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
                     className="w-full rounded-lg border border-gray-200 p-2.5 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+                    required
                   >
-                    <option value="active">Active</option>
-                    <option value="archived">Archived</option>
+                    {categories.map((cat) => (
+                      <option key={cat} value={cat}>
+                        {cat}
+                      </option>
+                    ))}
                   </select>
                 </div>
-                {/*==================== End of Status ====================*/}
+                {/*==================== End of Category ====================*/}
               </div>
               {/*==================== End of Form Content ====================*/}
 

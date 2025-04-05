@@ -1,10 +1,9 @@
 import { AlertTriangle, X, Loader } from "lucide-react";
 import { useEffect } from "react";
-import { Resource } from "@/hooks/admin/use-resources";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface DeleteResourceModalProps {
-  resource: Resource;
+  resourceCount: number;
   isOpen: boolean;
   isDeleting: boolean;
   onClose: () => void;
@@ -12,7 +11,7 @@ interface DeleteResourceModalProps {
 }
 
 const DeleteResourceModal = ({
-  resource,
+  resourceCount,
   isOpen,
   isDeleting,
   onClose,
@@ -34,6 +33,8 @@ const DeleteResourceModal = ({
       document.body.style.overflow = ""; // Restore scrolling when modal is closed
     };
   }, [isOpen, onClose]);
+
+  const isSingleResource = resourceCount === 1;
 
   return (
     <AnimatePresence>
@@ -65,7 +66,11 @@ const DeleteResourceModal = ({
                     <AlertTriangle className="h-5 w-5 text-amber-600" />
                   </div>
                   <h3 className="text-lg font-medium text-gray-900">
-                    Move to Recycle Bin
+                    Move{" "}
+                    {isSingleResource
+                      ? "Resource"
+                      : `${resourceCount} Resources`}{" "}
+                    to Recycle Bin
                   </h3>
                 </div>
 
@@ -81,17 +86,26 @@ const DeleteResourceModal = ({
 
               <div className="mb-6">
                 <p className="text-sm text-gray-600 mb-2">
-                  Are you sure you want to move this resource to the recycle
-                  bin? You can restore it later if needed.
+                  Are you sure you want to move{" "}
+                  {isSingleResource
+                    ? "this resource"
+                    : `these ${resourceCount} resources`}{" "}
+                  to the recycle bin?
+                  {isSingleResource ? " It" : " They"} can be restored later if
+                  needed.
                 </p>
 
-                <div className="mt-4 p-3 bg-gray-50 rounded-lg">
-                  <p className="text-sm font-medium text-gray-900">
-                    {resource.title}
+                <div className="mt-4 p-3 bg-amber-50 rounded-lg border border-amber-100">
+                  <p className="text-sm font-medium text-gray-900 flex items-center">
+                    <AlertTriangle className="h-4 w-4 text-amber-500 mr-2" />
+                    {isSingleResource
+                      ? "This resource will be moved to the recycle bin"
+                      : `${resourceCount} resources will be moved to the recycle bin`}
                   </p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    Type: {resource.type.toUpperCase()} • Size:{" "}
-                    {resource.fileSize}
+                  <p className="text-xs text-gray-500 mt-2">
+                    {isSingleResource
+                      ? "The resource will no longer appear in the main resources list"
+                      : "These resources will no longer appear in the main resources list"}
                   </p>
                 </div>
               </div>

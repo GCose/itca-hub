@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { Calendar, Users, FileText, PieChart } from "lucide-react";
 import DashboardLayout from "@/components/dashboard/layout/dashboard-layout";
-import StatsCard from "@/components/dashboard/admin/stats-card";
-import UserTable from "@/components/dashboard/admin/user-table";
-import RecentActivity from "@/components/dashboard/admin/recent-activity";
+import StatsCard from "@/components/dashboard/admin/overview/stats-card";
+import UserTable from "@/components/dashboard/admin/overview/user-table";
+import RecentActivity from "@/components/dashboard/admin/overview/recent-activity";
 
 // Types for dashboard data
 interface DashboardStats {

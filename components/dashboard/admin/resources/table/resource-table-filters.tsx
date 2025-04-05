@@ -7,11 +7,12 @@ interface ResourceFiltersProps {
   setDepartment: (dept: string) => void;
   fileType: string;
   setFileType: (type: string) => void;
-  status: string;
-  setStatus: (status: string) => void;
+  category: string;
+  setCategory: (category: string) => void;
   visibility: string;
   setVisibility: (visibility: string) => void;
   fileTypes: string[];
+  categories: string[];
   clearFilters?: () => void;
 }
 
@@ -22,11 +23,13 @@ const ResourceFilters = ({
   setDepartment,
   fileType,
   setFileType,
-  status,
-  setStatus,
+  category,
+  setCategory,
   visibility,
   setVisibility,
   fileTypes,
+  categories,
+  clearFilters,
 }: ResourceFiltersProps) => {
   return (
     <div className="mb-6 bg-white rounded-xl p-4">
@@ -37,6 +40,14 @@ const ResourceFilters = ({
             Filter Resources
           </h3>
         </div>
+        {clearFilters && (
+          <button
+            onClick={clearFilters}
+            className="text-sm text-gray-500 hover:text-blue-600 transition-colors"
+          >
+            Clear Filters
+          </button>
+        )}
       </div>
 
       {/*==================== Search Box ====================*/}
@@ -63,7 +74,7 @@ const ResourceFilters = ({
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search resources by title or description..."
-            className="w-full rounded-lg bg-white pl-10 pr-4 py-2.5 text-sm text-gray-500 border border-gray-200 focus:border-blue-600 focus:outline-none focus:ring-blue-600 transition-colors"
+            className="w-full rounded-lg bg-gray-100/70 pl-10 pr-4 py-2.5 text-sm text-gray-500 focus:bg-slate-200/50 focus:outline-none transition-colors"
           />
         </div>
       </div>
@@ -77,9 +88,9 @@ const ResourceFilters = ({
             Department
           </label>
           <select
-            className="w-full rounded-lg bg-white py-2.5 pl-3 pr-8 text-sm text-gray-500 border border-gray-200 focus:border-blue-600 focus:outline-none focus:ring-blue-600 transition-colors"
             value={department}
             onChange={(e) => setDepartment(e.target.value)}
+            className="w-full rounded-lg bg-gray-100/70 py-2.5 pl-3 pr-8 text-sm text-gray-500 focus:bg-slate-100 focus:outline-none transition-colors"
           >
             <option value="all">All Departments</option>
             <option value="computer-science">Computer Science</option>
@@ -97,7 +108,7 @@ const ResourceFilters = ({
           <select
             value={fileType}
             onChange={(e) => setFileType(e.target.value)}
-            className="w-full rounded-lg bg-white py-2.5 pl-3 pr-8 text-sm text-gray-500 border border-gray-200 focus:border-blue-600 focus:outline-none focus:ring-blue-600 transition-colors"
+            className="w-full rounded-lg bg-gray-100/70 py-2.5 pl-3 pr-8 text-sm text-gray-500 focus:bg-slate-100 focus:outline-none transition-colors"
           >
             <option value="all">All File Types</option>
             {fileTypes.map((type) => (
@@ -109,22 +120,25 @@ const ResourceFilters = ({
         </div>
         {/*==================== End of File Type Filter ====================*/}
 
-        {/*==================== Status Filter ====================*/}
+        {/*==================== Category Filter (replaced Status) ====================*/}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Status
+            Category
           </label>
           <select
-            value={status}
-            onChange={(e) => setStatus(e.target.value)}
-            className="w-full rounded-lg bg-white py-2.5 pl-3 pr-8 text-sm text-gray-500 border border-gray-200 focus:border-blue-600 focus:outline-none focus:ring-blue-600 transition-colors"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="w-full rounded-lg bg-gray-100/70 py-2.5 pl-3 pr-8 text-sm text-gray-500 focus:bg-slate-100 focus:outline-none transition-colors"
           >
-            <option value="all">All Statuses</option>
-            <option value="active">Active</option>
-            <option value="archived">Archived</option>
+            <option value="all">All Categories</option>
+            {categories.map((cat) => (
+              <option key={cat} value={cat}>
+                {cat}
+              </option>
+            ))}
           </select>
         </div>
-        {/*==================== End of Status Filter ====================*/}
+        {/*==================== End of Category Filter ====================*/}
 
         {/*==================== Visibility Filter ====================*/}
         <div>
@@ -134,10 +148,10 @@ const ResourceFilters = ({
           <select
             value={visibility}
             onChange={(e) => setVisibility(e.target.value)}
-            className="w-full rounded-lg bg-white py-2.5 pl-3 pr-8 text-sm text-gray-500 border border-gray-200 focus:border-blue-600 focus:outline-none focus:ring-blue-600 transition-colors"
+            className="w-full rounded-lg bg-gray-100/70 py-2.5 pl-3 pr-8 text-sm text-gray-500 focus:bg-slate-100 focus:outline-none transition-colors"
           >
             <option value="all">All Visibility</option>
-            <option value="students">Students Only</option>
+            <option value="all">All Users</option>{" "}
             <option value="admin">Admin Only</option>
           </select>
         </div>

@@ -53,13 +53,13 @@ const ResourceTableSkeleton = () => {
                     scope="col"
                     className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
                   >
-                    {header}
+                    <div className="h-4 w-36 rounded bg-gray-200 animate-pulse"></div>
                   </th>
                 ))}
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 bg-white">
-              {[...Array(5)].map((_, index) => (
+              {[...Array(10)].map((_, index) => (
                 <tr key={index}>
                   <td className="whitespace-nowrap px-6 py-4">
                     <div className="flex items-center">
@@ -93,6 +93,7 @@ const ResourceTableSkeleton = () => {
                   </td>
                   <td className="whitespace-nowrap px-6 py-4">
                     <div className="flex space-x-2 justify-end">
+                      <div className="h-8 w-8 rounded-full bg-gray-200 animate-pulse"></div>
                       <div className="h-8 w-8 rounded-full bg-gray-200 animate-pulse"></div>
                       <div className="h-8 w-8 rounded-full bg-gray-200 animate-pulse"></div>
                       <div className="h-8 w-8 rounded-full bg-gray-200 animate-pulse"></div>

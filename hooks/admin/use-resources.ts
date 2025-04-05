@@ -12,11 +12,9 @@ export interface Resource {
   fileSize: string;
   downloads: number;
   viewCount: number;
-  status: "active" | "archived";
-  uploadedBy: string;
   fileUrl: string;
   fileName: string;
-  visibility: "public" | "students" | "admin";
+  visibility: "all" | "admin";
   featuredOnLanding: boolean;
   academicLevel?: "undergraduate" | "postgraduate" | "all";
   department?: string;
@@ -94,7 +92,7 @@ export const useResources = () => {
 
     try {
       const response = await fetch(
-        "https://jeetix-file-service.onrender.com/api/storage/list"
+        "https://jeetix-file-service.onrender.com/api/storage/list?prefix=itca"
       );
 
       if (!response.ok) {
@@ -138,22 +136,21 @@ export const useResources = () => {
             title: title,
             description: description,
             type: fileType,
-            category: category.charAt(0).toUpperCase() + category.slice(1),
+            category:
+              resourceMetadata.category ||
+              category.charAt(0).toUpperCase() + category.slice(1),
             dateUploaded: uploadDate,
             fileSize: item.metadata?.size
               ? formatFileSize(parseInt(item.metadata.size))
               : "Unknown",
             downloads: Math.floor(Math.random() * 100), // Placeholder since Jeetix doesn't track this
             viewCount: Math.floor(Math.random() * 150), // Placeholder
-            status: resourceMetadata.status || "active",
-            uploadedBy: "Admin",
             fileUrl: item.url,
             fileName: item.name,
-            visibility: resourceMetadata.visibility || "students",
+            visibility: resourceMetadata.visibility || "all",
             featuredOnLanding: resourceMetadata.featuredOnLanding || false,
-            academicLevel: resourceMetadata.academicLevel || "Undergraduate",
-            department: resourceMetadata.department || "Computer Science",
-            // Recycle bin properties
+            academicLevel: resourceMetadata.academicLevel || "undergraduate",
+            department: resourceMetadata.department || "computer-science",
             isDeleted: resourceMetadata.isDeleted || false,
             deletedAt: resourceMetadata.deletedAt,
             deletedBy: resourceMetadata.deletedBy,
@@ -178,6 +175,43 @@ export const useResources = () => {
     } finally {
       setIsLoading(false);
     }
+
+    // BACKEND API IMPLEMENTATION (Commented out until backend is ready)
+    /*
+    try {
+      const response = await fetch("https://api.itca-hub.edu/api/resources/metadata", {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+          'Content-Type': 'application/json',
+        },
+        params: {
+          includeDeleted: includeDeleted.toString()
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch resources from server");
+      }
+
+      const data = await response.json();
+      
+      if (data.status !== "success" || !Array.isArray(data.data)) {
+        throw new Error("Invalid response format from server");
+      }
+
+      setResources(data.data);
+      setIsError(false);
+    } catch (err) {
+      console.error("Error fetching resources:", err);
+      setIsError(true);
+      toast.error("Failed to load resources", {
+        description: err instanceof Error ? err.message : "An unknown error occurred",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+    */
   }, []);
 
   // Move a resource to recycle bin (soft delete)
@@ -208,7 +242,7 @@ export const useResources = () => {
         description: resource.description,
         department: resource.department,
         visibility: resource.visibility,
-        status: resource.status,
+        category: resource.category,
         isDeleted: true,
         deletedAt: new Date().toISOString(),
         deletedBy: "Admin",
@@ -219,18 +253,16 @@ export const useResources = () => {
       localStorage.setItem("resourceMetadata", JSON.stringify(metadataMap));
 
       // Update the resources state to reflect the deletion
-      setResources(
-        resources.map((r) =>
-          r.id === resourceId
-            ? { ...r, isDeleted: true, deletedAt: new Date().toISOString() }
-            : r
-        )
-      );
+      setResources(resources.filter((r) => r.id !== resourceId));
 
-      // BACKEND API IMPLEMENTATION (I WILL UNCOMMENT THIS OUT WHEN BACKEND IS READY)
+      // BACKEND API IMPLEMENTATION (Commented out until backend is ready)
       /*
-      const response = await fetch(`/api/resources/${resourceId}/trash`, {
+      const response = await fetch(`https://api.itca-hub.edu/api/resources/${resourceId}/trash`, {
         method: 'PATCH',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+          'Content-Type': 'application/json',
+        }
       });
 
       if (!response.ok) {
@@ -253,6 +285,91 @@ export const useResources = () => {
     } catch (err) {
       console.error("Error moving resource to recycle bin:", err);
       toast.error("Failed to move resource to recycle bin", {
+        id: toastId,
+        description:
+          err instanceof Error ? err.message : "An unknown error occurred",
+      });
+      throw err;
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  // NEW FUNCTION: Move multiple resources to recycle bin (batch delete)
+  const batchMoveToRecycleBin = async (
+    resourceIds: string[]
+  ): Promise<boolean> => {
+    if (resourceIds.length === 0) return false;
+
+    setIsDeleting(true);
+    const toastId = toast.loading(
+      `Moving ${resourceIds.length} resources to recycle bin...`
+    );
+
+    try {
+      // Get stored metadata
+      const storedMetadata = localStorage.getItem("resourceMetadata");
+      const metadataMap = storedMetadata ? JSON.parse(storedMetadata) : {};
+
+      // Process each resource
+      for (const resourceId of resourceIds) {
+        const resource = resources.find((r) => r.id === resourceId);
+        if (!resource) continue;
+
+        // Update metadata for the resource
+        metadataMap[resource.fileName] = {
+          ...(metadataMap[resource.fileName] || {}),
+          id: resource.id,
+          title: resource.title,
+          description: resource.description,
+          department: resource.department,
+          visibility: resource.visibility,
+          category: resource.category,
+          isDeleted: true,
+          deletedAt: new Date().toISOString(),
+          deletedBy: "Admin",
+          fileName: resource.fileName,
+        };
+      }
+
+      // Save updated metadata back to localStorage
+      localStorage.setItem("resourceMetadata", JSON.stringify(metadataMap));
+
+      // Update the resources state to remove the deleted resources
+      setResources(resources.filter((r) => !resourceIds.includes(r.id)));
+
+      // BACKEND API IMPLEMENTATION (Commented out until backend is ready)
+      /*
+      const response = await fetch(`https://api.itca-hub.edu/api/resources/batch-trash`, {
+        method: 'PATCH',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ resourceIds })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to move resources to recycle bin");
+      }
+
+      const data = await response.json();
+      if (data.status !== "success") {
+        throw new Error(data.message || "Failed to move resources to recycle bin");
+      }
+      */
+
+      toast.success(`${resourceIds.length} resources moved to recycle bin`, {
+        id: toastId,
+        description:
+          "The selected resources have been moved to the recycle bin.",
+      });
+
+      return true;
+    } catch (err) {
+      console.error("Error batch moving resources to recycle bin:", err);
+      toast.error("Failed to move resources to recycle bin", {
         id: toastId,
         description:
           err instanceof Error ? err.message : "An unknown error occurred",
@@ -300,10 +417,14 @@ export const useResources = () => {
         )
       );
 
-      // BACKEND IMPLEMENTATION (Commented out until backend is ready)
+      // BACKEND API IMPLEMENTATION (Commented out until backend is ready)
       /*
-      const response = await fetch(`/api/resources/${resourceId}/restore`, {
+      const response = await fetch(`https://api.itca-hub.edu/api/resources/${resourceId}/restore`, {
         method: 'PATCH',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+          'Content-Type': 'application/json',
+        }
       });
 
       if (!response.ok) {
@@ -367,11 +488,14 @@ export const useResources = () => {
         }
       }
 
-      // BACKEND IMPLEMENTATION (Commented out until backend is ready)
+      // BACKEND API IMPLEMENTATION (Commented out until backend is ready)
       /*
-      // This would be a separate API call if the backend structure differs from Jeetix
-      const metadataResponse = await fetch(`/api/resources/${resourceId}/permanent`, {
+      const metadataResponse = await fetch(`https://api.itca-hub.edu/api/resources/${resourceId}/permanent`, {
         method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+          'Content-Type': 'application/json',
+        }
       });
 
       if (!metadataResponse.ok) {
@@ -414,6 +538,7 @@ export const useResources = () => {
     isError,
     fetchResources,
     moveToRecycleBin,
+    batchMoveToRecycleBin,
     restoreFromRecycleBin,
     permanentlyDeleteResource,
     handleDeleteSuccess,
