@@ -1,13 +1,16 @@
-import { useState } from "react";
-import { Search, Plus } from "lucide-react";
-import Link from "next/link";
-import DashboardLayout from "@/components/dashboard/layout/dashboard-layout";
-import UserTable from "@/components/dashboard/admin/overview/user-table";
+import { useState } from 'react';
+import { Search, Plus } from 'lucide-react';
+import Link from 'next/link';
+import DashboardLayout from '@/components/dashboard/layout/dashboard-layout';
+import UserTable from '@/components/dashboard/admin/overview/user-table';
+import { NextApiRequest } from 'next';
+import { isLoggedIn } from '@/utils/auth';
+import { UserAuth } from '@/types';
 
 const AdminUsersPage = () => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [role, setRole] = useState("all");
-  const [status, setStatus] = useState("all");
+  const [searchTerm, setSearchTerm] = useState('');
+  const [role, setRole] = useState('all');
+  const [status, setStatus] = useState('all');
 
   return (
     <DashboardLayout title="User Management">
@@ -24,9 +27,7 @@ const AdminUsersPage = () => {
                 </span>
               </span>
             </h1>
-            <p className="text-gray-600">
-              Manage user accounts, roles, and permissions
-            </p>
+            <p className="text-gray-600">Manage user accounts, roles, and permissions</p>
           </div>
 
           <div className="mt-4 sm:mt-0">
@@ -60,6 +61,7 @@ const AdminUsersPage = () => {
         <div className="grid grid-cols-2 gap-4">
           <div>
             <select
+              title="select"
               className="w-full rounded-lg border bg-white py-2.5 pl-3 pr-8 text-sm text-gray-700 focus:border-blue-500 focus:outline-none  focus:ring-blue-500"
               value={role}
               onChange={(e) => setRole(e.target.value)}
@@ -72,6 +74,7 @@ const AdminUsersPage = () => {
           </div>
           <div>
             <select
+              title="select"
               className="w-full rounded-lg border bg-white py-2.5 pl-3 pr-8 text-sm text-gray-700 focus:border-blue-500 focus:outline-none  focus:ring-blue-500"
               value={status}
               onChange={(e) => setStatus(e.target.value)}
@@ -95,3 +98,33 @@ const AdminUsersPage = () => {
 };
 
 export default AdminUsersPage;
+
+export const getServerSideProps = async ({ req }: { req: NextApiRequest }) => {
+  const userData = isLoggedIn(req);
+
+  if (userData === false) {
+    return {
+      redirect: {
+        destination: '/auth',
+        permanent: false,
+      },
+    };
+  }
+
+  const userAuth = userData as UserAuth;
+
+  if (userAuth.role === 'user') {
+    return {
+      redirect: {
+        destination: '/student',
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      userData,
+    },
+  };
+};

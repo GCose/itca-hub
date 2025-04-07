@@ -1,20 +1,16 @@
-import React from "react";
-import { motion } from "framer-motion";
-import { Mail, User } from "lucide-react";
-import { FormData } from "@/types/sign-up";
-import AuthButton from "../auth-button";
+import React from 'react';
+import { motion } from 'framer-motion';
+import { Mail, User } from 'lucide-react';
+import { RegistrationFormData } from '@/types';
+import AuthButton from '../auth-button';
 
 interface PersonalInfoStepProps {
-  formData: FormData;
+  formData: RegistrationFormData;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onContinue: () => void;
 }
 
-const PersonalInfoStep = ({
-  formData,
-  onChange,
-  onContinue,
-}: PersonalInfoStepProps) => {
+const PersonalInfoStep = ({ formData, onChange, onContinue }: PersonalInfoStepProps) => {
   return (
     <motion.div
       exit={{ opacity: 0, x: -20 }}
@@ -24,10 +20,7 @@ const PersonalInfoStep = ({
     >
       <div className="grid grid-cols-2 gap-4 mb-6">
         <div>
-          <label
-            htmlFor="firstName"
-            className="block text-sm font-medium text-gray-700 mb-2"
-          >
+          <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-2">
             First Name
           </label>
           <div className="relative">
@@ -48,10 +41,7 @@ const PersonalInfoStep = ({
         </div>
 
         <div>
-          <label
-            htmlFor="lastName"
-            className="block text-sm font-medium text-gray-700 mb-2"
-          >
+          <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-2">
             Last Name
           </label>
           <input
@@ -68,10 +58,7 @@ const PersonalInfoStep = ({
       </div>
 
       <div className="mb-6">
-        <label
-          htmlFor="email"
-          className="block text-sm font-medium text-gray-700 mb-2"
-        >
+        <label htmlFor="schoolEmail" className="block text-sm font-medium text-gray-700 mb-2">
           Email Address
         </label>
         <div className="relative">
@@ -80,11 +67,11 @@ const PersonalInfoStep = ({
           </div>
           <input
             required
-            id="email"
-            name="email"
+            id="schoolEmail"
+            name="schoolEmail"
             type="email"
             onChange={onChange}
-            value={formData.email}
+            value={formData.schoolEmail}
             placeholder="your.email@utg.edu.gm"
             className="pl-10 w-full py-3 px-4 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-all"
           />

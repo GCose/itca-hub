@@ -1,12 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 
-const useTimedError = (duration = 2000) => {
-  const [error, setError] = useState<string>("");
+const useTimedError = (duration = 3500) => {
+  const [error, setError] = useState<string>('');
 
   useEffect(() => {
     if (error) {
       const timer = setTimeout(() => {
-        setError("");
+        setError('');
       }, duration);
 
       return () => clearTimeout(timer);

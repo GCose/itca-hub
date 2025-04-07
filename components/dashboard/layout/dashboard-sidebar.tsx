@@ -1,8 +1,8 @@
-import { JSX, useRef } from "react";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import Image from "next/image";
-import { motion, AnimatePresence } from "framer-motion";
+import { JSX, useRef } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import Image from 'next/image';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Home,
   Users,
@@ -16,7 +16,7 @@ import {
   BarChart2,
   X,
   LayoutDashboardIcon,
-} from "lucide-react";
+} from 'lucide-react';
 
 interface SidebarProps {
   open: boolean;
@@ -37,81 +37,81 @@ const Sidebar = ({ open, setOpen }: SidebarProps) => {
   // Navigation items
   const adminNavItems: NavItem[] = [
     {
-      name: "Overview",
-      href: "/admin",
+      name: 'Overview',
+      href: '/admin',
       icon: <LayoutDashboardIcon className="h-5 w-5" />,
     },
     {
-      name: "Users",
-      href: "/admin/users",
+      name: 'Users',
+      href: '/admin/users',
       icon: <Users className="h-5 w-5" />,
     },
     {
-      name: "Events",
-      href: "/admin/events",
+      name: 'Events',
+      href: '/admin/events',
       icon: <Calendar className="h-5 w-5" />,
     },
     {
-      name: "Resources",
-      href: "/admin/resources",
+      name: 'Resources',
+      href: '/admin/resources',
       icon: <FileText className="h-5 w-5" />,
     },
     {
-      name: "Analytics",
-      href: "/admin/analytics",
+      name: 'Analytics',
+      href: '/admin/analytics',
       icon: <BarChart2 className="h-5 w-5" />,
     },
     {
-      name: "Settings",
-      href: "/admin/settings",
+      name: 'Settings',
+      href: '/admin/settings',
       icon: <Settings className="h-5 w-5" />,
     },
   ];
 
   const studentNavItems: NavItem[] = [
-    { name: "Dashboard", href: "/student", icon: <Home className="h-5 w-5" /> },
+    { name: 'Dashboard', href: '/student', icon: <Home className="h-5 w-5" /> },
     {
-      name: "Profile",
-      href: "/student/profile",
+      name: 'Profile',
+      href: '/student/profile',
       icon: <User className="h-5 w-5" />,
     },
     {
-      name: "Courses",
-      href: "/student/courses",
+      name: 'Courses',
+      href: '/student/courses',
       icon: <BookOpen className="h-5 w-5" />,
     },
     {
-      name: "Events",
-      href: "/student/events",
+      name: 'Events',
+      href: '/student/events',
       icon: <Calendar className="h-5 w-5" />,
     },
     {
-      name: "Resources",
-      href: "/student/resources",
+      name: 'Resources',
+      href: '/student/resources',
       icon: <FileText className="h-5 w-5" />,
     },
     {
-      name: "Help",
-      href: "/student/help",
+      name: 'Help',
+      href: '/student/help',
       icon: <HelpCircle className="h-5 w-5" />,
     },
   ];
 
   // Determine NavItems
   const getNavItems = () => {
-    isAdminRef.current = router.pathname.startsWith("/admin");
+    isAdminRef.current = router.pathname.startsWith('/admin');
     return isAdminRef.current ? adminNavItems : studentNavItems;
   };
 
   const handleLogout = () => {
-    console.log("Logging out...");
-    router.push("/auth");
+    console.log('Logging out...');
+    router.push('/api/logout');
   };
 
   // Check if a nav item is active
   const isActive = (href: string) => {
     // For dashboard routes, only exact match
-    if (href === "/admin" || href === "/student") {
+    if (href === '/admin' || href === '/student') {
       return router.pathname === href;
     }
     // For other routes, either exact match or starts with the path
@@ -137,7 +137,7 @@ const Sidebar = ({ open, setOpen }: SidebarProps) => {
       {/*==================== Sidebar ====================*/}
       <div
         className={`fixed my-10 ml-2 rounded-4xl inset-y-0 z-50 w-60 transform overflow-hidden max-[968px]:bg-white lg:bg-white transition-transform ease-in-out duration-300 
-                    ${open ? "translate-x-0" : "-translate-x-full"} 
+                    ${open ? 'translate-x-0' : '-translate-x-full'} 
                     min-[968px]:translate-x-0 min-[968px]:static min-[968px]:z-0`}
       >
         {/*==================== Decorative Elements  ====================*/}
@@ -166,6 +166,7 @@ const Sidebar = ({ open, setOpen }: SidebarProps) => {
               />
             </Link>
             <button
+              title="button"
               onClick={() => setOpen(false)}
               className="p-2 rounded-md text-gray-500 hover:bg-amber-50 hover:text-amber-500 transition-colors"
             >
@@ -177,9 +178,7 @@ const Sidebar = ({ open, setOpen }: SidebarProps) => {
           {/*==================== Desktop logo ====================*/}
           <div className="hidden min-[968px]:flex items-center p-4 border-b border-gray-100">
             <Link
-              href={
-                router.pathname.startsWith("/admin") ? "/admin" : "/student"
-              }
+              href={router.pathname.startsWith('/admin') ? '/admin' : '/student'}
               className="flex items-center"
             >
               <Image
@@ -202,12 +201,12 @@ const Sidebar = ({ open, setOpen }: SidebarProps) => {
                   href={item.href}
                   className={`flex items-center px-4 py-3 text-md font-medium  ${
                     isActive(item.href)
-                      ? "bg-gradient-to-r from-amber-50 to-blue-50 text-blue-700 border-l-2 border-l-amber-500 rounded-r-lg"
-                      : "text-gray-700 hover:bg-amber-50/50 hover:text-blue-700"
+                      ? 'bg-gradient-to-r from-amber-50 to-blue-50 text-blue-700 border-l-2 border-l-amber-500 rounded-r-lg'
+                      : 'text-gray-700 hover:bg-amber-50/50 hover:text-blue-700'
                   }`}
                 >
                   <span
-                    className={`mr-3 ${isActive(item.href) ? "text-amber-500" : "text-gray-500"}`}
+                    className={`mr-3 ${isActive(item.href) ? 'text-amber-500' : 'text-gray-500'}`}
                   >
                     {item.icon}
                   </span>

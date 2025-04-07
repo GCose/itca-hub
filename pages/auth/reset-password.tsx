@@ -1,19 +1,19 @@
-import { useState } from "react";
-import { motion } from "framer-motion";
-import {
-  Eye,
-  EyeOff,
-  Lock,
-  ShieldCheck,
-  KeyRound,
-  AlertCircle,
-} from "lucide-react";
-import Link from "next/link";
-import { toast } from "sonner";
-import AuthLayout from "@/components/authentication/auth-layout";
-import AuthButton from "@/components/authentication/auth-button";
-import PasswordStrengthIndicator from "@/components/authentication/sign-up/password-strength-indicator";
-import useTimedError from "@/hooks/timed-error";
+import { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
+import { Eye, EyeOff, Lock, ShieldCheck, KeyRound, AlertCircle } from 'lucide-react';
+import Link from 'next/link';
+import { toast } from 'sonner';
+import AuthLayout from '@/components/authentication/auth-layout';
+import AuthButton from '@/components/authentication/auth-button';
+import PasswordStrengthIndicator from '@/components/authentication/sign-up/password-strength-indicator';
+import useTimedError from '@/hooks/timed-error';
+import axios, { AxiosError } from 'axios';
+import { BASE_URL } from '@/utils/url';
+import { getErrorMessage } from '@/utils/error';
+import { CustomError, ErrorResponseData, UserAuth } from '@/types';
+import { useRouter } from 'next/router';
+import { NextApiRequest } from 'next';
+import { isLoggedIn } from '@/utils/auth';
 
 // Defining the DTO for reset password API call
 interface ResetPasswordDTO {
@@ -22,63 +22,65 @@ interface ResetPasswordDTO {
 }
 
 const ResetPassword = () => {
-  const [resetToken, setResetToken] = useState("");
-  const [newPassword, setNewPassword] = useState("");
+  const [resetToken, setResetToken] = useState('');
+  const [newPassword, setNewPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useTimedError();
   const [resetComplete, setResetComplete] = useState(false);
 
+  const router = useRouter();
+  const { token } = router.query;
+
+  useEffect(() => {
+    if (token) {
+      setResetToken(token as string);
+    }
+  }, [token]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
+    setError('');
 
     if (!resetToken) {
-      setError("Please enter the reset code from your email");
-      toast.error("Reset code required", {
-        description: "Please check your email for the code",
+      setError('Please enter the reset code from your email');
+      toast.error('Reset code required', {
+        description: 'Please check your email for the code',
       });
       return;
     }
 
     if (!newPassword || newPassword.length < 8) {
-      setError("Password must be at least 8 characters long");
-      toast.error("Password too short", {
-        description: "Please use at least 8 characters for security",
+      setError('Password must be at least 8 characters long');
+      toast.error('Password too short', {
+        description: 'Please use at least 8 characters for security',
       });
       return;
     }
 
-    try {
-      setIsLoading(true);
-      const toastId = toast.loading("Resetting password...");
+    setIsLoading(true);
 
-      // Prepare the DTO
+    try {
       const resetPasswordData: ResetPasswordDTO = {
         resetToken,
         newPassword,
       };
 
-      // API call would go here - Ebrima Mbye
-      // Example: await api.resetPassword(resetPasswordData);
-      console.log("Sending to backend:", resetPasswordData);
-
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      await axios.post(`${BASE_URL}/auth/reset-password`, resetPasswordData);
 
       // Show success message
       setResetComplete(true);
-      toast.success("Password has been reset successfully", {
-        id: toastId,
-        description: "You can now sign in with your new password",
+      toast.success('Password has been reset successfully', {
+        id: toast.loading('Resetting password...'),
+        description: 'You can now sign in with your new password',
         duration: 5000,
       });
-    } catch (err) {
-      setError("Invalid or expired reset code. Please try again.");
-      toast.error("Password reset failed", {
-        description: "Please check your code and try again",
-      });
-      console.error(err);
+    } catch (error) {
+      const { message } = getErrorMessage(
+        error as AxiosError<ErrorResponseData> | CustomError | Error
+      );
+
+      setError(message);
     } finally {
       setIsLoading(false);
     }
@@ -94,8 +96,8 @@ const ResetPassword = () => {
     >
       <h2 className="text-5xl font-bold mb-6">Secure Your Account</h2>
       <p className="text-lg text-white/80 mb-8">
-        Enter the verification code sent to your email and create a new secure
-        password for your ITCA account.
+        Enter the verification code sent to your email and create a new secure password for your
+        ITCA account.
       </p>
 
       <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 text-left">
@@ -103,27 +105,19 @@ const ResetPassword = () => {
         <ul className="space-y-2">
           <li className="flex items-start">
             <ShieldCheck className="h-5 w-5 text-amber-500 mr-2 mt-0.5" />
-            <span className="text-sm">
-              Use a mix of letters, numbers, and symbols
-            </span>
+            <span className="text-sm">Use a mix of letters, numbers, and symbols</span>
           </li>
           <li className="flex items-start">
             <ShieldCheck className="h-5 w-5 text-amber-500 mr-2 mt-0.5" />
-            <span className="text-sm">
-              Avoid using easily guessable information like birthdays
-            </span>
+            <span className="text-sm">Avoid using easily guessable information like birthdays</span>
           </li>
           <li className="flex items-start">
             <ShieldCheck className="h-5 w-5 text-amber-500 mr-2 mt-0.5" />
-            <span className="text-sm">
-              Use a different password for each of your accounts
-            </span>
+            <span className="text-sm">Use a different password for each of your accounts</span>
           </li>
           <li className="flex items-start">
             <ShieldCheck className="h-5 w-5 text-amber-500 mr-2 mt-0.5" />
-            <span className="text-sm">
-              Consider using a password manager for added security
-            </span>
+            <span className="text-sm">Consider using a password manager for added security</span>
           </li>
         </ul>
       </div>
@@ -137,12 +131,9 @@ const ResetPassword = () => {
       description="Create a new password for your ITCA account"
     >
       <>
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          Reset Password
-        </h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">Reset Password</h1>
         <p className="text-gray-600 mb-8">
-          Enter the verification code from your email and create a new secure
-          password
+          Enter the verification code from your email and create a new secure password
         </p>
 
         {error && (
@@ -162,12 +153,9 @@ const ResetPassword = () => {
             <div className="mb-4 flex justify-center">
               <ShieldCheck className="h-12 w-12 text-green-600" />
             </div>
-            <h2 className="text-xl font-semibold mb-2 text-gray-900">
-              Password Reset Complete
-            </h2>
+            <h2 className="text-xl font-semibold mb-2 text-gray-900">Password Reset Complete</h2>
             <p className="text-gray-600 mb-6">
-              Your password has been successfully reset. You can now sign in
-              with your new password.
+              Your password has been successfully reset. You can now sign in with your new password.
             </p>
             <Link href="/auth">
               <AuthButton>Sign In</AuthButton>
@@ -175,37 +163,8 @@ const ResetPassword = () => {
           </motion.div>
         ) : (
           <form onSubmit={handleSubmit}>
-            <div className="mb-6">
-              <label
-                htmlFor="resetToken"
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
-                Reset Code
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <KeyRound className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  required
-                  id="resetToken"
-                  value={resetToken}
-                  placeholder="Enter the code from your email"
-                  onChange={(e) => setResetToken(e.target.value)}
-                  className="pl-10 w-full py-3 px-4 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-all"
-                />
-              </div>
-              <p className="mt-1 text-xs text-gray-500">
-                Check your inbox, spam and junk folders for the verification
-                code
-              </p>
-            </div>
-
             <div className="mb-8">
-              <label
-                htmlFor="newPassword"
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
+              <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700 mb-2">
                 New Password
               </label>
               <div className="relative">
@@ -217,7 +176,7 @@ const ResetPassword = () => {
                   id="newPassword"
                   value={newPassword}
                   placeholder="••••••••"
-                  type={showPassword ? "text" : "password"}
+                  type={showPassword ? 'text' : 'password'}
                   onChange={(e) => setNewPassword(e.target.value)}
                   className="pl-10 w-full py-3 px-4 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-all"
                 />
@@ -238,11 +197,7 @@ const ResetPassword = () => {
               <PasswordStrengthIndicator password={newPassword} />
             </div>
 
-            <AuthButton
-              type="submit"
-              isLoading={isLoading}
-              loadingText="Resetting password..."
-            >
+            <AuthButton type="submit" isLoading={isLoading} loadingText="Resetting password...">
               Reset Password
             </AuthButton>
           </form>
@@ -250,7 +205,7 @@ const ResetPassword = () => {
 
         <div className="mt-8 text-center">
           <p className="text-gray-600">
-            Remember your password?{" "}
+            Remember your password?{' '}
             <Link
               href="/auth"
               className="text-blue-700 hover:text-blue-600 font-medium transition-colors"
@@ -265,3 +220,37 @@ const ResetPassword = () => {
 };
 
 export default ResetPassword;
+
+export const getServerSideProps = async ({ req }: { req: NextApiRequest }) => {
+  const userData = isLoggedIn(req);
+
+  // If there is user data and the user data type is not boolean, which means it is of type UserAuth object, then
+  if (userData && typeof userData !== 'boolean') {
+    const { role } = userData as UserAuth;
+
+    switch (role) {
+      case 'admin':
+        return {
+          redirect: {
+            destination: '/admin',
+            permanent: false,
+          },
+        };
+      case 'user':
+        return {
+          redirect: {
+            destination: '/student',
+            permanent: false,
+          },
+        };
+      default:
+        break;
+    }
+  }
+
+  return {
+    props: {
+      userData,
+    },
+  };
+};

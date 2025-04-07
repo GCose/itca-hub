@@ -1,13 +1,16 @@
-import Head from "next/head";
-import { useEffect } from "react";
-import Header from "../components/landing-page/header";
-import HeroSection from "../components/landing-page/hero-section";
-import EventsSection from "../components/landing-page/events-section";
-import DegreesSection from "../components/landing-page/degrees-section";
-import VirtualTour from "../components/landing-page/virtual-tour";
-import ResourcesSection from "../components/landing-page/resources-section";
-import Footer from "../components/landing-page/footer";
-import Link from "next/link";
+import Head from 'next/head';
+import { useEffect } from 'react';
+import Header from '../components/landing-page/header';
+import HeroSection from '../components/landing-page/hero-section';
+import EventsSection from '../components/landing-page/events-section';
+import DegreesSection from '../components/landing-page/degrees-section';
+import VirtualTour from '../components/landing-page/virtual-tour';
+import ResourcesSection from '../components/landing-page/resources-section';
+import Footer from '../components/landing-page/footer';
+import Link from 'next/link';
+import { NextApiRequest } from 'next';
+import { isLoggedIn } from '@/utils/auth';
+import { UserAuth } from '@/types';
 
 const HomePage = () => {
   // Smooth scroll implementation for navigation
@@ -18,28 +21,25 @@ const HomePage = () => {
 
       if (anchor) {
         e.preventDefault();
-        const targetId = anchor.getAttribute("href");
+        const targetId = anchor.getAttribute('href');
 
-        if (targetId && targetId !== "#") {
+        if (targetId && targetId !== '#') {
           const targetElement = document.querySelector(targetId);
 
           if (targetElement) {
             window.scrollTo({
-              top:
-                targetElement.getBoundingClientRect().top +
-                window.scrollY -
-                100,
-              behavior: "smooth",
+              top: targetElement.getBoundingClientRect().top + window.scrollY - 100,
+              behavior: 'smooth',
             });
           }
         }
       }
     };
 
-    document.addEventListener("click", handleAnchorClick);
+    document.addEventListener('click', handleAnchorClick);
 
     return () => {
-      document.removeEventListener("click", handleAnchorClick);
+      document.removeEventListener('click', handleAnchorClick);
     };
   }, []);
 
@@ -54,11 +54,7 @@ const HomePage = () => {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/images/logo.jpg" />
         <Link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          rel="preconnect"
-          crossOrigin="anonymous"
-          href="https://fonts.gstatic.com"
-        />
+        <link rel="preconnect" crossOrigin="anonymous" href="https://fonts.gstatic.com" />
         <Link
           rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
@@ -81,3 +77,42 @@ const HomePage = () => {
 };
 
 export default HomePage;
+
+export const getServerSideProps = async ({ req }: { req: NextApiRequest }) => {
+  const userData = isLoggedIn(req);
+
+  // If there is user data and the user data type is not boolean, which means it is of type UserAuth object, then
+  if (userData && typeof userData !== 'boolean') {
+    const { role } = userData as UserAuth;
+
+    switch (role) {
+      case 'admin':
+        return {
+          redirect: {
+            destination: '/admin',
+            permanent: false,
+          },
+        };
+      case 'user':
+        return {
+          redirect: {
+            destination: '/student',
+            permanent: false,
+          },
+        };
+      default:
+        return {
+          redirect: {
+            destination: '/',
+            permanent: false,
+          },
+        };
+    }
+  }
+
+  return {
+    props: {
+      userData: false,
+    },
+  };
+};

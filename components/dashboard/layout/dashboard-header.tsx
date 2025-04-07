@@ -47,6 +47,7 @@ const Header = ({ sidebarOpen, setSidebarOpen }: HeaderProps) => {
       {/*==================== Mobile menu button and search ====================*/}
       <div className="flex items-center space-x-4">
         <button
+        title="button"
           onClick={() => setSidebarOpen(!sidebarOpen)}
           className="rounded-md p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700 focus:outline-none max-[967px]:block hidden"
         >

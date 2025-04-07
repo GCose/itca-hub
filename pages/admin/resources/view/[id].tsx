@@ -1,16 +1,19 @@
-import { useRouter } from "next/router";
-import { ArrowLeft, Download, FileText, Loader } from "lucide-react";
-import VideoViewer from "@/components/dashboard/admin/resources/viewers/video-viewer";
-import Link from "next/link";
-import DashboardLayout from "@/components/dashboard/layout/dashboard-layout";
-import useResourceViewer from "@/hooks/admin/use-resource-viewer";
-import PDFViewer from "@/components/dashboard/admin/resources/viewers/pdf-viewer";
-import ImageViewer from "@/components/dashboard/admin/resources/viewers/image-viewer";
-import GenericViewer from "@/components/dashboard/admin/resources/viewers/generic-viewer";
-import formatDepartment from "@/utils/admin/format-department";
-import useResourceAnalytics from "@/hooks/admin/use-resource-analytics";
-import AudioViewer from "@/components/dashboard/admin/resources/viewers/audio-viewer";
-import TextViewer from "@/components/dashboard/admin/resources/viewers/text-viewer";
+import { useRouter } from 'next/router';
+import { ArrowLeft, Download, FileText, Loader } from 'lucide-react';
+import VideoViewer from '@/components/dashboard/admin/resources/viewers/video-viewer';
+import Link from 'next/link';
+import DashboardLayout from '@/components/dashboard/layout/dashboard-layout';
+import useResourceViewer from '@/hooks/admin/use-resource-viewer';
+import PDFViewer from '@/components/dashboard/admin/resources/viewers/pdf-viewer';
+import ImageViewer from '@/components/dashboard/admin/resources/viewers/image-viewer';
+import GenericViewer from '@/components/dashboard/admin/resources/viewers/generic-viewer';
+import formatDepartment from '@/utils/admin/format-department';
+import useResourceAnalytics from '@/hooks/admin/use-resource-analytics';
+import AudioViewer from '@/components/dashboard/admin/resources/viewers/audio-viewer';
+import TextViewer from '@/components/dashboard/admin/resources/viewers/text-viewer';
+import { UserAuth } from '@/types';
+import { isLoggedIn } from '@/utils/auth';
+import { NextApiRequest } from 'next';
 
 const ResourceViewPage = () => {
   const router = useRouter();
@@ -27,14 +30,14 @@ const ResourceViewPage = () => {
 
     try {
       await trackResourceDownload(resource.id);
-      const link = document.createElement("a");
+      const link = document.createElement('a');
       link.href = `/api/resources/download/${resource.id}`;
-      link.download = resource.fileName || resource.title || "resource";
+      link.download = resource.fileName || resource.title || 'resource';
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
     } catch (error) {
-      console.error("Error downloading resource:", error);
+      console.error('Error downloading resource:', error);
     }
   };
 
@@ -43,45 +46,25 @@ const ResourceViewPage = () => {
     if (!resource) return null;
 
     switch (fileType) {
-      case "pdf":
+      case 'pdf':
         return (
-          <PDFViewer
-            title={resource.title}
-            fileUrl={resource.fileUrl}
-            resourceId={resource.id}
-          />
+          <PDFViewer title={resource.title} fileUrl={resource.fileUrl} resourceId={resource.id} />
         );
-      case "image":
+      case 'image':
         return (
-          <ImageViewer
-            title={resource.title}
-            resourceId={resource.id}
-            fileUrl={resource.fileUrl}
-          />
+          <ImageViewer title={resource.title} resourceId={resource.id} fileUrl={resource.fileUrl} />
         );
-      case "video":
+      case 'video':
         return (
-          <VideoViewer
-            title={resource.title}
-            resourceId={resource.id}
-            fileUrl={resource.fileUrl}
-          />
+          <VideoViewer title={resource.title} resourceId={resource.id} fileUrl={resource.fileUrl} />
         );
-      case "audio":
+      case 'audio':
         return (
-          <AudioViewer
-            title={resource.title}
-            resourceId={resource.id}
-            fileUrl={resource.fileUrl}
-          />
+          <AudioViewer title={resource.title} resourceId={resource.id} fileUrl={resource.fileUrl} />
         );
-      case "text":
+      case 'text':
         return (
-          <TextViewer
-            title={resource.title}
-            resourceId={resource.id}
-            fileUrl={resource.fileUrl}
-          />
+          <TextViewer title={resource.title} resourceId={resource.id} fileUrl={resource.fileUrl} />
         );
       default:
         return (
@@ -96,11 +79,12 @@ const ResourceViewPage = () => {
   };
 
   return (
-    <DashboardLayout title={resource?.title || "Resource Viewer"}>
+    <DashboardLayout title={resource?.title || 'Resource Viewer'}>
       <div className="mb-8">
         <div className="flex items-center">
           <button
-            onClick={() => (window.location.href = "/admin/resources")}
+            title="button"
+            onClick={() => router.push('/admin/resources')}
             className="mr-3 inline-flex items-center rounded-lg bg-white p-2 text-sm text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-gray-500 focus:ring-offset-2 transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />
@@ -131,9 +115,7 @@ const ResourceViewPage = () => {
         <div className="flex items-center justify-center h-96 bg-white rounded-xl">
           <div className="flex flex-col items-center">
             <FileText className="h-16 w-16 text-red-400 mb-3" />
-            <h3 className="text-lg font-medium text-gray-900 mb-1">
-              Resource Not Found
-            </h3>
+            <h3 className="text-lg font-medium text-gray-900 mb-1">Resource Not Found</h3>
             <p className="text-gray-500 mb-4">{error}</p>
             <Link
               href="/admin/resources"
@@ -155,12 +137,8 @@ const ResourceViewPage = () => {
             <div className="px-6 py-5">
               <div className="flex justify-between items-center">
                 <div>
-                  <h2 className="text-xl font-semibold text-gray-900">
-                    {resource.title}
-                  </h2>
-                  <p className="text-sm text-gray-500 mt-1">
-                    {resource.description}
-                  </p>
+                  <h2 className="text-xl font-semibold text-gray-900">{resource.title}</h2>
+                  <p className="text-sm text-gray-500 mt-1">{resource.description}</p>
                 </div>
 
                 <button
@@ -179,14 +157,12 @@ const ResourceViewPage = () => {
                 </div>
                 <div>
                   <p className="text-xs text-gray-500">DEPARTMENT</p>
-                  <p className="text-sm font-medium">
-                    {formatDepartment(resource.department)}
-                  </p>
+                  <p className="text-sm font-medium">{formatDepartment(resource.department)}</p>
                 </div>
                 <div>
                   <p className="text-xs text-gray-500">FILE TYPE</p>
                   <p className="text-sm font-medium">
-                    {resource?.type?.toUpperCase() || "Unknown"}
+                    {resource?.type?.toUpperCase() || 'Unknown'}
                   </p>
                 </div>
                 <div>
@@ -211,3 +187,33 @@ const ResourceViewPage = () => {
 };
 
 export default ResourceViewPage;
+
+export const getServerSideProps = async ({ req }: { req: NextApiRequest }) => {
+  const userData = isLoggedIn(req);
+
+  if (userData === false) {
+    return {
+      redirect: {
+        destination: '/auth',
+        permanent: false,
+      },
+    };
+  }
+
+  const userAuth = userData as UserAuth;
+
+  if (userAuth.role === 'user') {
+    return {
+      redirect: {
+        destination: '/student',
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      userData,
+    },
+  };
+};

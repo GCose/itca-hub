@@ -1,7 +1,10 @@
-import { useState, useEffect } from "react";
-import { Search } from "lucide-react";
-import DashboardLayout from "@/components/dashboard/layout/dashboard-layout";
-import CourseList from "@/components/dashboard/student/course/course-list";
+import { useState, useEffect } from 'react';
+import { Search } from 'lucide-react';
+import DashboardLayout from '@/components/dashboard/layout/dashboard-layout';
+import CourseList from '@/components/dashboard/student/course/course-list';
+import { NextApiRequest } from 'next';
+import { isLoggedIn } from '@/utils/auth';
+import { UserAuth } from '@/types';
 
 // Course interface
 interface Course {
@@ -17,8 +20,8 @@ const StudentCoursesPage = () => {
   const [courses, setCourses] = useState<Course[]>([]);
   const [filteredCourses, setFilteredCourses] = useState<Course[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [sortBy, setSortBy] = useState("title");
+  const [searchTerm, setSearchTerm] = useState('');
+  const [sortBy, setSortBy] = useState('title');
 
   useEffect(() => {
     const fetchCourses = async () => {
@@ -31,48 +34,48 @@ const StudentCoursesPage = () => {
         const mockCourses = [
           {
             id: 1,
-            title: "Introduction to Web Development",
-            instructor: "Dr. Sarah Johnson",
+            title: 'Introduction to Web Development',
+            instructor: 'Dr. Sarah Johnson',
             progress: 75,
             totalResources: 12,
             totalStudents: 45,
           },
           {
             id: 2,
-            title: "Data Structures and Algorithms",
-            instructor: "Prof. Michael Chen",
+            title: 'Data Structures and Algorithms',
+            instructor: 'Prof. Michael Chen',
             progress: 60,
             totalResources: 18,
             totalStudents: 32,
           },
           {
             id: 3,
-            title: "Mobile App Development with React Native",
-            instructor: "Dr. David Wilson",
+            title: 'Mobile App Development with React Native',
+            instructor: 'Dr. David Wilson',
             progress: 40,
             totalResources: 15,
             totalStudents: 28,
           },
           {
             id: 4,
-            title: "Database Systems",
-            instructor: "Prof. Lisa Adams",
+            title: 'Database Systems',
+            instructor: 'Prof. Lisa Adams',
             progress: 90,
             totalResources: 10,
             totalStudents: 38,
           },
           {
             id: 5,
-            title: "Python Programming",
-            instructor: "Dr. Robert Brown",
+            title: 'Python Programming',
+            instructor: 'Dr. Robert Brown',
             progress: 25,
             totalResources: 14,
             totalStudents: 50,
           },
           {
             id: 6,
-            title: "Machine Learning Fundamentals",
-            instructor: "Dr. Emily Clark",
+            title: 'Machine Learning Fundamentals',
+            instructor: 'Dr. Emily Clark',
             progress: 15,
             totalResources: 20,
             totalStudents: 35,
@@ -82,7 +85,7 @@ const StudentCoursesPage = () => {
         setCourses(mockCourses);
         setFilteredCourses(mockCourses);
       } catch (error) {
-        console.error("Error fetching courses:", error);
+        console.error('Error fetching courses:', error);
       } finally {
         setIsLoading(false);
       }
@@ -100,13 +103,13 @@ const StudentCoursesPage = () => {
     );
 
     const sorted = [...filtered].sort((a, b) => {
-      if (sortBy === "title") {
+      if (sortBy === 'title') {
         return a.title.localeCompare(b.title);
       }
-      if (sortBy === "instructor") {
+      if (sortBy === 'instructor') {
         return a.instructor.localeCompare(b.instructor);
       }
-      if (sortBy === "progress") {
+      if (sortBy === 'progress') {
         return b.progress - a.progress;
       }
       return 0;
@@ -119,9 +122,7 @@ const StudentCoursesPage = () => {
     <DashboardLayout title="My Courses">
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-gray-900 mb-2">My Courses</h1>
-        <p className="text-gray-600">
-          Access your enrolled courses and learning materials
-        </p>
+        <p className="text-gray-600">Access your enrolled courses and learning materials</p>
       </div>
 
       <div className="mb-6 flex flex-col md:flex-row gap-4 items-center justify-between">
@@ -161,3 +162,33 @@ const StudentCoursesPage = () => {
 };
 
 export default StudentCoursesPage;
+
+export const getServerSideProps = async ({ req }: { req: NextApiRequest }) => {
+  const userData = isLoggedIn(req);
+
+  if (userData === false) {
+    return {
+      redirect: {
+        destination: '/auth',
+        permanent: false,
+      },
+    };
+  }
+
+  const userAuth = userData as UserAuth;
+
+  if (userAuth.role === 'admin') {
+    return {
+      redirect: {
+        destination: '/admin',
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      userData,
+    },
+  };
+};

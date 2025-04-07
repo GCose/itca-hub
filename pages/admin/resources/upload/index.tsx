@@ -1,7 +1,10 @@
-import ResourceUploader from "@/components/dashboard/admin/resources/uploader/resource-uploader";
-import { ArrowLeft } from "lucide-react";
-import Link from "next/link";
-import DashboardLayout from "@/components/dashboard/layout/dashboard-layout";
+import ResourceUploader from '@/components/dashboard/admin/resources/uploader/resource-uploader';
+import { ArrowLeft } from 'lucide-react';
+import Link from 'next/link';
+import DashboardLayout from '@/components/dashboard/layout/dashboard-layout';
+import { UserAuth } from '@/types';
+import { isLoggedIn } from '@/utils/auth';
+import { NextApiRequest } from 'next';
 
 const AdminResourceUploadPage = () => {
   const handleUploadComplete = (fileData: {
@@ -11,7 +14,7 @@ const AdminResourceUploadPage = () => {
     fileSize: string;
   }) => {
     // Logging the successful upload for debugging purposes because I can
-    console.log("Upload completed successfully:", fileData);
+    console.log('Upload completed successfully:', fileData);
   };
 
   return (
@@ -65,12 +68,12 @@ const AdminResourceUploadPage = () => {
 
             <div className="rounded-lg sm:p-1 lg:p-4">
               {[
-                "All uploaded resources should be relevant to educational purposes.",
-                "Maximum file size is 100MB. For larger files, consider splitting them into smaller parts.",
-                "Supported file types include PDFs, documents, spreadsheets, presentations, images, videos, and more.",
-                "Ensure you have the necessary rights or permissions to share uploaded content.",
-                "Choose a descriptive title and appropriate category to make resources easy to find.",
-                "Add a clear description to help users understand what the resource contains.",
+                'All uploaded resources should be relevant to educational purposes.',
+                'Maximum file size is 100MB. For larger files, consider splitting them into smaller parts.',
+                'Supported file types include PDFs, documents, spreadsheets, presentations, images, videos, and more.',
+                'Ensure you have the necessary rights or permissions to share uploaded content.',
+                'Choose a descriptive title and appropriate category to make resources easy to find.',
+                'Add a clear description to help users understand what the resource contains.',
               ].map((guideline, index) => (
                 <div
                   key={index}
@@ -92,3 +95,33 @@ const AdminResourceUploadPage = () => {
 };
 
 export default AdminResourceUploadPage;
+
+export const getServerSideProps = async ({ req }: { req: NextApiRequest }) => {
+  const userData = isLoggedIn(req);
+
+  if (userData === false) {
+    return {
+      redirect: {
+        destination: '/auth',
+        permanent: false,
+      },
+    };
+  }
+
+  const userAuth = userData as UserAuth;
+
+  if (userAuth.role === 'user') {
+    return {
+      redirect: {
+        destination: '/student',
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      userData,
+    },
+  };
+};
