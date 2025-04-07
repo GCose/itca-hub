@@ -1,11 +1,14 @@
-import { useState, useEffect } from "react";
-import DashboardLayout from "@/components/dashboard/layout/dashboard-layout";
-import { Calendar, Search, ListFilter } from "lucide-react";
-import Link from "next/link";
-import DeleteEventModal from "@/components/dashboard/admin/events/delete-event-modal";
-import EventsEmptyState from "@/components/dashboard/admin/events/events-empty-state";
-import EventsList from "@/components/dashboard/admin/events/events-list";
-import EventsLoadingSkeleton from "@/components/dashboard/admin/events/events-loading-skeleton";
+import { useState, useEffect } from 'react';
+import DashboardLayout from '@/components/dashboard/layout/dashboard-layout';
+import { Calendar, Search, ListFilter } from 'lucide-react';
+import Link from 'next/link';
+import DeleteEventModal from '@/components/dashboard/admin/events/delete-event-modal';
+import EventsEmptyState from '@/components/dashboard/admin/events/events-empty-state';
+import EventsList from '@/components/dashboard/admin/events/events-list';
+import EventsLoadingSkeleton from '@/components/dashboard/admin/events/events-loading-skeleton';
+import { NextApiRequest } from 'next';
+import { isLoggedIn } from '@/utils/auth';
+import { UserAuth } from '@/types';
 
 interface Event {
   id: number;
@@ -14,7 +17,7 @@ interface Event {
   date: string;
   time: string;
   location: string;
-  status: "upcoming" | "ongoing" | "completed" | "cancelled";
+  status: 'upcoming' | 'ongoing' | 'completed' | 'cancelled';
   registrations: number;
   capacity: number;
   image?: string;
@@ -23,9 +26,9 @@ interface Event {
 const AdminEventsPage = () => {
   const [events, setEvents] = useState<Event[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [status, setStatus] = useState("all");
-  const [viewMode, setViewMode] = useState<"list" | "calendar">("list");
+  const [searchTerm, setSearchTerm] = useState('');
+  const [status, setStatus] = useState('all');
+  const [viewMode, setViewMode] = useState<'list' | 'calendar'>('list');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [eventToDelete, setEventToDelete] = useState<number | null>(null);
 
@@ -40,61 +43,60 @@ const AdminEventsPage = () => {
         const mockEvents = [
           {
             id: 1,
-            title: "Web Development Workshop",
+            title: 'Web Development Workshop',
             description:
-              "Learn the fundamentals of web development with HTML, CSS, and JavaScript.",
-            date: "2023-10-25",
-            time: "14:00-16:00",
-            location: "Lab 302",
-            status: "upcoming" as const,
+              'Learn the fundamentals of web development with HTML, CSS, and JavaScript.',
+            date: '2023-10-25',
+            time: '14:00-16:00',
+            location: 'Lab 302',
+            status: 'upcoming' as const,
             registrations: 25,
             capacity: 30,
           },
           {
             id: 2,
-            title: "AI & Machine Learning Seminar",
+            title: 'AI & Machine Learning Seminar',
             description:
-              "An introduction to artificial intelligence and machine learning concepts.",
-            date: "2023-11-10",
-            time: "15:00-17:00",
-            location: "Virtual (Zoom)",
-            status: "upcoming" as const,
+              'An introduction to artificial intelligence and machine learning concepts.',
+            date: '2023-11-10',
+            time: '15:00-17:00',
+            location: 'Virtual (Zoom)',
+            status: 'upcoming' as const,
             registrations: 45,
             capacity: 100,
           },
           {
             id: 3,
-            title: "Database Design Workshop",
-            description:
-              "Learn best practices for designing efficient and scalable databases.",
-            date: "2023-09-15",
-            time: "10:00-12:00",
-            location: "Room 105",
-            status: "completed" as const,
+            title: 'Database Design Workshop',
+            description: 'Learn best practices for designing efficient and scalable databases.',
+            date: '2023-09-15',
+            time: '10:00-12:00',
+            location: 'Room 105',
+            status: 'completed' as const,
             registrations: 20,
             capacity: 25,
           },
           {
             id: 4,
-            title: "Cybersecurity Conference",
+            title: 'Cybersecurity Conference',
             description:
-              "A conference focused on the latest trends and challenges in cybersecurity.",
-            date: "2023-10-05",
-            time: "09:00-17:00",
-            location: "Main Auditorium",
-            status: "completed" as const,
+              'A conference focused on the latest trends and challenges in cybersecurity.',
+            date: '2023-10-05',
+            time: '09:00-17:00',
+            location: 'Main Auditorium',
+            status: 'completed' as const,
             registrations: 120,
             capacity: 150,
           },
           {
             id: 5,
-            title: "Mobile App Development Bootcamp",
+            title: 'Mobile App Development Bootcamp',
             description:
-              "Intensive bootcamp on developing mobile applications for iOS and Android.",
-            date: "2023-12-01",
-            time: "09:00-16:00",
-            location: "Computer Lab 201",
-            status: "upcoming" as const,
+              'Intensive bootcamp on developing mobile applications for iOS and Android.',
+            date: '2023-12-01',
+            time: '09:00-16:00',
+            location: 'Computer Lab 201',
+            status: 'upcoming' as const,
             registrations: 15,
             capacity: 20,
           },
@@ -102,7 +104,7 @@ const AdminEventsPage = () => {
 
         setEvents(mockEvents);
       } catch (error) {
-        console.error("Error fetching events:", error);
+        console.error('Error fetching events:', error);
       } finally {
         setIsLoading(false);
       }
@@ -117,7 +119,7 @@ const AdminEventsPage = () => {
       event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       event.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
       event.location.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = status === "all" || event.status === status;
+    const matchesStatus = status === 'all' || event.status === status;
 
     return matchesSearch && matchesStatus;
   });
@@ -144,15 +146,15 @@ const AdminEventsPage = () => {
         <div className="absolute -top-10 -right-10 h-64 w-64 rounded-full bg-amber-500/5 animate-pulse" />
         <div
           className="absolute top-40 right-20 h-40 w-40 rounded-full bg-blue-700/5 animate-pulse"
-          style={{ animationDelay: "1s" }}
+          style={{ animationDelay: '1s' }}
         />
         <div
           className="absolute -bottom-10 -left-10 h-80 w-80 rounded-full bg-blue-700/5 animate-pulse"
-          style={{ animationDelay: "1.5s" }}
+          style={{ animationDelay: '1.5s' }}
         />
         <div
           className="absolute bottom-40 left-20 h-48 w-48 rounded-full bg-amber-500/5 animate-pulse"
-          style={{ animationDelay: "0.5s" }}
+          style={{ animationDelay: '0.5s' }}
         />
 
         {/* Main Content */}
@@ -172,8 +174,7 @@ const AdminEventsPage = () => {
                   </span>
                 </h1>
                 <p className="text-gray-600">
-                  Create and manage ITCA events, workshops, and seminars with
-                  ease
+                  Create and manage ITCA events, workshops, and seminars with ease
                 </p>
               </div>
 
@@ -213,6 +214,7 @@ const AdminEventsPage = () => {
                     <ListFilter className="h-5 w-5 text-gray-400" />
                   </div>
                   <select
+                    title="select"
                     className="w-full rounded-lg border border-gray-200 bg-white py-2.5 pl-10 pr-8 text-sm text-gray-700 focus:border-blue-600 focus:outline-none  focus:ring-blue-600 appearance-none cursor-pointer transition-colors"
                     value={status}
                     onChange={(e) => setStatus(e.target.value)}
@@ -244,11 +246,11 @@ const AdminEventsPage = () => {
                 <div className="flex items-center justify-center h-full rounded-lg border border-gray-200 bg-white overflow-hidden">
                   <button
                     className={`flex-1 h-full flex items-center justify-center px-3 transition-colors ${
-                      viewMode === "list"
-                        ? "bg-gradient-to-r from-blue-100 to-blue-50 text-blue-700"
-                        : "text-gray-500 hover:bg-gray-50"
+                      viewMode === 'list'
+                        ? 'bg-gradient-to-r from-blue-100 to-blue-50 text-blue-700'
+                        : 'text-gray-500 hover:bg-gray-50'
                     }`}
-                    onClick={() => setViewMode("list")}
+                    onClick={() => setViewMode('list')}
                   >
                     <ListFilter className="h-4 w-4" />
                     <span className="ml-1.5 text-sm font-medium">List</span>
@@ -256,11 +258,11 @@ const AdminEventsPage = () => {
                   <div className="h-full w-px bg-gray-200"></div>
                   <button
                     className={`flex-1 h-full flex items-center justify-center px-3 transition-colors ${
-                      viewMode === "calendar"
-                        ? "bg-gradient-to-r from-blue-100 to-blue-50 text-blue-700"
-                        : "text-gray-500 hover:bg-gray-50"
+                      viewMode === 'calendar'
+                        ? 'bg-gradient-to-r from-blue-100 to-blue-50 text-blue-700'
+                        : 'text-gray-500 hover:bg-gray-50'
                     }`}
-                    onClick={() => setViewMode("calendar")}
+                    onClick={() => setViewMode('calendar')}
                   >
                     <Calendar className="h-4 w-4" />
                     <span className="ml-1.5 text-sm font-medium">Calendar</span>
@@ -276,10 +278,7 @@ const AdminEventsPage = () => {
           ) : filteredEvents.length === 0 ? (
             <EventsEmptyState />
           ) : (
-            <EventsList
-              events={filteredEvents}
-              onDeleteClick={handleDeleteClick}
-            />
+            <EventsList events={filteredEvents} onDeleteClick={handleDeleteClick} />
           )}
         </div>
       </div>
@@ -299,3 +298,33 @@ const AdminEventsPage = () => {
 };
 
 export default AdminEventsPage;
+
+export const getServerSideProps = async ({ req }: { req: NextApiRequest }) => {
+  const userData = isLoggedIn(req);
+
+  if (userData === false) {
+    return {
+      redirect: {
+        destination: '/auth',
+        permanent: false,
+      },
+    };
+  }
+
+  const userAuth = userData as UserAuth;
+
+  if (userAuth.role === 'user') {
+    return {
+      redirect: {
+        destination: '/student',
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      userData,
+    },
+  };
+};

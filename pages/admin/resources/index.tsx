@@ -1,19 +1,16 @@
-import { useEffect } from "react";
-import { useResources } from "@/hooks/admin/use-resources";
-import { Upload, Trash2 } from "lucide-react";
-import Link from "next/link";
-import ResourceTable from "@/components/dashboard/admin/resources/table/resource-table";
-import DashboardLayout from "@/components/dashboard/layout/dashboard-layout";
+import { useEffect } from 'react';
+import { useResources } from '@/hooks/admin/use-resources';
+import { Upload, Trash2 } from 'lucide-react';
+import Link from 'next/link';
+import ResourceTable from '@/components/dashboard/admin/resources/table/resource-table';
+import DashboardLayout from '@/components/dashboard/layout/dashboard-layout';
+import { UserAuth } from '@/types';
+import { isLoggedIn } from '@/utils/auth';
+import { NextApiRequest } from 'next';
 
 const AdminResourcesPage = () => {
-  const {
-    resources,
-    isLoading,
-    isError,
-    fetchResources,
-    moveToRecycleBin,
-    batchMoveToRecycleBin,
-  } = useResources();
+  const { resources, isLoading, isError, fetchResources, moveToRecycleBin, batchMoveToRecycleBin } =
+    useResources();
 
   useEffect(() => {
     // Only fetch non-deleted resources for the main page
@@ -30,19 +27,17 @@ const AdminResourcesPage = () => {
       // Call the move to recycle bin function
       return await moveToRecycleBin(resourceId, resource.title);
     } catch (err) {
-      console.error("Error deleting resource:", err);
+      console.error('Error deleting resource:', err);
       return false;
     }
   };
 
   // Handle deleting multiple resources
-  const handleDeleteMultiple = async (
-    resourceIds: string[]
-  ): Promise<boolean> => {
+  const handleDeleteMultiple = async (resourceIds: string[]): Promise<boolean> => {
     try {
       return await batchMoveToRecycleBin(resourceIds);
     } catch (err) {
-      console.error("Error deleting multiple resources:", err);
+      console.error('Error deleting multiple resources:', err);
       return false;
     }
   };
@@ -63,9 +58,7 @@ const AdminResourcesPage = () => {
                 </span>
               </span>
             </h1>
-            <p className="text-gray-600">
-              Upload and manage educational resources and materials
-            </p>
+            <p className="text-gray-600">Upload and manage educational resources and materials</p>
           </div>
           {/*==================== End of Page Title Header ====================*/}
 
@@ -108,3 +101,33 @@ const AdminResourcesPage = () => {
 };
 
 export default AdminResourcesPage;
+
+export const getServerSideProps = async ({ req }: { req: NextApiRequest }) => {
+  const userData = isLoggedIn(req);
+
+  if (userData === false) {
+    return {
+      redirect: {
+        destination: '/auth',
+        permanent: false,
+      },
+    };
+  }
+
+  const userAuth = userData as UserAuth;
+
+  if (userAuth.role === 'user') {
+    return {
+      redirect: {
+        destination: '/student',
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      userData,
+    },
+  };
+};

@@ -1,9 +1,12 @@
-import { useState, useEffect } from "react";
-import { Calendar, Users, FileText, PieChart } from "lucide-react";
-import DashboardLayout from "@/components/dashboard/layout/dashboard-layout";
-import StatsCard from "@/components/dashboard/admin/overview/stats-card";
-import UserTable from "@/components/dashboard/admin/overview/user-table";
-import RecentActivity from "@/components/dashboard/admin/overview/recent-activity";
+import { useState, useEffect } from 'react';
+import { Calendar, Users, FileText, PieChart } from 'lucide-react';
+import DashboardLayout from '@/components/dashboard/layout/dashboard-layout';
+import StatsCard from '@/components/dashboard/admin/overview/stats-card';
+import UserTable from '@/components/dashboard/admin/overview/user-table';
+import RecentActivity from '@/components/dashboard/admin/overview/recent-activity';
+import { isLoggedIn } from '@/utils/auth';
+import { NextApiRequest } from 'next';
+import { UserAuth } from '@/types';
 
 // Types for dashboard data
 interface DashboardStats {
@@ -39,7 +42,7 @@ const AdminDashboard = () => {
           activeUsers: 124,
         });
       } catch (error) {
-        console.error("Error fetching dashboard data:", error);
+        console.error('Error fetching dashboard data:', error);
       } finally {
         setIsLoading(false);
       }
@@ -67,7 +70,7 @@ const AdminDashboard = () => {
       {/*==================== Stats Cards ====================*/}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <StatsCard
-          trend={"+5.2%"}
+          trend={'+5.2%'}
           title="Total Users"
           trendDirection="up"
           isLoading={isLoading}
@@ -75,7 +78,7 @@ const AdminDashboard = () => {
           icon={<Users className="h-6 w-6 text-blue-600" />}
         />
         <StatsCard
-          trend={"+2.4%"}
+          trend={'+2.4%'}
           trendDirection="up"
           title="Active Events"
           isLoading={isLoading}
@@ -83,7 +86,7 @@ const AdminDashboard = () => {
           icon={<Calendar className="h-6 w-6 text-amber-500" />}
         />
         <StatsCard
-          trend={"+8.1%"}
+          trend={'+8.1%'}
           title="Resources"
           trendDirection="up"
           isLoading={isLoading}
@@ -91,7 +94,7 @@ const AdminDashboard = () => {
           icon={<FileText className="h-6 w-6 text-green-500" />}
         />
         <StatsCard
-          trend={"-1.8%"}
+          trend={'-1.8%'}
           title="Active Users"
           trendDirection="down"
           isLoading={isLoading}
@@ -121,3 +124,33 @@ const AdminDashboard = () => {
 };
 
 export default AdminDashboard;
+
+export const getServerSideProps = async ({ req }: { req: NextApiRequest }) => {
+  const userData = isLoggedIn(req);
+
+  if (userData === false) {
+    return {
+      redirect: {
+        destination: '/auth',
+        permanent: false,
+      },
+    };
+  }
+
+  const userAuth = userData as UserAuth;
+
+  if (userAuth.role === 'user') {
+    return {
+      redirect: {
+        destination: '/student',
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      userData,
+    },
+  };
+};

@@ -1,11 +1,14 @@
-import { useState, useEffect } from "react";
-import StatsCard from "@/components/dashboard/student/stats-card";
-import { BookOpen, Calendar, FileText, Award } from "lucide-react";
-import Link from "next/link";
-import DashboardLayout from "@/components/dashboard/layout/dashboard-layout";
-import CourseList from "@/components/dashboard/student/course/course-list";
-import UpcomingEvents from "@/components/dashboard/student/upcoming-events";
-import ResourceList from "@/components/dashboard/student/resource/resource-list";
+import { useState, useEffect } from 'react';
+import StatsCard from '@/components/dashboard/student/stats-card';
+import { BookOpen, Calendar, FileText, Award } from 'lucide-react';
+import Link from 'next/link';
+import DashboardLayout from '@/components/dashboard/layout/dashboard-layout';
+import CourseList from '@/components/dashboard/student/course/course-list';
+import UpcomingEvents from '@/components/dashboard/student/upcoming-events';
+import ResourceList from '@/components/dashboard/student/resource/resource-list';
+import { NextApiRequest } from 'next';
+import { isLoggedIn } from '@/utils/auth';
+import { UserAuth } from '@/types';
 
 // Types for student dashboard data
 interface StudentDashboardData {
@@ -65,60 +68,60 @@ const StudentDashboard = () => {
           upcomingEvents: [
             {
               id: 1,
-              title: "Web Development Workshop",
-              date: "Oct 25, 2023",
-              time: "2:00 PM",
-              location: "Lab 302",
+              title: 'Web Development Workshop',
+              date: 'Oct 25, 2023',
+              time: '2:00 PM',
+              location: 'Lab 302',
             },
             {
               id: 2,
-              title: "AI & Machine Learning Seminar",
-              date: "Nov 10, 2023",
-              time: "3:00 PM",
-              location: "Virtual (Zoom)",
+              title: 'AI & Machine Learning Seminar',
+              date: 'Nov 10, 2023',
+              time: '3:00 PM',
+              location: 'Virtual (Zoom)',
             },
           ],
           recentResources: [
             {
               id: 1,
-              title: "Introduction to Python Programming",
-              type: "PDF",
-              date: "Oct 15, 2023",
+              title: 'Introduction to Python Programming',
+              type: 'PDF',
+              date: 'Oct 15, 2023',
             },
             {
               id: 2,
-              title: "Database Design Principles",
-              type: "PPTX",
-              date: "Oct 12, 2023",
+              title: 'Database Design Principles',
+              type: 'PPTX',
+              date: 'Oct 12, 2023',
             },
             {
               id: 3,
-              title: "Web Security Best Practices",
-              type: "PDF",
-              date: "Oct 8, 2023",
+              title: 'Web Security Best Practices',
+              type: 'PDF',
+              date: 'Oct 8, 2023',
             },
           ],
           courses: [
             {
               id: 1,
-              title: "Introduction to Web Development",
-              instructor: "Dr. Sarah Johnson",
+              title: 'Introduction to Web Development',
+              instructor: 'Dr. Sarah Johnson',
               progress: 75,
               totalResources: 12,
               totalStudents: 45,
             },
             {
               id: 2,
-              title: "Data Structures and Algorithms",
-              instructor: "Prof. Michael Chen",
+              title: 'Data Structures and Algorithms',
+              instructor: 'Prof. Michael Chen',
               progress: 60,
               totalResources: 18,
               totalStudents: 32,
             },
             {
               id: 3,
-              title: "Mobile App Development with React Native",
-              instructor: "Dr. David Wilson",
+              title: 'Mobile App Development with React Native',
+              instructor: 'Dr. David Wilson',
               progress: 40,
               totalResources: 15,
               totalStudents: 28,
@@ -126,7 +129,7 @@ const StudentDashboard = () => {
           ],
         });
       } catch (error) {
-        console.error("Error fetching student dashboard data:", error);
+        console.error('Error fetching student dashboard data:', error);
       } finally {
         setIsLoading(false);
       }
@@ -138,9 +141,7 @@ const StudentDashboard = () => {
   return (
     <DashboardLayout title="Student Dashboard">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">
-          Student Dashboard
-        </h1>
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">Student Dashboard</h1>
         <p className="text-gray-600">Welcome back, John Doe</p>
       </div>
 
@@ -191,19 +192,13 @@ const StudentDashboard = () => {
         {/*==================== Upcoming Events ====================*/}
         <div className="lg:col-span-2">
           <h2 className="text-lg font-semibold mb-4">Upcoming Events</h2>
-          <UpcomingEvents
-            events={dashboardData.upcomingEvents}
-            isLoading={isLoading}
-          />
+          <UpcomingEvents events={dashboardData.upcomingEvents} isLoading={isLoading} />
         </div>
 
         {/*==================== Recent Resources ====================*/}
         <div>
           <h2 className="text-lg font-semibold mb-4">Recent Resources</h2>
-          <ResourceList
-            isLoading={isLoading}
-            resources={dashboardData.recentResources}
-          />
+          <ResourceList isLoading={isLoading} resources={dashboardData.recentResources} />
         </div>
       </div>
     </DashboardLayout>
@@ -211,3 +206,33 @@ const StudentDashboard = () => {
 };
 
 export default StudentDashboard;
+
+export const getServerSideProps = async ({ req }: { req: NextApiRequest }) => {
+  const userData = isLoggedIn(req);
+
+  if (userData === false) {
+    return {
+      redirect: {
+        destination: '/auth',
+        permanent: false,
+      },
+    };
+  }
+
+  const userAuth = userData as UserAuth;
+
+  if (userAuth.role === 'admin') {
+    return {
+      redirect: {
+        destination: '/admin',
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      userData,
+    },
+  };
+};

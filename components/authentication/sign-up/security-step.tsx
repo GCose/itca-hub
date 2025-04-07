@@ -1,13 +1,13 @@
-import React from "react";
-import { motion } from "framer-motion";
-import { Eye, EyeOff, Lock } from "lucide-react";
-import Link from "next/link";
-import { FormData } from "@/types/sign-up";
-import PasswordStrengthIndicator from "./password-strength-indicator";
-import AuthButton from "../auth-button";
+import React from 'react';
+import { motion } from 'framer-motion';
+import { Eye, EyeOff, Lock } from 'lucide-react';
+import Link from 'next/link';
+import { RegistrationFormData } from '@/types';
+import PasswordStrengthIndicator from './password-strength-indicator';
+import AuthButton from '../auth-button';
 
 interface SecurityStepProps {
-  formData: FormData;
+  formData: RegistrationFormData;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onPrevious: () => void;
   isLoading: boolean;
@@ -35,10 +35,7 @@ const SecurityStep = ({
       transition={{ duration: 0.3 }}
     >
       <div className="mb-6">
-        <label
-          htmlFor="password"
-          className="block text-sm font-medium text-gray-700 mb-2"
-        >
+        <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
           Password
         </label>
         <div className="relative">
@@ -52,7 +49,7 @@ const SecurityStep = ({
             onChange={onChange}
             placeholder="••••••••"
             value={formData.password}
-            type={showPassword ? "text" : "password"}
+            type={showPassword ? 'text' : 'password'}
             className="pl-10 w-full py-3 px-4 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-all"
           />
           <button
@@ -73,10 +70,7 @@ const SecurityStep = ({
       </div>
 
       <div className="mb-6">
-        <label
-          htmlFor="confirmPassword"
-          className="block text-sm font-medium text-gray-700 mb-2"
-        >
+        <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
           Confirm Password
         </label>
         <div className="relative">
@@ -90,7 +84,7 @@ const SecurityStep = ({
             name="confirmPassword"
             placeholder="••••••••"
             value={formData.confirmPassword}
-            type={showConfirmPassword ? "text" : "password"}
+            type={showConfirmPassword ? 'text' : 'password'}
             className="pl-10 w-full py-3 px-4 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-all"
           />
           <button
@@ -122,18 +116,12 @@ const SecurityStep = ({
             className="h-4 w-4 text-blue-700 focus:ring-blue-500 border-gray-300 rounded"
           />
           <span className="ml-2 text-sm text-gray-600">
-            I agree to the{" "}
-            <Link
-              href="/terms"
-              className="text-blue-700 hover:text-blue-600 underline"
-            >
+            I agree to the{' '}
+            <Link href="/terms" className="text-blue-700 hover:text-blue-600 underline">
               Terms of Service
-            </Link>{" "}
-            and{" "}
-            <Link
-              href="/privacy"
-              className="text-blue-700 hover:text-blue-600 underline"
-            >
+            </Link>{' '}
+            and{' '}
+            <Link href="/privacy" className="text-blue-700 hover:text-blue-600 underline">
               Privacy Policy
             </Link>
           </span>
@@ -141,12 +129,7 @@ const SecurityStep = ({
       </div>
 
       <div className="flex space-x-4">
-        <AuthButton
-          variant="secondary"
-          onClick={onPrevious}
-          fullWidth={false}
-          className="w-1/3"
-        >
+        <AuthButton variant="secondary" onClick={onPrevious} fullWidth={false} className="w-1/3">
           Back
         </AuthButton>
 
