@@ -1,10 +1,11 @@
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { BASE_URL } from '@/utils/url';
 import { NextApiRequest } from 'next';
 import { isLoggedIn } from '@/utils/auth';
-import { UserAuth } from '@/types';
+import { CustomError, ErrorResponseData, UserAuth } from '@/types';
+import { getErrorMessage } from '@/utils/error';
 
 const VerifyEmail = () => {
   const router = useRouter();
@@ -23,7 +24,10 @@ const VerifyEmail = () => {
       setStatus('Email verified successfully! Redirecting to login...');
       setTimeout(() => router.push('/auth'), 3000);
     } catch (error) {
-      setStatus('Verification failed. The link may be expired or invalid.');
+      const { message } = getErrorMessage(
+        error as AxiosError<ErrorResponseData> | CustomError | Error
+      );
+      setStatus(message);
     }
   };
 

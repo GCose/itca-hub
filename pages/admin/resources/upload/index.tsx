@@ -7,14 +7,14 @@ import { isLoggedIn } from '@/utils/auth';
 import { NextApiRequest } from 'next';
 
 const AdminResourceUploadPage = () => {
-  const handleUploadComplete = (fileData: {
+  const handleUploadComplete = (_fileData: {
     fileName: string;
     fileUrl: string;
     fileType: string;
     fileSize: string;
   }) => {
     // Logging the successful upload for debugging purposes because I can
-    console.log('Upload completed successfully:', fileData);
+    // console.log('Upload completed successfully:', fileData);
   };
 
   return (
