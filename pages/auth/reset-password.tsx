@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Eye, EyeOff, Lock, ShieldCheck, KeyRound, AlertCircle } from 'lucide-react';
+import { Eye, EyeOff, Lock, ShieldCheck, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'sonner';
 import AuthLayout from '@/components/authentication/auth-layout';

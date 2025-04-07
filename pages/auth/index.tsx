@@ -11,7 +11,6 @@ import { CustomError, ErrorResponseData, UserAuth } from '@/types';
 import { useRouter } from 'next/router';
 import { NextApiRequest } from 'next';
 import { isLoggedIn } from '@/utils/auth';
-import { BASE_URL } from '@/utils/url';
 
 const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -23,24 +22,24 @@ const SignIn = () => {
   const router = useRouter();
 
   // Call this for resend verification link
-  const handleResendVerificationLink = async () => {
-    try {
-      await axios.post(`${BASE_URL}/auth/resend-verification`, { schoolEmail });
+  // const handleResendVerificationLink = async () => {
+  //   try {
+  //     await axios.post(`${BASE_URL}/auth/resend-verification`, { schoolEmail });
 
-      // Show success message for resent verification link, something like this below
+  //     // Show success message for resent verification link, something like this below
 
-      // toast.success('Verification email sent successfully', {
-      //   id: toast.loading('Sending email...'),
-      //   description: 'Check your email for the verification link',
-      //   duration: 5000,
-      // });
-    } catch (error) {
-      const { message } = getErrorMessage(
-        error as AxiosError<ErrorResponseData> | CustomError | Error
-      );
-      setError(message);
-    }
-  };
+  //     // toast.success('Verification email sent successfully', {
+  //     //   id: toast.loading('Sending email...'),
+  //     //   description: 'Check your email for the verification link',
+  //     //   duration: 5000,
+  //     // });
+  //   } catch (error) {
+  //     const { message } = getErrorMessage(
+  //       error as AxiosError<ErrorResponseData> | CustomError | Error
+  //     );
+  //     setError(message);
+  //   }
+  // };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
