@@ -128,7 +128,7 @@ const Sidebar = ({ open, setOpen }: SidebarProps) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             onClick={() => setOpen(false)}
-            className="fixed inset-0 z-40 bg-gray-600/20 backdrop-blur-sm bg-opacity-75 max-[967px]:block hidden"
+            className="fixed inset-0 z-40 bg-gray-600/30 backdrop-blur-sm bg-opacity-75 max-[967px]:block hidden"
           />
         )}
       </AnimatePresence>
