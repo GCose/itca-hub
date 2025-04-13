@@ -136,7 +136,7 @@ const Sidebar = ({ open, setOpen }: SidebarProps) => {
 
       {/*==================== Sidebar ====================*/}
       <div
-        className={`fixed rounded-tl-4xl  inset-y-0 z-50 w-60 transform overflow-hidden max-[968px]:bg-white lg:bg-white transition-transform ease-in-out duration-300 
+        className={`fixed rounded-tl-4xl inset-y-0 z-50 w-60 transform overflow-hidden max-[968px]:bg-white lg:bg-white transition-transform ease-in-out duration-300 
                     ${open ? 'translate-x-0' : '-translate-x-full'} 
                     min-[968px]:translate-x-0 min-[968px]:static min-[968px]:z-0`}
       >
