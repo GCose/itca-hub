@@ -128,7 +128,7 @@ const Sidebar = ({ open, setOpen }: SidebarProps) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             onClick={() => setOpen(false)}
-            className="fixed inset-0 z-40 bg-gray-600 bg-opacity-75 max-[967px]:block hidden"
+            className="fixed inset-0 z-40 bg-gray-600/20 backdrop-blur-sm bg-opacity-75 max-[967px]:block hidden"
           />
         )}
       </AnimatePresence>
@@ -136,7 +136,7 @@ const Sidebar = ({ open, setOpen }: SidebarProps) => {
 
       {/*==================== Sidebar ====================*/}
       <div
-        className={`fixed rounded-tr-4xl inset-y-0 z-50 w-60 transform overflow-hidden max-[968px]:bg-white lg:bg-white transition-transform ease-in-out duration-300 
+        className={`fixed rounded-tr-4xl inset-y-0 z-50 w-60 transform overflow-hidden max-[968px]:bg-white lg:bg-white transition-transform ease-in-out duration-700 
                     ${open ? 'translate-x-0' : '-translate-x-full'} 
                     min-[968px]:translate-x-0 min-[968px]:static min-[968px]:z-0`}
       >
