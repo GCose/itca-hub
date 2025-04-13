@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { useResources } from "@/hooks/admin/use-resources";
+import { useState, useEffect } from 'react';
+import { useResources } from '@/hooks/admin/use-resources';
 import {
   Trash2,
   RefreshCw,
@@ -15,12 +15,15 @@ import {
   ScrollText,
   FileCode,
   File,
-} from "lucide-react";
-import Link from "next/link";
-import { NetworkError } from "@/components/error-message";
-import formatDepartment from "@/utils/admin/format-department";
-import DashboardLayout from "@/components/dashboard/layout/dashboard-layout";
-import { motion, AnimatePresence } from "framer-motion";
+} from 'lucide-react';
+import Link from 'next/link';
+import { NetworkError } from '@/components/error-message';
+import formatDepartment from '@/utils/admin/format-department';
+import DashboardLayout from '@/components/dashboard/layout/dashboard-layout';
+import { motion, AnimatePresence } from 'framer-motion';
+import { UserAuth } from '@/types';
+import { isLoggedIn } from '@/utils/auth';
+import { NextApiRequest } from 'next';
 
 const RecycleBinPage = () => {
   const {
@@ -32,12 +35,8 @@ const RecycleBinPage = () => {
     restoreFromRecycleBin,
   } = useResources();
 
-  const [deletedResources, setDeletedResources] = useState<typeof resources>(
-    []
-  );
-  const [selectedResource, setSelectedResource] = useState<
-    (typeof resources)[0] | null
-  >(null);
+  const [deletedResources, setDeletedResources] = useState<typeof resources>([]);
+  const [selectedResource, setSelectedResource] = useState<(typeof resources)[0] | null>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showRestoreModal, setShowRestoreModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -69,14 +68,12 @@ const RecycleBinPage = () => {
       );
 
       if (success) {
-        setDeletedResources((prev) =>
-          prev.filter((r) => r.id !== selectedResource.id)
-        );
+        setDeletedResources((prev) => prev.filter((r) => r.id !== selectedResource.id));
         setShowDeleteModal(false);
         setSelectedResource(null);
       }
     } catch (err) {
-      console.error("Error permanently deleting resource:", err);
+      console.error('Error permanently deleting resource:', err);
     } finally {
       setIsDeleting(false);
     }
@@ -88,20 +85,15 @@ const RecycleBinPage = () => {
 
     setIsRestoring(true);
     try {
-      const success = await restoreFromRecycleBin(
-        selectedResource.id,
-        selectedResource.title
-      );
+      const success = await restoreFromRecycleBin(selectedResource.id, selectedResource.title);
 
       if (success) {
-        setDeletedResources((prev) =>
-          prev.filter((r) => r.id !== selectedResource.id)
-        );
+        setDeletedResources((prev) => prev.filter((r) => r.id !== selectedResource.id));
         setShowRestoreModal(false);
         setSelectedResource(null);
       }
     } catch (err) {
-      console.error("Error restoring resource:", err);
+      console.error('Error restoring resource:', err);
     } finally {
       setIsRestoring(false);
     }
@@ -109,25 +101,25 @@ const RecycleBinPage = () => {
 
   // Format date for display
   const formatDate = (dateString?: string) => {
-    if (!dateString) return "Unknown";
+    if (!dateString) return 'Unknown';
     const date = new Date(dateString);
-    return date.toLocaleDateString() + " " + date.toLocaleTimeString();
+    return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
   };
 
   // Get category icon
   const getCategoryIcon = (category: string) => {
     switch (category) {
-      case "Lecture Notes":
+      case 'Lecture Notes':
         return <BookOpen className="h-4 w-4 text-blue-500 mr-1" />;
-      case "Assignments":
+      case 'Assignments':
         return <ScrollText className="h-4 w-4 text-green-500 mr-1" />;
-      case "Past Papers":
+      case 'Past Papers':
         return <FileQuestion className="h-4 w-4 text-orange-500 mr-1" />;
-      case "Tutorials":
+      case 'Tutorials':
         return <GraduationCap className="h-4 w-4 text-purple-500 mr-1" />;
-      case "Textbooks":
+      case 'Textbooks':
         return <BookMarked className="h-4 w-4 text-red-500 mr-1" />;
-      case "Research Papers":
+      case 'Research Papers':
         return <FileCode className="h-4 w-4 text-indigo-500 mr-1" />;
       default:
         return <File className="h-4 w-4 text-gray-500 mr-1" />;
@@ -137,20 +129,20 @@ const RecycleBinPage = () => {
   // Close modal on escape key
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
+      if (e.key === 'Escape') {
         setShowDeleteModal(false);
         setShowRestoreModal(false);
       }
     };
 
     if (showDeleteModal || showRestoreModal) {
-      document.addEventListener("keydown", handleEscape);
-      document.body.style.overflow = "hidden"; // Prevent scrolling when modal is open
+      document.addEventListener('keydown', handleEscape);
+      document.body.style.overflow = 'hidden'; // Prevent scrolling when modal is open
     }
 
     return () => {
-      document.removeEventListener("keydown", handleEscape);
-      document.body.style.overflow = ""; // Restore scrolling when modal is closed
+      document.removeEventListener('keydown', handleEscape);
+      document.body.style.overflow = ''; // Restore scrolling when modal is closed
     };
   }, [showDeleteModal, showRestoreModal]);
 
@@ -176,8 +168,8 @@ const RecycleBinPage = () => {
               </span>
             </h1>
             <p className="text-gray-600">
-              View and manage deleted resources. Items remain here for 30 days
-              before being permanently removed.
+              View and manage deleted resources. Items remain here for 30 days before being
+              permanently removed.
             </p>
           </div>
         </div>
@@ -195,10 +187,7 @@ const RecycleBinPage = () => {
 
       {/*==================== Error State ====================*/}
       {isError && (
-        <NetworkError
-          title="Unable to load recycle bin"
-          onRetry={() => fetchResources(true)}
-        />
+        <NetworkError title="Unable to load recycle bin" onRetry={() => fetchResources(true)} />
       )}
       {/*==================== End of Error State ====================*/}
 
@@ -206,9 +195,7 @@ const RecycleBinPage = () => {
       {!isError && !isLoading && deletedResources.length === 0 && (
         <div className="rounded-2xl bg-white p-8 text-center">
           <Trash2 className="mx-auto h-12 w-12 text-gray-400 mb-3" />
-          <h3 className="text-lg font-medium text-gray-900 mb-1">
-            Recycle Bin is Empty
-          </h3>
+          <h3 className="text-lg font-medium text-gray-900 mb-1">Recycle Bin is Empty</h3>
           <p className="text-gray-500 mb-4">
             No resources have been deleted. Deleted resources will appear here.
           </p>
@@ -229,9 +216,7 @@ const RecycleBinPage = () => {
       {!isError && !isLoading && deletedResources.length > 0 && (
         <div className="rounded-2xl bg-white">
           <div className="px-5 py-4 border-b border-gray-200">
-            <h3 className="text-lg font-medium text-gray-900">
-              Deleted Resources
-            </h3>
+            <h3 className="text-lg font-medium text-gray-900">Deleted Resources</h3>
           </div>
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
@@ -273,9 +258,7 @@ const RecycleBinPage = () => {
                 {deletedResources.map((resource) => (
                   <tr key={resource.id} className="hover:bg-gray-100">
                     <td className="px-6 py-4">
-                      <div className="text-sm font-medium text-gray-900">
-                        {resource.title}
-                      </div>
+                      <div className="text-sm font-medium text-gray-900">{resource.title}</div>
                       <div className="text-xs text-gray-500 truncate max-w-[250px]">
                         {resource.description}
                       </div>
@@ -352,7 +335,7 @@ const RecycleBinPage = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 10 }}
-              transition={{ duration: 0.3, type: "spring", damping: 25 }}
+              transition={{ duration: 0.3, type: 'spring', damping: 25 }}
             >
               <div className="relative p-6">
                 <div className="mb-5 flex justify-between items-center">
@@ -360,12 +343,11 @@ const RecycleBinPage = () => {
                     <div className="mr-3 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-blue-100">
                       <RotateCcw className="h-5 w-5 text-blue-600" />
                     </div>
-                    <h3 className="text-lg font-medium text-gray-900">
-                      Restore Resource
-                    </h3>
+                    <h3 className="text-lg font-medium text-gray-900">Restore Resource</h3>
                   </div>
 
                   <button
+                    title="button"
                     type="button"
                     className="rounded-full p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-500"
                     onClick={() => setShowRestoreModal(false)}
@@ -383,18 +365,14 @@ const RecycleBinPage = () => {
                   </p>
 
                   <div className="mt-4 p-3 bg-gray-50 rounded-lg">
-                    <p className="text-sm font-medium text-gray-900">
-                      {selectedResource.title}
-                    </p>
+                    <p className="text-sm font-medium text-gray-900">{selectedResource.title}</p>
                     <p className="text-xs text-gray-500 mt-1">
-                      Type: {selectedResource.type.toUpperCase()} • Size:{" "}
+                      Type: {selectedResource.type.toUpperCase()} • Size:{' '}
                       {selectedResource.fileSize}
                     </p>
                     <p className="text-xs text-gray-500 mt-1">
-                      Category: {selectedResource.category} • Visibility:{" "}
-                      {selectedResource.visibility === "all"
-                        ? "All Users"
-                        : "Admin Only"}
+                      Category: {selectedResource.category} • Visibility:{' '}
+                      {selectedResource.visibility === 'all' ? 'All Users' : 'Admin Only'}
                     </p>
                   </div>
                 </div>
@@ -420,7 +398,7 @@ const RecycleBinPage = () => {
                         Restoring...
                       </>
                     ) : (
-                      "Restore Resource"
+                      'Restore Resource'
                     )}
                   </button>
                 </div>
@@ -453,7 +431,7 @@ const RecycleBinPage = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 10 }}
-              transition={{ duration: 0.3, type: "spring", damping: 25 }}
+              transition={{ duration: 0.3, type: 'spring', damping: 25 }}
             >
               <div className="relative p-6">
                 <div className="mb-5 flex justify-between items-center">
@@ -467,6 +445,7 @@ const RecycleBinPage = () => {
                   </div>
 
                   <button
+                    title="button"
                     type="button"
                     className="rounded-full p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-500"
                     onClick={() => setShowDeleteModal(false)}
@@ -479,23 +458,18 @@ const RecycleBinPage = () => {
                 <div className="mb-6">
                   <p className="text-sm text-gray-600 mb-2">
                     Are you sure you want to permanently delete &quot;
-                    {selectedResource.title}&quot;? This action cannot be
-                    undone.
+                    {selectedResource.title}&quot;? This action cannot be undone.
                   </p>
 
                   <div className="mt-4 p-3 bg-gray-50 rounded-lg">
-                    <p className="text-sm font-medium text-gray-900">
-                      {selectedResource.title}
-                    </p>
+                    <p className="text-sm font-medium text-gray-900">{selectedResource.title}</p>
                     <p className="text-xs text-gray-500 mt-1">
-                      Type: {selectedResource.type.toUpperCase()} • Size:{" "}
+                      Type: {selectedResource.type.toUpperCase()} • Size:{' '}
                       {selectedResource.fileSize}
                     </p>
                     <p className="text-xs text-gray-500 mt-1">
-                      Category: {selectedResource.category} • Visibility:{" "}
-                      {selectedResource.visibility === "all"
-                        ? "All Users"
-                        : "Admin Only"}
+                      Category: {selectedResource.category} • Visibility:{' '}
+                      {selectedResource.visibility === 'all' ? 'All Users' : 'Admin Only'}
                     </p>
                   </div>
                 </div>
@@ -521,7 +495,7 @@ const RecycleBinPage = () => {
                         Deleting...
                       </>
                     ) : (
-                      "Delete Permanently"
+                      'Delete Permanently'
                     )}
                   </button>
                 </div>
@@ -537,3 +511,33 @@ const RecycleBinPage = () => {
 };
 
 export default RecycleBinPage;
+
+export const getServerSideProps = async ({ req }: { req: NextApiRequest }) => {
+  const userData = isLoggedIn(req);
+
+  if (userData === false) {
+    return {
+      redirect: {
+        destination: '/auth',
+        permanent: false,
+      },
+    };
+  }
+
+  const userAuth = userData as UserAuth;
+
+  if (userAuth.role === 'user') {
+    return {
+      redirect: {
+        destination: '/student',
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      userData,
+    },
+  };
+};

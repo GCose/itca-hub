@@ -1,36 +1,77 @@
-import { useState } from "react";
-import { motion } from "framer-motion";
-import { Eye, EyeOff, Lock, Mail } from "lucide-react";
-import Link from "next/link";
-import AuthLayout from "@/components/authentication/auth-layout";
-import AuthButton from "@/components/authentication/auth-button";
-import useTimedError from "@/hooks/timed-error";
+import { useState } from 'react';
+import { motion } from 'framer-motion';
+import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
+import Link from 'next/link';
+import AuthLayout from '@/components/authentication/auth-layout';
+import AuthButton from '@/components/authentication/auth-button';
+import useTimedError from '@/hooks/timed-error';
+import axios, { AxiosError } from 'axios';
+import { getErrorMessage } from '@/utils/error';
+import { CustomError, ErrorResponseData, UserAuth } from '@/types';
+import { useRouter } from 'next/router';
+import { NextApiRequest } from 'next';
+import { isLoggedIn } from '@/utils/auth';
 
 const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [schoolEmail, setSchoolEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useTimedError();
 
+  const router = useRouter();
+
+  // Call this for resend verification link
+  // const handleResendVerificationLink = async () => {
+  //   try {
+  //     await axios.post(`${BASE_URL}/auth/resend-verification`, { schoolEmail });
+
+  //     // Show success message for resent verification link, something like this below
+
+  //     // toast.success('Verification email sent successfully', {
+  //     //   id: toast.loading('Sending email...'),
+  //     //   description: 'Check your email for the verification link',
+  //     //   duration: 5000,
+  //     // });
+  //   } catch (error) {
+  //     const { message } = getErrorMessage(
+  //       error as AxiosError<ErrorResponseData> | CustomError | Error
+  //     );
+  //     setError(message);
+  //   }
+  // };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
+    setError('');
 
-    if (!email || !password) {
-      setError("Please fill in all fields");
+    if (!schoolEmail || !password) {
+      setError('Please fill in all fields');
       return;
     }
 
-    try {
-      setIsLoading(true);
-      // API simulation call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+    setIsLoading(true);
 
-      // Redirect to dashboard or home page after successful login
-      window.location.href = "/student";
-    } catch {
-      setError("Invalid email or password");
+    try {
+      const { data } = await axios.post('/api/login', { schoolEmail, password });
+
+      // Show that alert user is logged in
+
+      switch (data.role) {
+        case 'admin':
+          router.push('/admin');
+          break;
+        case 'user':
+          router.push('/student');
+          break;
+        default:
+          break;
+      }
+    } catch (error) {
+      const { message } = getErrorMessage(
+        error as AxiosError<ErrorResponseData> | CustomError | Error
+      );
+      setError(message);
     } finally {
       setIsLoading(false);
     }
@@ -44,12 +85,10 @@ const SignIn = () => {
       transition={{ duration: 0.5, delay: 0.2 }}
       className="max-w-4xl text-center"
     >
-      <h2 className="text-6xl font-bold mb-6">
-        Unlock Your Potential with ITCA
-      </h2>
+      <h2 className="text-6xl font-bold mb-6">Unlock Your Potential with ITCA</h2>
       <p className="text-lg text-white/80 mb-8">
-        Access exclusive resources, connect with industry professionals, and
-        enhance your skills in information technology and communication.
+        Access exclusive resources, connect with industry professionals, and enhance your skills in
+        information technology and communication.
       </p>
 
       <div className="flex justify-center space-x-4">
@@ -77,9 +116,7 @@ const SignIn = () => {
     >
       <>
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome back</h1>
-        <p className="text-gray-600 mb-8">
-          Sign in to your account to continue
-        </p>
+        <p className="text-gray-600 mb-8">Sign in to your account to continue</p>
 
         {error && (
           <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg">
@@ -89,10 +126,7 @@ const SignIn = () => {
 
         <form onSubmit={handleSubmit}>
           <div className="mb-6">
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700 mb-2"
-            >
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
               Email Address
             </label>
             <div className="relative">
@@ -103,9 +137,9 @@ const SignIn = () => {
                 required
                 id="email"
                 type="email"
-                value={email}
+                value={schoolEmail}
                 placeholder="your.email@utg.edu.gm"
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => setSchoolEmail(e.target.value)}
                 className="pl-10 w-full py-3 px-4 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-all"
               />
             </div>
@@ -113,10 +147,7 @@ const SignIn = () => {
 
           <div className="mb-6">
             <div className="flex items-center justify-between mb-2">
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-gray-700"
-              >
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                 Password
               </label>
               <Link
@@ -135,7 +166,7 @@ const SignIn = () => {
                 id="password"
                 value={password}
                 placeholder="••••••••"
-                type={showPassword ? "text" : "password"}
+                type={showPassword ? 'text' : 'password'}
                 onChange={(e) => setPassword(e.target.value)}
                 className="pl-10 w-full py-3 px-4 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-all"
               />
@@ -153,18 +184,14 @@ const SignIn = () => {
             </div>
           </div>
 
-          <AuthButton
-            type="submit"
-            isLoading={isLoading}
-            loadingText="Signing in..."
-          >
+          <AuthButton type="submit" isLoading={isLoading} loadingText="Signing in...">
             Sign in
           </AuthButton>
         </form>
 
         <div className="mt-8 text-center">
           <p className="text-gray-600">
-            Do not have an account?{" "}
+            Do not have an account?{' '}
             <Link
               href="/auth/sign-up"
               className="text-blue-700 hover:text-blue-600 font-medium transition-colors"
@@ -179,3 +206,37 @@ const SignIn = () => {
 };
 
 export default SignIn;
+
+export const getServerSideProps = async ({ req }: { req: NextApiRequest }) => {
+  const userData = isLoggedIn(req);
+
+  // If there is user data and the user data type is not boolean, which means it is of type UserAuth object, then
+  if (userData && typeof userData !== 'boolean') {
+    const { role } = userData as UserAuth;
+
+    switch (role) {
+      case 'admin':
+        return {
+          redirect: {
+            destination: '/admin',
+            permanent: false,
+          },
+        };
+      case 'user':
+        return {
+          redirect: {
+            destination: '/student',
+            permanent: false,
+          },
+        };
+      default:
+        break;
+    }
+  }
+
+  return {
+    props: {
+      userData,
+    },
+  };
+};
