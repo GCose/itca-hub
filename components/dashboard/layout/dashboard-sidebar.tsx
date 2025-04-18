@@ -104,7 +104,6 @@ const Sidebar = ({ open, setOpen }: SidebarProps) => {
   };
 
   const handleLogout = () => {
-    console.log('Logging out...');
     router.push('/api/logout');
   };
 
