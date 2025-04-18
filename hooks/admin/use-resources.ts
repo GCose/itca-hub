@@ -1,5 +1,5 @@
-import { useState, useCallback } from "react";
-import { toast } from "sonner";
+import { useState, useCallback } from 'react';
+import { toast } from 'sonner';
 
 // Types for the resources and API responses
 export interface Resource {
@@ -14,9 +14,8 @@ export interface Resource {
   viewCount: number;
   fileUrl: string;
   fileName: string;
-  visibility: "all" | "admin";
-  featuredOnLanding: boolean;
-  academicLevel?: "undergraduate" | "postgraduate" | "all";
+  visibility: 'all' | 'admin';
+  academicLevel?: 'undergraduate' | 'postgraduate' | 'all';
   department?: string;
   isDeleted?: boolean;
   deletedAt?: string;
@@ -49,9 +48,9 @@ export const useResources = () => {
 
   // Function to format file size
   const formatFileSize = (sizeInBytes: number): string => {
-    if (!sizeInBytes) return "Unknown";
+    if (!sizeInBytes) return 'Unknown';
 
-    const units = ["B", "KB", "MB", "GB", "TB"];
+    const units = ['B', 'KB', 'MB', 'GB', 'TB'];
     let size = sizeInBytes;
     let unitIndex = 0;
 
@@ -65,24 +64,24 @@ export const useResources = () => {
 
   // Function to get file type from filename
   const getFileType = (fileName: string): string => {
-    const ext = fileName.split(".").pop()?.toLowerCase() || "";
+    const ext = fileName.split('.').pop()?.toLowerCase() || '';
     return ext;
   };
 
   // Extract a more meaningful title from the filename
   const extractTitle = (fileName: string): string => {
     // Remove file extension and path
-    const baseName = fileName.split("/").pop() || fileName;
-    const nameWithoutExt = baseName.substring(0, baseName.lastIndexOf("."));
+    const baseName = fileName.split('/').pop() || fileName;
+    const nameWithoutExt = baseName.substring(0, baseName.lastIndexOf('.'));
 
     // Replace dashes and underscores with spaces
-    const cleanedName = nameWithoutExt.replace(/[-_]/g, " ");
+    const cleanedName = nameWithoutExt.replace(/[-_]/g, ' ');
 
     // Capitalize first letter of each word
     return cleanedName
-      .split(" ")
+      .split(' ')
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" ");
+      .join(' ');
   };
 
   // Fetch resources from Jeetix API, optionally including deleted resources
@@ -92,71 +91,64 @@ export const useResources = () => {
 
     try {
       const response = await fetch(
-        "https://jeetix-file-service.onrender.com/api/storage/list?prefix=itca"
+        'https://jeetix-file-service.onrender.com/api/storage/list?prefix=itca'
       );
 
       if (!response.ok) {
-        throw new Error("Failed to fetch resources from server");
+        throw new Error('Failed to fetch resources from server');
       }
 
       const data = (await response.json()) as JeetixApiResponse;
 
-      if (data.status !== "success" || !Array.isArray(data.data)) {
-        throw new Error("Invalid response format from server");
+      if (data.status !== 'success' || !Array.isArray(data.data)) {
+        throw new Error('Invalid response format from server');
       }
 
       // Map Jeetix data to the Resource interface
-      const mappedResources: Resource[] = data.data.map(
-        (item: JeetixFileItem, index: number) => {
-          const fileType = getFileType(item.name);
-          const pathParts = item.name.split("/");
-          const fileName = pathParts[pathParts.length - 1];
-          const category =
-            pathParts.length > 1 ? pathParts[0] : "Uncategorized";
+      const mappedResources: Resource[] = data.data.map((item: JeetixFileItem, index: number) => {
+        const fileType = getFileType(item.name);
+        const pathParts = item.name.split('/');
+        const fileName = pathParts[pathParts.length - 1];
+        const category = pathParts.length > 1 ? pathParts[0] : 'Uncategorized';
 
-          // Gets metadata from localStorage if available
-          const storedMetadata = localStorage.getItem("resourceMetadata");
-          const metadataMap = storedMetadata ? JSON.parse(storedMetadata) : {};
-          const resourceMetadata = metadataMap[item.name] || {};
+        // Gets metadata from localStorage if available
+        const storedMetadata = localStorage.getItem('resourceMetadata');
+        const metadataMap = storedMetadata ? JSON.parse(storedMetadata) : {};
+        const resourceMetadata = metadataMap[item.name] || {};
 
-          // Gets title either from metadata or generate from filename
-          const title = resourceMetadata.title || extractTitle(fileName);
+        // Gets title either from metadata or generate from filename
+        const title = resourceMetadata.title || extractTitle(fileName);
 
-          // Gets description from metadata or use default
-          const description =
-            resourceMetadata.description || `${category} resource`;
+        // Gets description from metadata or use default
+        const description = resourceMetadata.description || `${category} resource`;
 
-          // Gets date from item.metadata.timeCreated or current date
-          const uploadDate = item.metadata?.timeCreated
-            ? new Date(item.metadata.timeCreated).toISOString().split("T")[0]
-            : new Date().toISOString().split("T")[0];
+        // Gets date from item.metadata.timeCreated or current date
+        const uploadDate = item.metadata?.timeCreated
+          ? new Date(item.metadata.timeCreated).toISOString().split('T')[0]
+          : new Date().toISOString().split('T')[0];
 
-          return {
-            id: resourceMetadata.id || `resource-${index}`,
-            title: title,
-            description: description,
-            type: fileType,
-            category:
-              resourceMetadata.category ||
-              category.charAt(0).toUpperCase() + category.slice(1),
-            dateUploaded: uploadDate,
-            fileSize: item.metadata?.size
-              ? formatFileSize(parseInt(item.metadata.size))
-              : "Unknown",
-            downloads: Math.floor(Math.random() * 100), // Placeholder since Jeetix doesn't track this
-            viewCount: Math.floor(Math.random() * 150), // Placeholder
-            fileUrl: item.url,
-            fileName: item.name,
-            visibility: resourceMetadata.visibility || "all",
-            featuredOnLanding: resourceMetadata.featuredOnLanding || false,
-            academicLevel: resourceMetadata.academicLevel || "undergraduate",
-            department: resourceMetadata.department || "computer-science",
-            isDeleted: resourceMetadata.isDeleted || false,
-            deletedAt: resourceMetadata.deletedAt,
-            deletedBy: resourceMetadata.deletedBy,
-          };
-        }
-      );
+        return {
+          id: resourceMetadata.id || `resource-${index}`,
+          title: title,
+          description: description,
+          type: fileType,
+          category:
+            resourceMetadata.category || category.charAt(0).toUpperCase() + category.slice(1),
+          dateUploaded: uploadDate,
+          fileSize: item.metadata?.size ? formatFileSize(parseInt(item.metadata.size)) : 'Unknown',
+          downloads: Math.floor(Math.random() * 100), // Placeholder since Jeetix doesn't track this
+          viewCount: Math.floor(Math.random() * 150), // Placeholder
+          fileUrl: item.url,
+          fileName: item.name,
+          visibility: resourceMetadata.visibility || 'all',
+          featuredOnLanding: resourceMetadata.featuredOnLanding || false,
+          academicLevel: resourceMetadata.academicLevel || 'undergraduate',
+          department: resourceMetadata.department || 'computer-science',
+          isDeleted: resourceMetadata.isDeleted || false,
+          deletedAt: resourceMetadata.deletedAt,
+          deletedBy: resourceMetadata.deletedBy,
+        };
+      });
 
       // Filter resources based on includeDeleted parameter
       const filteredResources = includeDeleted
@@ -166,11 +158,10 @@ export const useResources = () => {
       setResources(filteredResources);
       setIsError(false); // Ensure error state is cleared on success
     } catch (err) {
-      console.error("Error fetching resources:", err);
+      console.error('Error fetching resources:', err);
       setIsError(true); // Set error state when fetch fails
-      toast.error("Failed to load resources", {
-        description:
-          err instanceof Error ? err.message : "An unknown error occurred",
+      toast.error('Failed to load resources', {
+        description: err instanceof Error ? err.message : 'An unknown error occurred',
       });
     } finally {
       setIsLoading(false);
@@ -215,10 +206,7 @@ export const useResources = () => {
   }, []);
 
   // Move a resource to recycle bin (soft delete)
-  const moveToRecycleBin = async (
-    resourceId: string,
-    resourceTitle: string
-  ): Promise<boolean> => {
+  const moveToRecycleBin = async (resourceId: string, resourceTitle: string): Promise<boolean> => {
     setIsDeleting(true);
     const toastId = toast.loading(`Moving ${resourceTitle} to recycle bin...`);
 
@@ -226,12 +214,12 @@ export const useResources = () => {
       // Find the resource in the current resources array
       const resource = resources.find((r) => r.id === resourceId);
       if (!resource) {
-        throw new Error("Resource not found");
+        throw new Error('Resource not found');
       }
 
       // TEMPORARY IMPLEMENTATION (localStorage)
       // Get stored metadata
-      const storedMetadata = localStorage.getItem("resourceMetadata");
+      const storedMetadata = localStorage.getItem('resourceMetadata');
       const metadataMap = storedMetadata ? JSON.parse(storedMetadata) : {};
 
       // Update metadata for the resource
@@ -245,12 +233,12 @@ export const useResources = () => {
         category: resource.category,
         isDeleted: true,
         deletedAt: new Date().toISOString(),
-        deletedBy: "Admin",
+        deletedBy: 'Admin',
         fileName: resource.fileName,
       };
 
       // Save updated metadata back to localStorage
-      localStorage.setItem("resourceMetadata", JSON.stringify(metadataMap));
+      localStorage.setItem('resourceMetadata', JSON.stringify(metadataMap));
 
       // Update the resources state to reflect the deletion
       setResources(resources.filter((r) => r.id !== resourceId));
@@ -276,18 +264,17 @@ export const useResources = () => {
       }
       */
 
-      toast.success("Resource moved to recycle bin", {
+      toast.success('Resource moved to recycle bin', {
         id: toastId,
         description: `${resourceTitle} has been moved to the recycle bin.`,
       });
 
       return true;
     } catch (err) {
-      console.error("Error moving resource to recycle bin:", err);
-      toast.error("Failed to move resource to recycle bin", {
+      console.error('Error moving resource to recycle bin:', err);
+      toast.error('Failed to move resource to recycle bin', {
         id: toastId,
-        description:
-          err instanceof Error ? err.message : "An unknown error occurred",
+        description: err instanceof Error ? err.message : 'An unknown error occurred',
       });
       throw err;
     } finally {
@@ -296,19 +283,15 @@ export const useResources = () => {
   };
 
   // NEW FUNCTION: Move multiple resources to recycle bin (batch delete)
-  const batchMoveToRecycleBin = async (
-    resourceIds: string[]
-  ): Promise<boolean> => {
+  const batchMoveToRecycleBin = async (resourceIds: string[]): Promise<boolean> => {
     if (resourceIds.length === 0) return false;
 
     setIsDeleting(true);
-    const toastId = toast.loading(
-      `Moving ${resourceIds.length} resources to recycle bin...`
-    );
+    const toastId = toast.loading(`Moving ${resourceIds.length} resources to recycle bin...`);
 
     try {
       // Get stored metadata
-      const storedMetadata = localStorage.getItem("resourceMetadata");
+      const storedMetadata = localStorage.getItem('resourceMetadata');
       const metadataMap = storedMetadata ? JSON.parse(storedMetadata) : {};
 
       // Process each resource
@@ -327,13 +310,13 @@ export const useResources = () => {
           category: resource.category,
           isDeleted: true,
           deletedAt: new Date().toISOString(),
-          deletedBy: "Admin",
+          deletedBy: 'Admin',
           fileName: resource.fileName,
         };
       }
 
       // Save updated metadata back to localStorage
-      localStorage.setItem("resourceMetadata", JSON.stringify(metadataMap));
+      localStorage.setItem('resourceMetadata', JSON.stringify(metadataMap));
 
       // Update the resources state to remove the deleted resources
       setResources(resources.filter((r) => !resourceIds.includes(r.id)));
@@ -362,17 +345,15 @@ export const useResources = () => {
 
       toast.success(`${resourceIds.length} resources moved to recycle bin`, {
         id: toastId,
-        description:
-          "The selected resources have been moved to the recycle bin.",
+        description: 'The selected resources have been moved to the recycle bin.',
       });
 
       return true;
     } catch (err) {
-      console.error("Error batch moving resources to recycle bin:", err);
-      toast.error("Failed to move resources to recycle bin", {
+      console.error('Error batch moving resources to recycle bin:', err);
+      toast.error('Failed to move resources to recycle bin', {
         id: toastId,
-        description:
-          err instanceof Error ? err.message : "An unknown error occurred",
+        description: err instanceof Error ? err.message : 'An unknown error occurred',
       });
       throw err;
     } finally {
@@ -391,11 +372,11 @@ export const useResources = () => {
       // Find resource in the current resources array
       const resource = resources.find((r) => r.id === resourceId);
       if (!resource) {
-        throw new Error("Resource not found");
+        throw new Error('Resource not found');
       }
 
       // TEMPORARY IMPLEMENTATION (localStorage)
-      const storedMetadata = localStorage.getItem("resourceMetadata");
+      const storedMetadata = localStorage.getItem('resourceMetadata');
       const metadataMap = storedMetadata ? JSON.parse(storedMetadata) : {};
 
       // Update metadata for the resource
@@ -405,15 +386,13 @@ export const useResources = () => {
         delete metadataMap[resource.fileName].deletedBy;
 
         // Save updated metadata back to localStorage
-        localStorage.setItem("resourceMetadata", JSON.stringify(metadataMap));
+        localStorage.setItem('resourceMetadata', JSON.stringify(metadataMap));
       }
 
       // Update the resources state to reflect the restoration
       setResources(
         resources.map((r) =>
-          r.id === resourceId
-            ? { ...r, isDeleted: false, deletedAt: undefined }
-            : r
+          r.id === resourceId ? { ...r, isDeleted: false, deletedAt: undefined } : r
         )
       );
 
@@ -438,18 +417,17 @@ export const useResources = () => {
       }
       */
 
-      toast.success("Resource restored", {
+      toast.success('Resource restored', {
         id: toastId,
         description: `${resourceTitle} has been restored from the recycle bin.`,
       });
 
       return true;
     } catch (err) {
-      console.error("Error restoring resource:", err);
-      toast.error("Failed to restore resource", {
+      console.error('Error restoring resource:', err);
+      toast.error('Failed to restore resource', {
         id: toastId,
-        description:
-          err instanceof Error ? err.message : "An unknown error occurred",
+        description: err instanceof Error ? err.message : 'An unknown error occurred',
       });
       throw err;
     }
@@ -468,23 +446,23 @@ export const useResources = () => {
       const response = await fetch(
         `https://jeetix-file-service.onrender.com/api/storage/delete/${encodeURIComponent(resourceFileName)}`,
         {
-          method: "DELETE",
+          method: 'DELETE',
         }
       );
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to delete resource");
+        throw new Error(errorData.message || 'Failed to delete resource');
       }
 
       // TEMPORARY IMPLEMENTATION (localStorage)
       // Remove metadata from localStorage
-      const storedMetadata = localStorage.getItem("resourceMetadata");
+      const storedMetadata = localStorage.getItem('resourceMetadata');
       if (storedMetadata) {
         const metadataMap = JSON.parse(storedMetadata);
         if (metadataMap[resourceFileName]) {
           delete metadataMap[resourceFileName];
-          localStorage.setItem("resourceMetadata", JSON.stringify(metadataMap));
+          localStorage.setItem('resourceMetadata', JSON.stringify(metadataMap));
         }
       }
 
@@ -507,18 +485,17 @@ export const useResources = () => {
       // Remove from the resources state
       setResources(resources.filter((r) => r.fileName !== resourceFileName));
 
-      toast.success("Resource permanently deleted", {
+      toast.success('Resource permanently deleted', {
         id: toastId,
         description: `${resourceTitle} has been permanently deleted.`,
       });
 
       return true;
     } catch (err) {
-      console.error("Error permanently deleting resource:", err);
-      toast.error("Failed to delete resource", {
+      console.error('Error permanently deleting resource:', err);
+      toast.error('Failed to delete resource', {
         id: toastId,
-        description:
-          err instanceof Error ? err.message : "An unknown error occurred",
+        description: err instanceof Error ? err.message : 'An unknown error occurred',
       });
       throw err;
     } finally {
