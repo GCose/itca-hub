@@ -1,6 +1,6 @@
-import { AlertTriangle, X, Loader } from "lucide-react";
-import { useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AlertTriangle, X, Loader } from 'lucide-react';
+import { useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface DeleteResourceModalProps {
   resourceCount: number;
@@ -20,17 +20,17 @@ const DeleteResourceModal = ({
   // Close modal on escape key
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+      if (e.key === 'Escape') onClose();
     };
 
     if (isOpen) {
-      document.addEventListener("keydown", handleEscape);
-      document.body.style.overflow = "hidden"; // Prevent scrolling when modal is open
+      document.addEventListener('keydown', handleEscape);
+      document.body.style.overflow = 'hidden'; // Prevent scrolling when modal is open
     }
 
     return () => {
-      document.removeEventListener("keydown", handleEscape);
-      document.body.style.overflow = ""; // Restore scrolling when modal is closed
+      document.removeEventListener('keydown', handleEscape);
+      document.body.style.overflow = ''; // Restore scrolling when modal is closed
     };
   }, [isOpen, onClose]);
 
@@ -57,7 +57,7 @@ const DeleteResourceModal = ({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
-            transition={{ duration: 0.3, type: "spring", damping: 25 }}
+            transition={{ duration: 1, type: 'spring', damping: 25 }}
           >
             <div className="relative p-6">
               <div className="mb-5 flex justify-between items-center">
@@ -66,11 +66,8 @@ const DeleteResourceModal = ({
                     <AlertTriangle className="h-5 w-5 text-amber-600" />
                   </div>
                   <h3 className="text-lg font-medium text-gray-900">
-                    Move{" "}
-                    {isSingleResource
-                      ? "Resource"
-                      : `${resourceCount} Resources`}{" "}
-                    to Recycle Bin
+                    Move {isSingleResource ? 'Resource' : `${resourceCount} Resources`} to Recycle
+                    Bin
                   </h3>
                 </div>
 
@@ -86,26 +83,23 @@ const DeleteResourceModal = ({
 
               <div className="mb-6">
                 <p className="text-sm text-gray-600 mb-2">
-                  Are you sure you want to move{" "}
-                  {isSingleResource
-                    ? "this resource"
-                    : `these ${resourceCount} resources`}{" "}
-                  to the recycle bin?
-                  {isSingleResource ? " It" : " They"} can be restored later if
-                  needed.
+                  Are you sure you want to move{' '}
+                  {isSingleResource ? 'this resource' : `these ${resourceCount} resources`} to the
+                  recycle bin?
+                  {isSingleResource ? ' It' : ' They'} can be restored later if needed.
                 </p>
 
                 <div className="mt-4 p-3 bg-amber-50 rounded-lg border border-amber-100">
                   <p className="text-sm font-medium text-gray-900 flex items-center">
                     <AlertTriangle className="h-4 w-4 text-amber-500 mr-2" />
                     {isSingleResource
-                      ? "This resource will be moved to the recycle bin"
+                      ? 'This resource will be moved to the recycle bin'
                       : `${resourceCount} resources will be moved to the recycle bin`}
                   </p>
                   <p className="text-xs text-gray-500 mt-2">
                     {isSingleResource
-                      ? "The resource will no longer appear in the main resources list"
-                      : "These resources will no longer appear in the main resources list"}
+                      ? 'The resource will no longer appear in the main resources list'
+                      : 'These resources will no longer appear in the main resources list'}
                   </p>
                 </div>
               </div>
@@ -131,7 +125,7 @@ const DeleteResourceModal = ({
                       Moving...
                     </>
                   ) : (
-                    "Move to Recycle Bin"
+                    'Move to Recycle Bin'
                   )}
                 </button>
               </div>

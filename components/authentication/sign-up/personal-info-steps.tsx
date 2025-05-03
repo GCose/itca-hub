@@ -14,7 +14,7 @@ const PersonalInfoStep = ({ formData, onChange, onContinue }: PersonalInfoStepPr
   return (
     <motion.div
       exit={{ opacity: 0, x: -20 }}
-      transition={{ duration: 0.3 }}
+      transition={{ duration: 1 }}
       animate={{ opacity: 1, x: 0 }}
       initial={{ opacity: 0, x: 70 }}
     >

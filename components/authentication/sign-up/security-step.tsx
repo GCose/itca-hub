@@ -32,7 +32,7 @@ const SecurityStep = ({
       initial={{ opacity: 0, x: 70 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -20 }}
-      transition={{ duration: 0.3 }}
+      transition={{ duration: 1 }}
     >
       <div className="mb-6">
         <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">

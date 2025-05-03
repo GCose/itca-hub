@@ -5,12 +5,12 @@ import Link from 'next/link';
 import AuthLayout from '@/components/authentication/auth-layout';
 import AuthButton from '@/components/authentication/auth-button';
 import useTimedError from '@/hooks/timed-error';
-import axios, { AxiosError } from 'axios';
-import { getErrorMessage } from '@/utils/error';
-import { CustomError, ErrorResponseData, UserAuth } from '@/types';
+import axios from 'axios';
+import { UserAuth } from '@/types';
 import { useRouter } from 'next/router';
 import { NextApiRequest } from 'next';
 import { isLoggedIn } from '@/utils/auth';
+import { toast } from 'sonner';
 
 const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -57,6 +57,8 @@ const SignIn = () => {
 
       // Show that alert user is logged in
 
+      toast.success('Login In Successful', { description: 'You have been logged in sucessfully' });
+
       switch (data.role) {
         case 'admin':
           router.push('/admin');
@@ -67,11 +69,8 @@ const SignIn = () => {
         default:
           break;
       }
-    } catch (error) {
-      const { message } = getErrorMessage(
-        error as AxiosError<ErrorResponseData> | CustomError | Error
-      );
-      setError(message);
+    } catch {
+      setError('Unable to sign you in. You need an internet connection to sign-in.');
     } finally {
       setIsLoading(false);
     }
@@ -80,9 +79,9 @@ const SignIn = () => {
   // Right side content that will be displayed in the AuthLayout
   const rightSideContent = (
     <motion.div
-      initial={{ opacity: 0, y: 70 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: 0.2 }}
+      initial={{ opacity: 0, x: 70 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 1, delay: 0.5 }}
       className="max-w-4xl text-center"
     >
       <h2 className="text-6xl font-bold mb-6">Unlock Your Potential with ITCA</h2>

@@ -1,6 +1,6 @@
-import { useState, useRef, useEffect } from "react";
-import Image from "next/image";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useRef, useEffect } from 'react';
+import Image from 'next/image';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Clock,
   ChevronRight,
@@ -13,12 +13,12 @@ import {
   GraduationCap,
   ArrowRight,
   ChevronDown,
-} from "lucide-react";
+} from 'lucide-react';
 
 type Degree = {
   id: number;
   title: string;
-  level: "Undergraduate";
+  level: 'Undergraduate';
   duration: string;
   description: string;
   image: string;
@@ -29,52 +29,52 @@ type Degree = {
 const degrees: Degree[] = [
   {
     id: 1,
-    title: "Computer Science",
-    level: "Undergraduate",
-    duration: "4 years",
+    title: 'Computer Science',
+    level: 'Undergraduate',
+    duration: '4 years',
     description:
       "A comprehensive program covering programming, algorithms, data structures, and software engineering principles. Develop the technical skills necessary to design and build software systems that power today's digital economy.",
-    image: "/images/degree-1.jpg",
+    image: '/images/degree-1.jpg',
     highlights: [
-      "Specializations in AI, Cybersecurity, or Software Engineering",
-      "Industry-partnered capstone projects",
-      "Internship opportunities with leading tech companies",
-      "Strong foundation in computational theory and practice",
-      "Advanced algorithms and data structures",
+      'Specializations in AI, Cybersecurity, or Software Engineering',
+      'Industry-partnered capstone projects',
+      'Internship opportunities with leading tech companies',
+      'Strong foundation in computational theory and practice',
+      'Advanced algorithms and data structures',
     ],
     icon: <Code className="w-5 h-5" />,
   },
   {
     id: 2,
-    title: "Information Systems",
-    level: "Undergraduate",
-    duration: "4 years",
+    title: 'Information Systems',
+    level: 'Undergraduate',
+    duration: '4 years',
     description:
-      "Focus on bridging technology and business needs by designing, implementing, and managing information systems that support organizational operations. Learn to analyze business problems and develop technology solutions.",
-    image: "/images/degree-2.jpg",
+      'Focus on bridging technology and business needs by designing, implementing, and managing information systems that support organizational operations. Learn to analyze business problems and develop technology solutions.',
+    image: '/images/degree-2.jpg',
     highlights: [
-      "Business process modeling and analysis",
-      "Database design and management",
-      "Project management methodologies",
-      "Enterprise systems integration",
-      "IT service management",
+      'Business process modeling and analysis',
+      'Database design and management',
+      'Project management methodologies',
+      'Enterprise systems integration',
+      'IT service management',
     ],
     icon: <Database className="w-5 h-5" />,
   },
   {
     id: 3,
-    title: "Telecommunications",
-    level: "Undergraduate",
-    duration: "4 years",
+    title: 'Telecommunications',
+    level: 'Undergraduate',
+    duration: '4 years',
     description:
-      "Master the science and technology of communication at a distance through electronic transmission of information. Focus on network design, wireless communications, signal processing, and telecommunications infrastructure.",
-    image: "/images/degree-3.jpg",
+      'Master the science and technology of communication at a distance through electronic transmission of information. Focus on network design, wireless communications, signal processing, and telecommunications infrastructure.',
+    image: '/images/degree-3.jpg',
     highlights: [
-      "Network architecture and protocols",
-      "Wireless communications systems",
-      "Signal processing techniques",
-      "Optical communication technologies",
-      "Telecommunications regulations and standards",
+      'Network architecture and protocols',
+      'Wireless communications systems',
+      'Signal processing techniques',
+      'Optical communication technologies',
+      'Telecommunications regulations and standards',
     ],
     icon: <Radio className="w-5 h-5" />,
   },
@@ -97,10 +97,10 @@ const DegreesSection = () => {
     handleResize();
 
     // Add event listener
-    window.addEventListener("resize", handleResize);
+    window.addEventListener('resize', handleResize);
 
     // Cleanup
-    return () => window.removeEventListener("resize", handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   // Initialize with first degree on component mount
@@ -121,11 +121,11 @@ const DegreesSection = () => {
           <div className="absolute top-10 right-[-200px] h-[500px] w-[500px] rounded-full border-[40px] border-amber-500/5 animate-pulse"></div>
           <div
             className="absolute top-40 right-[-150px] h-[400px] w-[400px] rounded-full border-[30px] border-blue-700/5 animate-pulse"
-            style={{ animationDelay: "1s" }}
+            style={{ animationDelay: '1s' }}
           ></div>
           <div
             className="absolute top-60 right-[-100px] h-[300px] w-[300px] rounded-full border-[20px] border-amber-500/5 animate-pulse"
-            style={{ animationDelay: "2s" }}
+            style={{ animationDelay: '2s' }}
           ></div>
         </div>
       </div>
@@ -136,15 +136,15 @@ const DegreesSection = () => {
         <div className="absolute bottom-10 left-0 w-full h-full">
           <div
             className="absolute bottom-10 left-[-200px] h-[500px] w-[500px] rounded-full border-[40px] border-blue-700/5 animate-pulse"
-            style={{ animationDelay: "0.5s" }}
+            style={{ animationDelay: '0.5s' }}
           ></div>
           <div
             className="absolute bottom-40 left-[-150px] h-[400px] w-[400px] rounded-full border-[30px] border-amber-500/5 animate-pulse"
-            style={{ animationDelay: "1.5s" }}
+            style={{ animationDelay: '1.5s' }}
           ></div>
           <div
             className="absolute bottom-60 left-[-100px] h-[300px] w-[300px] rounded-full border-[20px] border-blue-700/5 animate-pulse"
-            style={{ animationDelay: "2.5s" }}
+            style={{ animationDelay: '2.5s' }}
           ></div>
         </div>
       </div>
@@ -159,8 +159,8 @@ const DegreesSection = () => {
         className="absolute inset-0 -z-5 opacity-20"
         style={{
           backgroundImage:
-            "radial-gradient(circle at 1px 1px, rgba(0,0,0,0.05) 1px, transparent 0)",
-          backgroundSize: "40px 40px",
+            'radial-gradient(circle at 1px 1px, rgba(0,0,0,0.05) 1px, transparent 0)',
+          backgroundSize: '40px 40px',
         }}
       ></div>
       {/*==================== End of Pattern Background ====================*/}
@@ -173,16 +173,14 @@ const DegreesSection = () => {
           transition={{ duration: 0.6 }}
           className="mb-16 text-center"
         >
-          <span className="inline-block text-blue-700 font-semibold mb-2">
-            ACADEMIC EXCELLENCE
-          </span>
+          <span className="inline-block text-blue-700 font-semibold mb-2">ACADEMIC EXCELLENCE</span>
           <h2 className="mb-4 text-4xl font-bold text-gray-900 md:text-5xl">
             Our <span className="text-amber-500">Undergraduate</span> Programs
           </h2>
           <div className="mx-auto h-1 w-24 bg-gradient-to-r from-blue-700 via-amber-500 to-blue-700 rounded-full mb-6"></div>
           <p className="mx-auto max-w-2xl text-lg text-gray-600">
-            Explore our comprehensive undergraduate degree programs designed to
-            prepare you for the rapidly evolving technology landscape.
+            Explore our comprehensive undergraduate degree programs designed to prepare you for the
+            rapidly evolving technology landscape.
           </p>
         </motion.div>
 
@@ -203,16 +201,14 @@ const DegreesSection = () => {
               >
                 <div className="flex items-center">
                   {selectedDegree && (
-                    <div className="bg-blue-100 p-2 rounded-lg mr-3">
-                      {selectedDegree.icon}
-                    </div>
+                    <div className="bg-blue-100 p-2 rounded-lg mr-3">{selectedDegree.icon}</div>
                   )}
                   <span className="font-medium">
-                    {selectedDegree ? selectedDegree.title : "Select a program"}
+                    {selectedDegree ? selectedDegree.title : 'Select a program'}
                   </span>
                 </div>
                 <ChevronDown
-                  className={`w-5 h-5 transition-transform duration-300 ${showMobileDropdown ? "rotate-180" : ""}`}
+                  className={`w-5 h-5 transition-transform duration-300 ${showMobileDropdown ? 'rotate-180' : ''}`}
                 />
               </button>
 
@@ -233,22 +229,18 @@ const DegreesSection = () => {
                           setShowMobileDropdown(false);
                         }}
                         className={`flex items-center p-4 cursor-pointer transition-colors hover:bg-blue-50 ${
-                          selectedDegree?.id === degree.id ? "bg-blue-50" : ""
+                          selectedDegree?.id === degree.id ? 'bg-blue-50' : ''
                         }`}
                       >
                         <div
                           className={`p-2 rounded-lg mr-3 ${
-                            selectedDegree?.id === degree.id
-                              ? "bg-blue-100"
-                              : "bg-gray-100"
+                            selectedDegree?.id === degree.id ? 'bg-blue-100' : 'bg-gray-100'
                           }`}
                         >
                           {degree.icon}
                         </div>
                         <div>
-                          <h4 className="font-medium text-gray-800">
-                            {degree.title}
-                          </h4>
+                          <h4 className="font-medium text-gray-800">{degree.title}</h4>
                           <div className="flex items-center text-xs text-gray-500">
                             <Clock className="w-3 h-3 mr-1" />
                             <span>{degree.duration}</span>
@@ -273,10 +265,9 @@ const DegreesSection = () => {
                   initial={false}
                   animate={{
                     x: tabRefs.current[selectedDegree.id - 1]?.offsetLeft || 0,
-                    width:
-                      tabRefs.current[selectedDegree.id - 1]?.offsetWidth || 0,
+                    width: tabRefs.current[selectedDegree.id - 1]?.offsetWidth || 0,
                   }}
-                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                   className="absolute top-0 left-0 h-full z-0 rounded-xl bg-gradient-to-r from-blue-700/90 to-blue-600/90 shadow-md"
                 />
               )}
@@ -289,7 +280,7 @@ const DegreesSection = () => {
                     tabRefs.current[index] = el;
                   }}
                   className={`relative z-10 px-3 sm:px-4 md:px-6 lg:px-8 py-3 sm:py-4 cursor-pointer transition-all duration-300 flex-1 flex flex-col items-center rounded-xl
-                    ${selectedDegree?.id === degree.id ? "text-white" : "text-gray-700 hover:text-blue-700"}`}
+                    ${selectedDegree?.id === degree.id ? 'text-white' : 'text-gray-700 hover:text-blue-700'}`}
                   onClick={() => setSelectedDegree(degree)}
                   onMouseEnter={() => setHoveredTab(degree.id)}
                   onMouseLeave={() => setHoveredTab(null)}
@@ -298,17 +289,15 @@ const DegreesSection = () => {
                   <div
                     className={`flex items-center justify-center mb-2 transition-all duration-300 ${
                       selectedDegree?.id === degree.id
-                        ? "scale-110"
+                        ? 'scale-110'
                         : hoveredTab === degree.id
-                          ? "scale-105"
-                          : ""
+                          ? 'scale-105'
+                          : ''
                     }`}
                   >
                     <div
                       className={`p-2 rounded-lg ${
-                        selectedDegree?.id === degree.id
-                          ? "bg-white/20"
-                          : "bg-blue-100"
+                        selectedDegree?.id === degree.id ? 'bg-white/20' : 'bg-blue-100'
                       }`}
                     >
                       {degree.icon}
@@ -346,7 +335,7 @@ const DegreesSection = () => {
                 <div className="lg:w-2/5 relative">
                   <div className="h-64 lg:h-full w-full relative">
                     <Image
-                      src={selectedDegree.image || "/placeholder.svg"}
+                      src={selectedDegree.image || '/placeholder.svg'}
                       alt={selectedDegree.title}
                       fill
                       className="object-cover"
@@ -375,9 +364,7 @@ const DegreesSection = () => {
 
                         <div className="flex items-center px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full">
                           <Users className="mr-2 h-4 w-4 text-amber-400" />
-                          <span className="text-white font-medium">
-                            200+ Students
-                          </span>
+                          <span className="text-white font-medium">200+ Students</span>
                         </div>
                       </div>
                     </div>
@@ -389,13 +376,9 @@ const DegreesSection = () => {
                   <div className="mb-6">
                     <div className="flex items-center mb-4">
                       <GraduationCap className="w-6 h-6 text-blue-700 mr-2" />
-                      <h4 className="text-xl font-bold text-gray-900">
-                        Program Overview
-                      </h4>
+                      <h4 className="text-xl font-bold text-gray-900">Program Overview</h4>
                     </div>
-                    <p className="text-gray-700 leading-relaxed">
-                      {selectedDegree.description}
-                    </p>
+                    <p className="text-gray-700 leading-relaxed">{selectedDegree.description}</p>
                   </div>
 
                   <div className="mb-6">
@@ -410,15 +393,13 @@ const DegreesSection = () => {
                           key={i}
                           initial={{ opacity: 0, x: -10 }}
                           animate={{ opacity: 1, x: 0 }}
-                          transition={{ duration: 0.3, delay: i * 0.1 }}
+                          transition={{ duration: 1, delay: i * 0.1 }}
                           className="flex items-start p-3 rounded-lg bg-gradient-to-r from-gray-50 to-white border border-gray-100"
                         >
                           <div className="mr-3 mt-0.5 h-5 w-5 rounded-full bg-green-500/10 flex items-center justify-center flex-shrink-0">
                             <Check className="h-3 w-3 text-green-600" />
                           </div>
-                          <span className="text-gray-700 text-sm">
-                            {highlight}
-                          </span>
+                          <span className="text-gray-700 text-sm">{highlight}</span>
                         </motion.div>
                       ))}
                     </div>
@@ -454,9 +435,8 @@ const DegreesSection = () => {
                 Select a program to view details
               </h3>
               <p className="text-gray-400 text-center max-w-md">
-                Click on one of the program icons above to explore our
-                undergraduate offerings and discover which path is right for
-                you.
+                Click on one of the program icons above to explore our undergraduate offerings and
+                discover which path is right for you.
               </p>
             </motion.div>
           )}

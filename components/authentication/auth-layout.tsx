@@ -1,9 +1,9 @@
-import React from "react";
-import { motion } from "framer-motion";
-import { ArrowLeft } from "lucide-react";
-import Link from "next/link";
-import Image from "next/image";
-import Head from "next/head";
+import React from 'react';
+import { motion } from 'framer-motion';
+import { ArrowLeft } from 'lucide-react';
+import Link from 'next/link';
+import Image from 'next/image';
+import Head from 'next/head';
 
 interface AuthLayoutProps {
   children: React.ReactNode;
@@ -40,22 +40,22 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({
             <div className="absolute top-1/4 left-0 h-[1px] w-full bg-gradient-to-r from-transparent via-blue-700/20 to-transparent animate-pulse"></div>
             <div
               className="absolute top-2/4 left-0 h-[1px] w-full bg-gradient-to-r from-transparent via-amber-500/20 to-transparent animate-pulse"
-              style={{ animationDelay: "1s" }}
+              style={{ animationDelay: '1s' }}
             ></div>
             <div
               className="absolute top-3/4 left-0 h-[1px] w-full bg-gradient-to-r from-transparent via-blue-700/20 to-transparent animate-pulse"
-              style={{ animationDelay: "2s" }}
+              style={{ animationDelay: '2s' }}
             ></div>
 
             {/*==================== Vertical lines ====================*/}
             <div className="absolute top-0 left-1/4 h-full w-[1px] bg-gradient-to-b from-transparent via-blue-700/20 to-transparent animate-pulse"></div>
             <div
               className="absolute top-0 left-2/4 h-full w-[1px] bg-gradient-to-b from-transparent via-amber-500/20 to-transparent animate-pulse"
-              style={{ animationDelay: "1.5s" }}
+              style={{ animationDelay: '1.5s' }}
             ></div>
             <div
               className="absolute top-0 left-3/4 h-full w-[1px] bg-gradient-to-b from-transparent via-blue-700/20 to-transparent animate-pulse"
-              style={{ animationDelay: "2.5s" }}
+              style={{ animationDelay: '2.5s' }}
             ></div>
           </div>
 
@@ -65,41 +65,41 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({
             <div className="absolute top-1/4 left-1/4 h-2 w-2 rounded-full bg-blue-500/40 animate-pulse shadow-sm shadow-blue-500/30"></div>
             <div
               className="absolute top-1/4 left-2/4 h-2 w-2 rounded-full bg-amber-500/40 animate-pulse shadow-sm shadow-amber-500/30"
-              style={{ animationDelay: "0.5s" }}
+              style={{ animationDelay: '0.5s' }}
             ></div>
             <div
               className="absolute top-1/4 left-3/4 h-2 w-2 rounded-full bg-blue-500/40 animate-pulse shadow-sm shadow-blue-500/30"
-              style={{ animationDelay: "1s" }}
+              style={{ animationDelay: '1s' }}
             ></div>
             {/*==================== End of First Row ====================*/}
 
             {/*==================== Second Row ====================*/}
             <div
               className="absolute top-2/4 left-1/4 h-2 w-2 rounded-full bg-amber-500/40 animate-pulse shadow-sm shadow-amber-500/30"
-              style={{ animationDelay: "1.5s" }}
+              style={{ animationDelay: '1.5s' }}
             ></div>
             <div
               className="absolute top-2/4 left-2/4 h-2 w-2 rounded-full bg-blue-500/40 animate-pulse shadow-sm shadow-blue-500/30"
-              style={{ animationDelay: "2s" }}
+              style={{ animationDelay: '2s' }}
             ></div>
             <div
               className="absolute top-2/4 left-3/4 h-2 w-2 rounded-full bg-amber-500/40 animate-pulse shadow-sm shadow-amber-500/30"
-              style={{ animationDelay: "2.5s" }}
+              style={{ animationDelay: '2.5s' }}
             ></div>
             {/*==================== End of Second Row ====================*/}
 
             {/*==================== Third Row ====================*/}
             <div
               className="absolute top-3/4 left-1/4 h-2 w-2 rounded-full bg-blue-500/40 animate-pulse shadow-sm shadow-blue-500/30"
-              style={{ animationDelay: "3s" }}
+              style={{ animationDelay: '3s' }}
             ></div>
             <div
               className="absolute top-3/4 left-2/4 h-2 w-2 rounded-full bg-amber-500/40 animate-pulse shadow-sm shadow-amber-500/30"
-              style={{ animationDelay: "3.5s" }}
+              style={{ animationDelay: '3.5s' }}
             ></div>
             <div
               className="absolute top-3/4 left-3/4 h-2 w-2 rounded-full bg-blue-500/40 animate-pulse shadow-sm shadow-blue-500/30"
-              style={{ animationDelay: "4s" }}
+              style={{ animationDelay: '4s' }}
             ></div>
           </div>
           {/*==================== End of Third Row ====================*/}
@@ -112,21 +112,21 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({
             {/*==================== Top left Circle ====================*/}
             <div
               className="absolute top-20 -left-40 h-96 w-96 rounded-full border-[30px] border-amber-500/6 animate-pulse"
-              style={{ animationDelay: "2s" }}
+              style={{ animationDelay: '2s' }}
             ></div>
             {/*==================== End of Top left Circle ====================*/}
 
             {/*==================== Bottom Circle ====================*/}
             <div
               className="absolute -bottom-20 left-40 h-80 w-80 rounded-full bg-amber-500/6 animate-pulse"
-              style={{ animationDelay: "1s" }}
+              style={{ animationDelay: '1s' }}
             ></div>
             {/*==================== End of Bottom Circle ====================*/}
 
             {/*==================== Decorative Element - Center Right ====================*/}
             <div
               className="absolute top-1/2 -right-20 h-60 w-60 rounded-full border-[20px] border-blue-700/6 animate-pulse"
-              style={{ animationDelay: "3s" }}
+              style={{ animationDelay: '3s' }}
             ></div>
             {/*==================== End of Decorative Element - Center Right ====================*/}
           </div>
@@ -137,8 +137,8 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({
             className="absolute inset-0 -z-16 opacity-10"
             style={{
               backgroundImage:
-                "radial-gradient(circle at 1px 1px, rgba(30,64,175,0.15) 1px, transparent 0)",
-              backgroundSize: "30px 30px",
+                'radial-gradient(circle at 1px 1px, rgba(30,64,175,0.15) 1px, transparent 0)',
+              backgroundSize: '30px 30px',
             }}
           ></div>
           {/*==================== End of Subtle Dot Pattern ====================*/}
@@ -174,9 +174,9 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({
 
             <motion.div
               className="backdrop-blur-xl"
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              initial={{ opacity: 0, y: 70 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 1, delay: 0.5 }}
+              initial={{ opacity: 0, x: -70 }}
             >
               {children}
             </motion.div>
@@ -193,7 +193,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({
               priority
               alt="Background"
               className="opacity-20"
-              style={{ objectFit: "cover" }}
+              style={{ objectFit: 'cover' }}
               src="/images/main-building.jpeg"
             />
           </div>
@@ -204,8 +204,8 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({
             className="absolute inset-0 opacity-10 z-10"
             style={{
               backgroundImage:
-                "linear-gradient(to right, rgba(255, 255, 255, 0.2) 1px, transparent 1px), linear-gradient(to bottom, rgba(255, 255, 255, 0.2) 1px, transparent 1px)",
-              backgroundSize: "80px 80px",
+                'linear-gradient(to right, rgba(255, 255, 255, 0.2) 1px, transparent 1px), linear-gradient(to bottom, rgba(255, 255, 255, 0.2) 1px, transparent 1px)',
+              backgroundSize: '80px 80px',
             }}
           ></div>
           {/*==================== End of Grid Pattern ====================*/}
@@ -215,21 +215,21 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({
             <div className="absolute top-1/4 left-0 h-[2px] w-full bg-gradient-to-r from-transparent via-amber-500/70 to-transparent animate-pulse"></div>
             <div
               className="absolute top-2/4 left-0 h-[2px] w-full bg-gradient-to-r from-transparent via-white/70 to-transparent animate-pulse"
-              style={{ animationDelay: "1s" }}
+              style={{ animationDelay: '1s' }}
             ></div>
             <div
               className="absolute top-3/4 left-0 h-[2px] w-full bg-gradient-to-r from-transparent via-amber-500/70 to-transparent animate-pulse"
-              style={{ animationDelay: "2s" }}
+              style={{ animationDelay: '2s' }}
             ></div>
 
             <div className="absolute top-0 left-1/4 h-full w-[2px] bg-gradient-to-b from-transparent via-white/70 to-transparent animate-pulse"></div>
             <div
               className="absolute top-0 left-2/4 h-full w-[2px] bg-gradient-to-b from-transparent via-amber-500/70 to-transparent animate-pulse"
-              style={{ animationDelay: "1.5s" }}
+              style={{ animationDelay: '1.5s' }}
             ></div>
             <div
               className="absolute top-0 left-3/4 h-full w-[2px] bg-gradient-to-b from-transparent via-white/70 to-transparent animate-pulse"
-              style={{ animationDelay: "2.5s" }}
+              style={{ animationDelay: '2.5s' }}
             ></div>
           </div>
           {/*==================== End of Animated lines ====================*/}
