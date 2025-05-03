@@ -1,21 +1,13 @@
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import Link from "next/link";
-import Image from "next/image";
-import {
-  Menu,
-  X,
-  Facebook,
-  Twitter,
-  Instagram,
-  Mail,
-  Phone,
-} from "lucide-react";
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import Link from 'next/link';
+import Image from 'next/image';
+import { Menu, X, Facebook, Twitter, Instagram, Mail, Phone } from 'lucide-react';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [activeSection, setActiveSection] = useState("");
+  const [activeSection, setActiveSection] = useState('');
   const [isMobile, setIsMobile] = useState(false);
 
   // Check if window width is below 1050px
@@ -28,10 +20,10 @@ const Header = () => {
     checkMobile();
 
     // Add event listener
-    window.addEventListener("resize", checkMobile);
+    window.addEventListener('resize', checkMobile);
 
     // Cleanup
-    return () => window.removeEventListener("resize", checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
   // Handle scroll effect and section tracking
@@ -44,13 +36,13 @@ const Header = () => {
       }
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener('scroll', handleScroll);
 
     // Set up intersection observer for each section
-    const sections = document.querySelectorAll("section[id]");
+    const sections = document.querySelectorAll('section[id]');
     const observerOptions = {
       root: null,
-      rootMargin: "-100px 0px -100px 0px",
+      rootMargin: '-100px 0px -100px 0px',
       threshold: 0.3,
     };
 
@@ -62,37 +54,34 @@ const Header = () => {
       });
     };
 
-    const observer = new IntersectionObserver(
-      observerCallback,
-      observerOptions
-    );
+    const observer = new IntersectionObserver(observerCallback, observerOptions);
     sections.forEach((section) => {
       observer.observe(section);
     });
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener('scroll', handleScroll);
       observer.disconnect();
     };
   }, []);
 
   // Helper function to determine if a link is active
   const isActive = (sectionId: string) => {
-    return activeSection === sectionId ? "link-active" : "";
+    return activeSection === sectionId ? 'link-active' : '';
   };
 
   const navLinks = [
-    { name: "Home", href: "#hero-section" },
-    { name: "Events", href: "#events" },
-    { name: "Degrees", href: "#degrees" },
-    { name: "Virtual Tour", href: "#virtual-tour" },
-    { name: "Resources", href: "#resources" },
+    { name: 'Home', href: '#hero-section' },
+    { name: 'Events', href: '#events' },
+    { name: 'Degrees', href: '#degrees' },
+    { name: 'Virtual Tour', href: '#virtual-tour' },
+    { name: 'Resources', href: '#resources' },
   ];
 
   return (
     <header
       className={`fixed left-0 top-0 sm:px-0 lg:px-15 z-50 w-full transition-all duration-300 ${
-        isScrolled ? "bg-white py-2 shadow-md" : "bg-transparent py-4"
+        isScrolled ? 'bg-white py-2 shadow-md' : 'bg-transparent py-4'
       }`}
     >
       <div className="container mx-auto flex items-center justify-between px-4">
@@ -116,8 +105,8 @@ const Header = () => {
                     href={link.href}
                     className={`font-medium transition-colors ${
                       isScrolled
-                        ? "text-gray-900 hover:text-[#1d4ed8]"
-                        : "text-white hover:text-[#f59e0b]"
+                        ? 'text-gray-900 hover:text-[#1d4ed8]'
+                        : 'text-white hover:text-[#f59e0b]'
                     } ${isActive(link.href.substring(1))}`}
                   >
                     {link.name}
@@ -135,8 +124,8 @@ const Header = () => {
             href="/auth"
             className={`rounded-full px-6 py-2 font-medium transition-all ${
               isScrolled
-                ? "text-gray-800 hover:bg-[#1d4ed8] hover:text-white"
-                : "text-white hover:bg-white/20"
+                ? 'text-gray-800 hover:bg-[#1d4ed8] hover:text-white'
+                : 'text-white hover:bg-white/20'
             }`}
           >
             Sign in
@@ -145,8 +134,8 @@ const Header = () => {
             href="/auth/sign-up"
             className={`rounded-full px-6 py-2 font-medium transition-all ${
               isScrolled
-                ? "bg-[#1d4ed8] text-white hover:bg-[#1e40af]"
-                : "bg-white/10 text-white backdrop-blur-sm hover:bg-white/20"
+                ? 'bg-[#1d4ed8] text-white hover:bg-[#1e40af]'
+                : 'bg-white/10 text-white backdrop-blur-sm hover:bg-white/20'
             }`}
           >
             Sign Up
@@ -161,17 +150,9 @@ const Header = () => {
           aria-label="Toggle menu"
         >
           {isMenuOpen ? (
-            <X
-              className={`h-6 w-6 ${
-                isScrolled ? "text-gray-900" : "text-white"
-              }`}
-            />
+            <X className={`h-6 w-6 ${isScrolled ? 'text-gray-900' : 'text-white'}`} />
           ) : (
-            <Menu
-              className={`h-6 w-6 ${
-                isScrolled ? "text-gray-900" : "text-white"
-              }`}
-            />
+            <Menu className={`h-6 w-6 ${isScrolled ? 'text-gray-900' : 'text-white'}`} />
           )}
         </button>
         {/*==================== End of Mobile Menu Toggle Button ====================*/}
@@ -221,7 +202,7 @@ const Header = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
+              transition={{ duration: 1 }}
               className="fixed inset-0 bg-gray-900/95 backdrop-blur-md z-40"
             >
               <button
@@ -232,11 +213,11 @@ const Header = () => {
                 <X className="h-6 w-6" />
               </button>
               <motion.nav
-                initial={{ x: "100%" }}
+                initial={{ x: '100%' }}
                 animate={{ x: 0 }}
-                exit={{ x: "100%" }}
+                exit={{ x: '100%' }}
                 transition={{
-                  type: "spring",
+                  type: 'spring',
                   stiffness: 100,
                   damping: 20,
                 }}
@@ -291,17 +272,13 @@ const Header = () => {
                       <div className="h-10 w-10 rounded-full bg-[#1d4ed8]/20 flex items-center justify-center">
                         <Mail className="h-5 w-5 text-[#1d4ed8]" />
                       </div>
-                      <span className="text-gray-300 text-sm">
-                        info@itca.com
-                      </span>
+                      <span className="text-gray-300 text-sm">info@itca.com</span>
                     </div>
                     <div className="flex items-center space-x-3">
                       <div className="h-10 w-10 rounded-full bg-[#f59e0b]/20 flex items-center justify-center">
                         <Phone className="h-5 w-5 text-[#f59e0b]" />
                       </div>
-                      <span className="text-gray-300 text-sm">
-                        +1 (234) 567-8900
-                      </span>
+                      <span className="text-gray-300 text-sm">+1 (234) 567-8900</span>
                     </div>
                   </motion.div>
 

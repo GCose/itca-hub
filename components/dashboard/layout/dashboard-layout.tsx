@@ -1,18 +1,15 @@
-import { useState, ReactNode } from "react";
-import Head from "next/head";
-import { motion } from "framer-motion";
-import Sidebar from "./dashboard-sidebar";
-import Header from "./dashboard-header";
+import { useState, ReactNode } from 'react';
+import Head from 'next/head';
+import { motion } from 'framer-motion';
+import Sidebar from './dashboard-sidebar';
+import Header from './dashboard-header';
 
 interface DashboardLayoutProps {
   children: ReactNode;
   title?: string;
 }
 
-const DashboardLayout = ({
-  children,
-  title = "Dashboard",
-}: DashboardLayoutProps) => {
+const DashboardLayout = ({ children, title = 'Dashboard' }: DashboardLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
@@ -32,11 +29,11 @@ const DashboardLayout = ({
               <div className="absolute top-10 right-[-200px] h-[500px] w-[500px] rounded-full border-[40px] border-amber-500/8 animate-pulse"></div>
               <div
                 className="absolute top-40 right-[-150px] h-[400px] w-[400px] rounded-full border-[30px] border-blue-700/8 animate-pulse"
-                style={{ animationDelay: "1s" }}
+                style={{ animationDelay: '1s' }}
               ></div>
               <div
                 className="absolute top-60 right-[-100px] h-[300px] w-[300px] rounded-full border-[20px] border-amber-500/8 animate-pulse"
-                style={{ animationDelay: "2s" }}
+                style={{ animationDelay: '2s' }}
               ></div>
             </div>
           </div>
@@ -47,11 +44,11 @@ const DashboardLayout = ({
             <div className="absolute bottom-10 left-70 w-[200px] h-[200px] origin-center rotate-45 bg-blue-700/8 rounded-xl animate-pulse"></div>
             <div
               className="absolute top-10 left-50 w-[160px] h-[160px] origin-center rotate-[30deg] bg-amber-500/8 rounded-xl animate-pulse"
-              style={{ animationDelay: "0.8s" }}
+              style={{ animationDelay: '0.8s' }}
             ></div>
             <div
               className="absolute top-40 left-100 w-[120px] h-[120px] origin-center rotate-20 bg-amber-700/8 rounded-xl animate-pulse"
-              style={{ animationDelay: "1.2s" }}
+              style={{ animationDelay: '1.2s' }}
             ></div>
           </div>
           {/*==================== End of Angular Elements - Bottom Left ====================*/}
@@ -65,10 +62,10 @@ const DashboardLayout = ({
         <div className="flex flex-1 flex-col overflow-hidden">
           <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
-          <main className="flex-1 overflow-y-auto overflow-x-hidden px-9 pr-7 py-12">
+          <main className="flex-1 overflow-y-auto w-full overflow-x-hidden px-4 py-12 min-[968px]:px-9 min-[968px]:pr-7 min-[968px]:py-12">
             <motion.div
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
+              transition={{ duration: 1 }}
               initial={{ opacity: 0, y: 20 }}
             >
               {children}

@@ -335,7 +335,7 @@ const RecycleBinPage = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 10 }}
-              transition={{ duration: 0.3, type: 'spring', damping: 25 }}
+              transition={{ duration: 1, type: 'spring', damping: 25 }}
             >
               <div className="relative p-6">
                 <div className="mb-5 flex justify-between items-center">
@@ -431,7 +431,7 @@ const RecycleBinPage = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 10 }}
-              transition={{ duration: 0.3, type: 'spring', damping: 25 }}
+              transition={{ duration: 1, type: 'spring', damping: 25 }}
             >
               <div className="relative p-6">
                 <div className="mb-5 flex justify-between items-center">

@@ -1,15 +1,7 @@
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import {
-  Bell,
-  Menu,
-  Search,
-  User,
-  MessageSquare,
-  LogOut,
-  Settings,
-} from "lucide-react";
-import Link from "next/link";
+import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { Bell, Menu, Search, User, MessageSquare, LogOut, Settings } from 'lucide-react';
+import Link from 'next/link';
 
 interface HeaderProps {
   sidebarOpen: boolean;
@@ -24,30 +16,24 @@ const Header = ({ sidebarOpen, setSidebarOpen }: HeaderProps) => {
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
-      if (
-        !target.closest(".profile-menu") &&
-        !target.closest(".profile-trigger")
-      ) {
+      if (!target.closest('.profile-menu') && !target.closest('.profile-trigger')) {
         setIsProfileOpen(false);
       }
-      if (
-        !target.closest(".notification-menu") &&
-        !target.closest(".notification-trigger")
-      ) {
+      if (!target.closest('.notification-menu') && !target.closest('.notification-trigger')) {
         setIsNotificationOpen(false);
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   return (
-    <header className="sticky top-3 mx-8 z-20 flex h-16 items-center justify-between bg-white rounded-3xl px-4 transition-shadow duration-200 min-[968px]:px-6">
+    <header className="sticky top-3 mx-4 min-[968px]:mx-8 z-20 flex h-16 items-center justify-between bg-white rounded-3xl px-4 transition-shadow duration-200 min-[968px]:px-6">
       {/*==================== Mobile menu button and search ====================*/}
       <div className="flex items-center space-x-4">
         <button
-        title="button"
+          title="button"
           onClick={() => setSidebarOpen(!sidebarOpen)}
           className="rounded-md p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700 focus:outline-none max-[967px]:block hidden"
         >

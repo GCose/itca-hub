@@ -3,21 +3,20 @@ import { motion } from 'framer-motion';
 import { CheckCircle } from 'lucide-react';
 import Link from 'next/link';
 import AuthLayout from '@/components/authentication/auth-layout';
-import { CustomError, ErrorResponseData, RegistrationFormData, UserAuth } from '@/types';
+import { RegistrationFormData, UserAuth } from '@/types';
 import { validatePersonalInfo, validateSecurity } from '@/utils/sign-up/validation';
 import PersonalInfoStep from '@/components/authentication/sign-up/personal-info-steps';
 import SecurityStep from '@/components/authentication/sign-up/security-step';
 import StepIndicator from '@/components/authentication/sign-up/step-indicator';
 import useTimedError from '@/hooks/timed-error';
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 import { BASE_URL } from '@/utils/url';
-import { getErrorMessage } from '@/utils/error';
 import { useRouter } from 'next/router';
 import { NextApiRequest } from 'next';
 import { isLoggedIn } from '@/utils/auth';
+import { toast } from 'sonner';
 
 const SignUp = () => {
-  // State management
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState<RegistrationFormData>({
@@ -75,13 +74,17 @@ const SignUp = () => {
       await axios.post(`${BASE_URL}/auth/register`, formData);
 
       // Show alert that the user has registered successfully
+      toast.error('Account created successfully', {
+        description: 'Your account has been verified and you are not eligible to use the system',
+      });
 
       router.push('/auth');
-    } catch (error) {
-      const { message } = getErrorMessage(
-        error as AxiosError<ErrorResponseData> | CustomError | Error
-      );
-      setError(message);
+    } catch {
+      toast.error('Unable to sign in', {
+        description:
+          'You need an internet connection to sign in. Check your internet connection and try again',
+      });
+      setError('You need an internet connection to create an account');
     } finally {
       setIsLoading(false);
     }
