@@ -14,7 +14,7 @@ const AdminResourceUploadPage = () => {
     fileSize: string;
   }) => {
     // Logging the successful upload for debugging purposes because I can
-    // console.log('Upload completed successfully:', fileData);
+    // console.error('Upload completed successfully:', fileData);
   };
 
   return (
