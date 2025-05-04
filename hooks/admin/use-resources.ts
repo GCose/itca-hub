@@ -1,25 +1,6 @@
+import { Resource } from '@/types';
 import { useState, useCallback } from 'react';
 import { toast } from 'sonner';
-
-export interface Resource {
-  id: string;
-  title: string;
-  description: string;
-  type: string;
-  category: string;
-  dateUploaded: string;
-  fileSize: string;
-  downloads: number;
-  viewCount: number;
-  fileUrl: string;
-  fileName: string;
-  visibility: 'all' | 'admin';
-  academicLevel?: 'undergraduate' | 'postgraduate' | 'all';
-  department?: string;
-  isDeleted?: boolean;
-  deletedAt?: string;
-  deletedBy?: string;
-}
 
 interface JeetixFileItem {
   name: string;

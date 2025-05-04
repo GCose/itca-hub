@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Users, Download, Eye } from 'lucide-react';
-import { Resource } from '@/hooks/admin/use-resources';
+import { Resource } from '@/types';
 
 interface ResourceAnalyticsProps {
   resource: Resource;
