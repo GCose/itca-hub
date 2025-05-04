@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import { useResources } from '@/hooks/admin/use-resources';
 import { Upload, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import ResourceTable from '@/components/dashboard/admin/resources/table/resource-table';
@@ -7,6 +6,7 @@ import DashboardLayout from '@/components/dashboard/layout/dashboard-layout';
 import { UserAuth } from '@/types';
 import { isLoggedIn } from '@/utils/auth';
 import { NextApiRequest } from 'next';
+import { useResources } from '@/hooks/admin/use-resources';
 
 const AdminResourcesPage = () => {
   const { resources, isLoading, isError, fetchResources, moveToRecycleBin, batchMoveToRecycleBin } =

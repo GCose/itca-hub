@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { X, Pencil, Save, Loader } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Resource } from '@/hooks/admin/use-resources';
+import { Resource } from '@/types';
 
 interface ResourceEditModalProps {
   resource: Resource;

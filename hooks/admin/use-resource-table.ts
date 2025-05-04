@@ -1,8 +1,9 @@
-import { useState, useMemo, useEffect, useCallback } from "react";
-import { toast } from "sonner";
-import { Resource } from "./use-resources";
-import useResourceAnalytics from "./use-resource-analytics";
-import { useRouter } from "next/router";
+import { useState, useMemo, useEffect, useCallback } from 'react';
+import { toast } from 'sonner';
+
+import useResourceAnalytics from './use-resource-analytics';
+import { useRouter } from 'next/router';
+import { Resource } from '@/types';
 
 const useResourceTable = (
   resources: Resource[],
@@ -13,15 +14,13 @@ const useResourceTable = (
   const router = useRouter();
 
   // Basic state definitions
-  const [searchTerm, setSearchTerm] = useState("");
-  const [department, setDepartment] = useState("all");
-  const [fileType, setFileType] = useState("all");
-  const [category, setCategory] = useState("all");
-  const [visibility, setVisibility] = useState("all");
+  const [searchTerm, setSearchTerm] = useState('');
+  const [department, setDepartment] = useState('all');
+  const [fileType, setFileType] = useState('all');
+  const [category, setCategory] = useState('all');
+  const [visibility, setVisibility] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedResource, setSelectedResource] = useState<Resource | null>(
-    null
-  );
+  const [selectedResource, setSelectedResource] = useState<Resource | null>(null);
   const [showAnalytics, setShowAnalytics] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -29,9 +28,7 @@ const useResourceTable = (
   const [isDeleting, setIsDeleting] = useState(false);
 
   // Selection state
-  const [selectedResources, setSelectedResources] = useState<
-    Record<string, boolean>
-  >({});
+  const [selectedResources, setSelectedResources] = useState<Record<string, boolean>>({});
   const itemsPerPage = 10;
 
   // Using the analytics hooks
@@ -82,23 +79,16 @@ const useResourceTable = (
         resource.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         resource.description.toLowerCase().includes(searchTerm.toLowerCase());
 
-      const matchesDepartment =
-        department === "all" || resource.department === department;
+      const matchesDepartment = department === 'all' || resource.department === department;
 
-      const matchesType = fileType === "all" || resource.type === fileType;
+      const matchesType = fileType === 'all' || resource.type === fileType;
 
-      const matchesCategory =
-        category === "all" || resource.category === category;
+      const matchesCategory = category === 'all' || resource.category === category;
 
-      const matchesVisibility =
-        visibility === "all" || resource.visibility === visibility;
+      const matchesVisibility = visibility === 'all' || resource.visibility === visibility;
 
       return (
-        matchesSearch &&
-        matchesDepartment &&
-        matchesType &&
-        matchesCategory &&
-        matchesVisibility
+        matchesSearch && matchesDepartment && matchesType && matchesCategory && matchesVisibility
       );
     });
   }, [resources, searchTerm, department, fileType, category, visibility]);
@@ -123,51 +113,37 @@ const useResourceTable = (
   // Reset selection when page changes or filters change
   useEffect(() => {
     clearSelection();
-  }, [
-    currentPage,
-    searchTerm,
-    department,
-    fileType,
-    category,
-    visibility,
-    clearSelection,
-  ]);
+  }, [currentPage, searchTerm, department, fileType, category, visibility, clearSelection]);
 
   /**=======================================
    * Handle single row selection (toggle)
    =======================================*/
-  const toggleSelection = useCallback(
-    (resource: Resource, event: React.MouseEvent) => {
-      // Check if Ctrl/Cmd key is pressed for multi-select
-      const isMultiSelectKey = event.ctrlKey || event.metaKey;
+  const toggleSelection = useCallback((resource: Resource, event: React.MouseEvent) => {
+    // Check if Ctrl/Cmd key is pressed for multi-select
+    const isMultiSelectKey = event.ctrlKey || event.metaKey;
 
-      setSelectedResources((prev) => {
-        const newSelection = { ...prev };
+    setSelectedResources((prev) => {
+      const newSelection = { ...prev };
 
-        // If multi-select key is not pressed, clear other selections
-        if (!isMultiSelectKey) {
-          // If the resource is already the only one selected, toggle it off
-          if (
-            prev[resource.id] &&
-            Object.values(prev).filter(Boolean).length === 1
-          ) {
-            newSelection[resource.id] = false;
-            return newSelection;
-          }
-
-          // Otherwise clear everything and select just this one
-          Object.keys(newSelection).forEach((id) => {
-            newSelection[id] = false;
-          });
+      // If multi-select key is not pressed, clear other selections
+      if (!isMultiSelectKey) {
+        // If the resource is already the only one selected, toggle it off
+        if (prev[resource.id] && Object.values(prev).filter(Boolean).length === 1) {
+          newSelection[resource.id] = false;
+          return newSelection;
         }
 
-        // Toggle the clicked resource
-        newSelection[resource.id] = !prev[resource.id];
-        return newSelection;
-      });
-    },
-    []
-  );
+        // Otherwise clear everything and select just this one
+        Object.keys(newSelection).forEach((id) => {
+          newSelection[id] = false;
+        });
+      }
+
+      // Toggle the clicked resource
+      newSelection[resource.id] = !prev[resource.id];
+      return newSelection;
+    });
+  }, []);
 
   /**=======================================
    * Select all resources on current page
@@ -176,9 +152,7 @@ const useResourceTable = (
     const newSelection = { ...selectedResources };
 
     // Check if all current items are already selected
-    const allSelected = currentItems.every(
-      (item) => selectedResources[item.id]
-    );
+    const allSelected = currentItems.every((item) => selectedResources[item.id]);
 
     // Toggle: select all if not all selected, otherwise deselect all
     currentItems.forEach((item) => {
@@ -193,9 +167,7 @@ const useResourceTable = (
    ====================================================*/
   const handleDoubleClick = useCallback(
     (resource: Resource) => {
-      router.push(
-        `/admin/resources/view/${encodeURIComponent(resource.fileName)}`
-      );
+      router.push(`/admin/resources/view/${encodeURIComponent(resource.fileName)}`);
     },
     [router]
   );
@@ -204,8 +176,7 @@ const useResourceTable = (
    * Change page
    =============*/
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
-  const nextPage = () =>
-    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+  const nextPage = () => setCurrentPage((prev) => Math.min(prev + 1, totalPages));
   const prevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
 
   /**====================
@@ -219,15 +190,15 @@ const useResourceTable = (
       await trackResourceDownload(resource.id);
 
       // Use API to initiate the download
-      const link = document.createElement("a");
+      const link = document.createElement('a');
       link.href = `/api/resources/download/${resource.id}`;
-      link.download = resource.fileName || resource.title || "resource";
+      link.download = resource.fileName || resource.title || 'resource';
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
     } catch (error) {
-      console.error("Error downloading resource:", error);
-      toast.error("Failed to download resource");
+      console.error('Error downloading resource:', error);
+      toast.error('Failed to download resource');
     }
   };
 
@@ -254,10 +225,7 @@ const useResourceTable = (
   /**===========================
    * Delete a single resource
    ===========================*/
-  const handleDeleteResource = async (
-    resource: Resource,
-    e?: React.MouseEvent
-  ) => {
+  const handleDeleteResource = async (resource: Resource, e?: React.MouseEvent) => {
     if (e) e.stopPropagation(); // Prevent row selection
 
     setSelectedResource(resource);
@@ -298,8 +266,8 @@ const useResourceTable = (
         setSelectedResource(null);
       }
     } catch (error) {
-      console.error("Error deleting resource(s):", error);
-      toast.error("Failed to delete resource(s)");
+      console.error('Error deleting resource(s):', error);
+      toast.error('Failed to delete resource(s)');
     } finally {
       setIsDeleting(false);
     }
@@ -314,7 +282,7 @@ const useResourceTable = (
       // LOCALSTORAGE IMPLEMENTATION (TEMPORARY)
 
       // Get existing metadata
-      const storedMetadata = localStorage.getItem("resourceMetadata");
+      const storedMetadata = localStorage.getItem('resourceMetadata');
       const metadataMap = storedMetadata ? JSON.parse(storedMetadata) : {};
 
       // Update the resource metadata
@@ -329,16 +297,16 @@ const useResourceTable = (
       };
 
       // Save back to localStorage
-      localStorage.setItem("resourceMetadata", JSON.stringify(metadataMap));
+      localStorage.setItem('resourceMetadata', JSON.stringify(metadataMap));
 
       // Show success message
-      toast.success("Resource updated successfully");
+      toast.success('Resource updated successfully');
 
       // Refresh resources
       onRefresh();
     } catch (error) {
-      console.error("Error updating resource:", error);
-      toast.error("Failed to update resource");
+      console.error('Error updating resource:', error);
+      toast.error('Failed to update resource');
       throw error;
     } finally {
       setIsEditing(false);
@@ -366,11 +334,11 @@ const useResourceTable = (
    * Clear all filters
    ====================*/
   const clearFilters = () => {
-    setSearchTerm("");
-    setDepartment("all");
-    setFileType("all");
-    setCategory("all");
-    setVisibility("all");
+    setSearchTerm('');
+    setDepartment('all');
+    setFileType('all');
+    setCategory('all');
+    setVisibility('all');
   };
 
   return {
