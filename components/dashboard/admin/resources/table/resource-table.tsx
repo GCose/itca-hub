@@ -12,20 +12,16 @@ import {
   Users,
   ShieldAlert,
   RefreshCw,
-} from "lucide-react";
-import { Resource } from "@/hooks/admin/use-resources";
-import useResourceTable from "@/hooks/admin/use-resource-table";
-import ResourceTableSkeleton from "./resource-table-skeleton";
-import ResourceFilters from "./resource-table-filters";
-import ResourceAnalytics from "../modals/analytics-resource-modal";
-import ResourceEditModal from "../modals/edit-resource-modal";
-import DeleteResourceModal from "../modals/delete-resource-modal";
-import formatDepartment from "@/utils/admin/format-department";
-import {
-  EmptyState,
-  NetworkError,
-  NoResults,
-} from "@/components/error-message";
+} from 'lucide-react';
+import { Resource } from '@/types';
+import useResourceTable from '@/hooks/admin/use-resource-table';
+import ResourceTableSkeleton from './resource-table-skeleton';
+import ResourceFilters from './resource-table-filters';
+import ResourceAnalytics from '../modals/analytics-resource-modal';
+import ResourceEditModal from '../modals/edit-resource-modal';
+import DeleteResourceModal from '../modals/delete-resource-modal';
+import formatDepartment from '@/utils/admin/format-department';
+import { EmptyState, NetworkError, NoResults } from '@/components/error-message';
 
 interface ResourceTableProps {
   resources: Resource[];
@@ -88,35 +84,30 @@ const ResourceTable = ({
     selectAll,
     clearSelection,
     handleDoubleClick,
-  } = useResourceTable(
-    resources,
-    onRefresh,
-    onDeleteResource,
-    onDeleteMultiple
-  );
+  } = useResourceTable(resources, onRefresh, onDeleteResource, onDeleteMultiple);
 
   // Function to get the appropriate icon based on file type
   const getFileIcon = (type: string) => {
     switch (type.toLowerCase()) {
-      case "pdf":
+      case 'pdf':
         return <FileText className="h-5 w-5 text-red-500" />;
-      case "doc":
-      case "docx":
+      case 'doc':
+      case 'docx':
         return <FileText className="h-5 w-5 text-blue-500" />;
-      case "ppt":
-      case "pptx":
+      case 'ppt':
+      case 'pptx':
         return <FileText className="h-5 w-5 text-orange-500" />;
-      case "xls":
-      case "xlsx":
+      case 'xls':
+      case 'xlsx':
         return <FileText className="h-5 w-5 text-green-500" />;
-      case "jpg":
-      case "jpeg":
-      case "png":
-      case "gif":
+      case 'jpg':
+      case 'jpeg':
+      case 'png':
+      case 'gif':
         return <ImageIcon className="h-5 w-5 text-purple-500" />;
-      case "mp4":
-      case "avi":
-      case "mov":
+      case 'mp4':
+      case 'avi':
+      case 'mov':
         return <Video className="h-5 w-5 text-blue-500" />;
       default:
         return <File className="h-5 w-5 text-gray-500" />;
@@ -126,9 +117,9 @@ const ResourceTable = ({
   // Function to get visibility icon
   const getVisibilityIcon = (visibility: string) => {
     switch (visibility) {
-      case "all":
+      case 'all':
         return <Users className="h-4 w-4 text-green-500 mr-1" />;
-      case "admin":
+      case 'admin':
         return <ShieldAlert className="h-4 w-4 text-purple-500 mr-1" />;
       default:
         return null;
@@ -147,8 +138,8 @@ const ResourceTable = ({
           onClick={() => paginate(i)}
           className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold focus:z-20 ${
             currentPage === i
-              ? "bg-blue-600 text-white focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-              : "text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-offset-0"
+              ? 'bg-blue-600 text-white focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-blue-600'
+              : 'text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-offset-0'
           }`}
         >
           {i}
@@ -188,24 +179,16 @@ const ResourceTable = ({
       {hasMultipleSelected && (
         <div className="bg-blue-50 border border-blue-100 mb-4 px-4 py-3 rounded-lg flex items-center justify-between">
           <div className="flex items-center">
-            <span className="text-blue-800 font-medium">
-              {selectedCount} resources selected
-            </span>
+            <span className="text-blue-800 font-medium">{selectedCount} resources selected</span>
           </div>
           <div className="flex items-center space-x-3">
-            <button
-              onClick={clearSelection}
-              className="text-gray-600 hover:text-gray-800 text-sm"
-            >
+            <button onClick={clearSelection} className="text-gray-600 hover:text-gray-800 text-sm">
               Clear Selection
             </button>
-            <button
-              onClick={selectAll}
-              className="text-gray-600 hover:text-gray-800 text-sm"
-            >
+            <button onClick={selectAll} className="text-gray-600 hover:text-gray-800 text-sm">
               {currentItems.every((item) => selectedResources[item.id])
-                ? "Deselect All"
-                : "Select All"}
+                ? 'Deselect All'
+                : 'Select All'}
             </button>
             <button
               onClick={handleDeleteSelected}
@@ -241,8 +224,7 @@ const ResourceTable = ({
             <h3 className="text-lg font-medium text-gray-900">Resources</h3>
             <div className="flex items-center mt-2 sm:mt-0">
               <p className="text-sm text-gray-500">
-                Showing {currentItems.length} of {filteredResources.length}{" "}
-                resources
+                Showing {currentItems.length} of {filteredResources.length} resources
               </p>
               <button
                 onClick={onRefresh}
@@ -312,7 +294,7 @@ const ResourceTable = ({
                     onClick={(e) => toggleSelection(resource, e)}
                     onDoubleClick={() => handleDoubleClick(resource)}
                     className={`even:bg-gray-100/80 hover:bg-gray-200/60 border-none transition-colors cursor-pointer ${
-                      selectedResources[resource.id] ? "bg-amber-100/50" : ""
+                      selectedResources[resource.id] ? 'bg-amber-100/50' : ''
                     }`}
                   >
                     {/*==================== Resource Column ====================*/}
@@ -379,10 +361,7 @@ const ResourceTable = ({
 
                     {/*==================== Actions Column ====================*/}
                     <td className="whitespace-nowrap px-5 py-4 text-sm font-medium">
-                      <div
-                        className="flex space-x-2"
-                        onClick={(e) => e.stopPropagation()}
-                      >
+                      <div className="flex space-x-2" onClick={(e) => e.stopPropagation()}>
                         <button
                           onClick={(e) => handleEditResource(resource, e)}
                           className="rounded-full p-1.5 text-gray-500 hover:bg-gray-100 hover:text-blue-600"
@@ -450,19 +429,11 @@ const ResourceTable = ({
               <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
                 <div>
                   <p className="text-sm text-gray-500">
-                    Showing{" "}
-                    <span className="font-medium">
-                      {(currentPage - 1) * 10 + 1}
-                    </span>{" "}
-                    to{" "}
+                    Showing <span className="font-medium">{(currentPage - 1) * 10 + 1}</span> to{' '}
                     <span className="font-medium">
                       {Math.min(currentPage * 10, filteredResources.length)}
-                    </span>{" "}
-                    of{" "}
-                    <span className="font-medium">
-                      {filteredResources.length}
-                    </span>{" "}
-                    results
+                    </span>{' '}
+                    of <span className="font-medium">{filteredResources.length}</span> results
                   </p>
                 </div>
 
@@ -503,10 +474,7 @@ const ResourceTable = ({
       {/*==================== Analytics Modal ====================*/}
       {showAnalytics && selectedResource && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/50 backdrop-blur-sm">
-          <ResourceAnalytics
-            resource={selectedResource}
-            onClose={() => setShowAnalytics(false)}
-          />
+          <ResourceAnalytics resource={selectedResource} onClose={() => setShowAnalytics(false)} />
         </div>
       )}
       {/*==================== End of Analytics Modal ====================*/}

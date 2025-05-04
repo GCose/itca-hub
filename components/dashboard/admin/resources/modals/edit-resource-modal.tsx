@@ -1,7 +1,7 @@
-import { useState } from "react";
-import { X, Pencil, Save, Loader } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Resource } from "@/hooks/admin/use-resources";
+import { useState } from 'react';
+import { X, Pencil, Save, Loader } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Resource } from '@/hooks/admin/use-resources';
 
 interface ResourceEditModalProps {
   resource: Resource;
@@ -10,30 +10,25 @@ interface ResourceEditModalProps {
   onSave: (updatedResource: Resource) => Promise<void>;
 }
 
-const ResourceEditModal = ({
-  resource,
-  isOpen,
-  onClose,
-  onSave,
-}: ResourceEditModalProps) => {
+const ResourceEditModal = ({ resource, isOpen, onClose, onSave }: ResourceEditModalProps) => {
   const [title, setTitle] = useState(resource.title);
   const [description, setDescription] = useState(resource.description);
-  const [department, setDepartment] = useState(resource.department || "");
+  const [department, setDepartment] = useState(resource.department || '');
   const [visibility, setVisibility] = useState(resource.visibility);
   const [category, setCategory] = useState(resource.category);
   const [isSaving, setIsSaving] = useState(false);
 
   // Available categories
   const categories = [
-    "Lecture Notes",
-    "Assignments",
-    "Past Papers",
-    "Tutorials",
-    "Textbooks",
-    "Research Papers",
+    'Lecture Notes',
+    'Assignments',
+    'Past Papers',
+    'Tutorials',
+    'Textbooks',
+    'Research Papers',
   ];
 
-  // Handle save
+  // Handle updated resource save
   const handleSave = async () => {
     if (!title.trim()) {
       return; // Don't save if title is empty
@@ -47,14 +42,14 @@ const ResourceEditModal = ({
         title,
         description,
         department,
-        visibility: visibility as "all" | "admin",
+        visibility: visibility as 'all' | 'admin',
         category,
       };
 
       await onSave(updatedResource);
       onClose();
     } catch (error) {
-      console.error("Failed to save resource:", error);
+      console.error('Failed to save resource:', error);
     } finally {
       setIsSaving(false);
     }
@@ -82,7 +77,7 @@ const ResourceEditModal = ({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.97, y: 10 }}
             transition={{
-              type: "spring",
+              type: 'spring',
               damping: 20,
               stiffness: 300,
               duration: 0.3,
@@ -122,10 +117,7 @@ const ResourceEditModal = ({
               <div className="mb-6">
                 {/*==================== Title ====================*/}
                 <div className="mb-4">
-                  <label
-                    htmlFor="title"
-                    className="block text-sm font-medium text-gray-700 mb-1"
-                  >
+                  <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
                     Title <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -176,12 +168,8 @@ const ResourceEditModal = ({
                     >
                       <option value="">Select Department</option>
                       <option value="computer-science">Computer Science</option>
-                      <option value="information-systems">
-                        Information Systems
-                      </option>
-                      <option value="telecommunications">
-                        Telecommunications
-                      </option>
+                      <option value="information-systems">Information Systems</option>
+                      <option value="telecommunications">Telecommunications</option>
                     </select>
                   </div>
                   {/*==================== End of Department ====================*/}
@@ -197,13 +185,11 @@ const ResourceEditModal = ({
                     <select
                       id="visibility"
                       value={visibility}
-                      onChange={(e) =>
-                        setVisibility(e.target.value as "all" | "admin")
-                      }
+                      onChange={(e) => setVisibility(e.target.value as 'all' | 'admin')}
                       className="w-full rounded-lg border border-gray-200 p-2.5 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
                       required
                     >
-                      <option value="all">All Users</option>{" "}
+                      <option value="all">All Users</option>{' '}
                       <option value="admin">Admin Only</option>
                     </select>
                   </div>

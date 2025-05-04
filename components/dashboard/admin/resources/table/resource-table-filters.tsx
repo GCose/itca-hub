@@ -1,20 +1,5 @@
-import { Filter } from "lucide-react";
-
-interface ResourceFiltersProps {
-  searchTerm: string;
-  setSearchTerm: (term: string) => void;
-  department: string;
-  setDepartment: (dept: string) => void;
-  fileType: string;
-  setFileType: (type: string) => void;
-  category: string;
-  setCategory: (category: string) => void;
-  visibility: string;
-  setVisibility: (visibility: string) => void;
-  fileTypes: string[];
-  categories: string[];
-  clearFilters?: () => void;
-}
+import { ResourceFiltersProps } from '@/types';
+import { Filter } from 'lucide-react';
 
 const ResourceFilters = ({
   searchTerm,
@@ -36,9 +21,7 @@ const ResourceFilters = ({
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center">
           <Filter className="h-5 w-5 text-blue-600 mr-2" />
-          <h3 className="text-lg font-medium text-gray-900">
-            Filter Resources
-          </h3>
+          <h3 className="text-lg font-medium text-gray-900">Filter Resources</h3>
         </div>
         {clearFilters && (
           <button
@@ -52,16 +35,10 @@ const ResourceFilters = ({
 
       {/*==================== Search Box ====================*/}
       <div className="mb-4 pt-2">
-        <label className="block text-sm font-medium text-gray-500 mb-1">
-          Search
-        </label>
+        <label className="block text-sm font-medium text-gray-500 mb-1">Search</label>
         <div className="relative">
           <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-            <svg
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              className="h-5 w-5 text-gray-400"
-            >
+            <svg viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5 text-gray-400">
               <path
                 fillRule="evenodd"
                 clipRule="evenodd"
@@ -84,9 +61,7 @@ const ResourceFilters = ({
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 pt-2">
         {/*==================== Department Filter ====================*/}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Department
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Department</label>
           <select
             value={department}
             onChange={(e) => setDepartment(e.target.value)}
@@ -102,9 +77,7 @@ const ResourceFilters = ({
 
         {/*==================== File Type Filter ====================*/}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            File Type
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">File Type</label>
           <select
             value={fileType}
             onChange={(e) => setFileType(e.target.value)}
@@ -122,9 +95,7 @@ const ResourceFilters = ({
 
         {/*==================== Category Filter (replaced Status) ====================*/}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Category
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
@@ -142,17 +113,14 @@ const ResourceFilters = ({
 
         {/*==================== Visibility Filter ====================*/}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Visibility
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Visibility</label>
           <select
             value={visibility}
             onChange={(e) => setVisibility(e.target.value)}
             className="w-full rounded-lg bg-gray-100/70 py-2.5 pl-3 pr-8 text-sm text-gray-500 focus:bg-slate-100 focus:outline-none transition-colors"
           >
             <option value="all">All Visibility</option>
-            <option value="all">All Users</option>{" "}
-            <option value="admin">Admin Only</option>
+            <option value="all">All Users</option> <option value="admin">Admin Only</option>
           </select>
         </div>
         {/*==================== End of Visibility Filter ====================*/}

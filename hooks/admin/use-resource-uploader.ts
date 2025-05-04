@@ -1,5 +1,5 @@
-import { useState, useRef, FormEvent } from "react";
-import { toast } from "sonner";
+import { useState, useRef, FormEvent } from 'react';
+import { toast } from 'sonner';
 
 interface ResourceUploadHookProps {
   onUploadComplete?: (fileData: {
@@ -18,87 +18,56 @@ interface ResourceMetadata {
   title: string;
   description: string;
   category: string;
-  visibility: "all" | "admin";
+  visibility: 'all' | 'admin';
   featuredOnLanding?: boolean;
-  academicLevel?: "undergraduate" | "postgraduate" | "all";
+  academicLevel?: 'undergraduate' | 'postgraduate' | 'all';
   department?: string;
   isDeleted?: boolean;
   deletedAt?: string;
   deletedBy?: string;
 }
 
-const useResourceUploader = ({
-  onUploadComplete,
-  onError,
-}: ResourceUploadHookProps) => {
+const useResourceUploader = ({ onUploadComplete, onError }: ResourceUploadHookProps) => {
   const [file, setFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [isCheckingDuplicate, setIsCheckingDuplicate] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Basic fields
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [category, setCategory] = useState("");
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [category, setCategory] = useState('');
 
   // Additional fields
-  const [visibility, setVisibility] = useState<"all" | "admin">("all");
+  const [visibility, setVisibility] = useState<'all' | 'admin'>('all');
   const [featuredOnLanding, setFeaturedOnLanding] = useState(false);
-  const [academicLevel, setAcademicLevel] = useState<
-    "undergraduate" | "postgraduate" | "all"
-  >("all");
-  const [department, setDepartment] = useState("");
+  const [academicLevel, setAcademicLevel] = useState<'undergraduate' | 'postgraduate' | 'all'>(
+    'all'
+  );
+  const [department, setDepartment] = useState('');
 
   // Available categories
   const categories = [
-    "Lecture Notes",
-    "Assignments",
-    "Past Papers",
-    "Tutorials",
-    "Textbooks",
-    "Research Papers",
+    'Lecture Notes',
+    'Assignments',
+    'Past Papers',
+    'Tutorials',
+    'Textbooks',
+    'Research Papers',
   ];
 
   // Function to check if a file with similar title already exists
   // This should ideally be a backend call but I will be using the local storage for now
-  const checkForDuplicates = async (
-    fileName: string,
-    fileTitle: string
-  ): Promise<boolean> => {
+  const checkForDuplicates = async (fileName: string, fileTitle: string): Promise<boolean> => {
     setIsCheckingDuplicate(true);
 
     try {
-      // BACKEND API IMPLEMENTATION (Commented out until backend is ready)
-      /*
-      // Check with backend if a similar resource exists
-      const response = await fetch('https://api.itca-hub.edu/api/resources/check-duplicate', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          fileName,
-          title: fileTitle,
-          category: category
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to check for duplicate resources");
-      }
-
-      const data = await response.json();
-      return data.isDuplicate;
-      */
-
       // TEMPORARY IMPLEMENTATION (localStorage)
       // Get existing metadata from localStorage
-      const storedMetadata = localStorage.getItem("resourceMetadata");
+      const storedMetadata = localStorage.getItem('resourceMetadata');
       if (!storedMetadata) return false;
 
-      const metadataMap: Record<string, ResourceMetadata> =
-        JSON.parse(storedMetadata);
+      const metadataMap: Record<string, ResourceMetadata> = JSON.parse(storedMetadata);
 
       // Check for duplicate file names (case insensitive)
       const hasDuplicateFileName = Object.keys(metadataMap).some(
@@ -108,13 +77,12 @@ const useResourceUploader = ({
       // Check for duplicate titles (case insensitive)
       const hasDuplicateTitle = Object.values(metadataMap).some(
         (metadata: ResourceMetadata) =>
-          metadata.title &&
-          metadata.title.toLowerCase() === fileTitle.toLowerCase()
+          metadata.title && metadata.title.toLowerCase() === fileTitle.toLowerCase()
       );
 
       return hasDuplicateFileName || hasDuplicateTitle;
     } catch (error) {
-      console.error("Error checking for duplicates:", error);
+      console.error('Error checking for duplicates:', error);
       // Default to false on error to not block upload
       // In production, I might have to handle this differently
       return false;
@@ -125,16 +93,14 @@ const useResourceUploader = ({
 
   // Function to format file size
   const formatFileSize = (sizeInBytes: number): string => {
-    if (sizeInBytes === 0) return "0 B";
+    if (sizeInBytes === 0) return '0 B';
 
-    const units = ["B", "KB", "MB", "GB", "TB"];
+    const units = ['B', 'KB', 'MB', 'GB', 'TB'];
     const base = 1024;
     const digitGroups = Math.floor(Math.log(sizeInBytes) / Math.log(base));
 
     return (
-      parseFloat((sizeInBytes / Math.pow(base, digitGroups)).toFixed(2)) +
-      " " +
-      units[digitGroups]
+      parseFloat((sizeInBytes / Math.pow(base, digitGroups)).toFixed(2)) + ' ' + units[digitGroups]
     );
   };
 
@@ -148,8 +114,8 @@ const useResourceUploader = ({
 
     // Check file size (100MB limit)
     if (selectedFile.size > 100 * 1024 * 1024) {
-      toast.error("File too large", {
-        description: "Maximum file size is 100MB.",
+      toast.error('File too large', {
+        description: 'Maximum file size is 100MB.',
       });
       return;
     }
@@ -159,14 +125,14 @@ const useResourceUploader = ({
     // Generate a title from the filename if empty
     if (!title) {
       const fileName = selectedFile.name;
-      const nameWithoutExt = fileName.substring(0, fileName.lastIndexOf("."));
-      const cleanedName = nameWithoutExt.replace(/[-_]/g, " ");
+      const nameWithoutExt = fileName.substring(0, fileName.lastIndexOf('.'));
+      const cleanedName = nameWithoutExt.replace(/[-_]/g, ' ');
 
       // Capitalize first letter of each word
       const formattedTitle = cleanedName
-        .split(" ")
+        .split(' ')
         .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(" ");
+        .join(' ');
 
       setTitle(formattedTitle);
     }
@@ -177,50 +143,50 @@ const useResourceUploader = ({
     e.preventDefault();
 
     if (!file) {
-      toast.error("No file selected", {
-        description: "Please select a file to upload.",
+      toast.error('No file selected', {
+        description: 'Please select a file to upload.',
       });
       return;
     }
 
     if (!title.trim()) {
-      toast.error("Title required", {
-        description: "Please provide a title for the resource.",
+      toast.error('Title required', {
+        description: 'Please provide a title for the resource.',
       });
       return;
     }
 
     if (!description.trim()) {
-      toast.error("Description required", {
-        description: "Please provide a description for the resource.",
+      toast.error('Description required', {
+        description: 'Please provide a description for the resource.',
       });
       return;
     }
 
     if (!category) {
-      toast.error("Category required", {
-        description: "Please select a category for the resource.",
+      toast.error('Category required', {
+        description: 'Please select a category for the resource.',
       });
       return;
     }
 
     if (!department) {
-      toast.error("Department required", {
-        description: "Please select a department for the resource.",
+      toast.error('Department required', {
+        description: 'Please select a department for the resource.',
       });
       return;
     }
 
     // Calculate potential folder path for the file
-    const folderName = category.toLowerCase().replace(/\s+/g, "-");
+    const folderName = category.toLowerCase().replace(/\s+/g, '-');
     const potentialFileName = `${folderName}/${file.name}`;
 
     // First check for duplicates before starting the upload
     const isDuplicate = await checkForDuplicates(potentialFileName, title);
     if (isDuplicate) {
-      toast.error("Duplicate resource", {
+      toast.error('Duplicate resource', {
         description:
-          "A resource with the same name or title already exists. Please rename your file or choose a different title.",
+          'A resource with the same name or title already exists. Please rename your file or choose a different title.',
       });
       return;
     }
@@ -230,33 +196,33 @@ const useResourceUploader = ({
     try {
       // Create FormData for the file upload
       const formData = new FormData();
-      formData.append("file", file);
+      formData.append('file', file);
 
       // Add the category as a folder parameter with itca prefix
       if (category) {
-        const folderName = `itca/${category.toLowerCase().replace(/\s+/g, "-")}`;
-        formData.append("folder", folderName);
+        const folderName = `itca/${category.toLowerCase().replace(/\s+/g, '-')}`;
+        formData.append('folder', folderName);
       } else {
-        formData.append("folder", "itca");
+        formData.append('folder', 'itca');
       }
 
       // Upload the file to Jeetix API
       const uploadResponse = await fetch(
-        "https://jeetix-file-service.onrender.com/api/storage/upload",
+        'https://jeetix-file-service.onrender.com/api/storage/upload',
         {
-          method: "POST",
+          method: 'POST',
           body: formData,
         }
       );
 
       if (!uploadResponse.ok) {
-        throw new Error("Failed to upload file");
+        throw new Error('Failed to upload file');
       }
 
       const uploadData = await uploadResponse.json();
 
-      if (uploadData.status !== "success") {
-        throw new Error(uploadData.message || "File upload failed");
+      if (uploadData.status !== 'success') {
+        throw new Error(uploadData.message || 'File upload failed');
       }
 
       // Store the metadata
@@ -274,45 +240,12 @@ const useResourceUploader = ({
 
       // TEMPORARY IMPLEMENTATION (localStorage)
       // Store in localStorage for now until the backend API is available
-      const existingMetadata = localStorage.getItem("resourceMetadata");
+      const existingMetadata = localStorage.getItem('resourceMetadata');
       const metadataMap: Record<string, ResourceMetadata> = existingMetadata
         ? JSON.parse(existingMetadata)
         : {};
       metadataMap[uploadData.data.fileName] = metadataPayload;
-      localStorage.setItem("resourceMetadata", JSON.stringify(metadataMap));
-
-      // BACKEND API IMPLEMENTATION (Commented out until backend is ready)
-      /*
-      // Create metadata on backend
-      const metadataResponse = await fetch('https://api.itca-hub.edu/api/resources/metadata', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          fileName: uploadData.data.fileName,
-          fileUrl: uploadData.data.fileUrl,
-          title: title,
-          description: description,
-          category: category,
-          visibility: visibility,
-          department: department,
-          academicLevel: academicLevel,
-          featuredOnLanding: featuredOnLanding
-        }),
-      });
-
-      if (!metadataResponse.ok) {
-        // Handle case where file was uploaded but metadata failed
-        // Ideally cleanup the uploaded file
-        await fetch(`https://jeetix-file-service.onrender.com/api/storage/delete/${encodeURIComponent(uploadData.data.fileName)}`, {
-          method: 'DELETE'
-        });
-        
-        throw new Error("Failed to save resource metadata");
-      }
-      */
+      localStorage.setItem('resourceMetadata', JSON.stringify(metadataMap));
 
       // Call the onUploadComplete callback with the file data
       if (onUploadComplete) {
@@ -328,16 +261,14 @@ const useResourceUploader = ({
       resetForm();
 
       // Show success toast
-      toast.success("Resource uploaded successfully!", {
-        description:
-          "Your file has been uploaded and is now available in the resource library.",
+      toast.success('Resource uploaded successfully!', {
+        description: 'Your file has been uploaded and is now available in the resource library.',
       });
     } catch (err) {
-      console.error("Error uploading resource:", err);
-      const errorMessage =
-        err instanceof Error ? err.message : "An unknown error occurred";
+      console.error('Error uploading resource:', err);
+      const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
 
-      toast.error("Upload failed", {
+      toast.error('Upload failed', {
         description: errorMessage,
       });
 
@@ -352,17 +283,17 @@ const useResourceUploader = ({
   // Reset the form
   const resetForm = () => {
     setFile(null);
-    setTitle("");
-    setDescription("");
-    setCategory("");
-    setVisibility("all");
+    setTitle('');
+    setDescription('');
+    setCategory('');
+    setVisibility('all');
     setFeaturedOnLanding(false);
-    setAcademicLevel("all");
-    setDepartment("");
+    setAcademicLevel('all');
+    setDepartment('');
 
     // Reset the file input
     if (fileInputRef.current) {
-      fileInputRef.current.value = "";
+      fileInputRef.current.value = '';
     }
   };
 

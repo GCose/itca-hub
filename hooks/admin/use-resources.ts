@@ -1,7 +1,6 @@
 import { useState, useCallback } from 'react';
 import { toast } from 'sonner';
 
-// Types for the resources and API responses
 export interface Resource {
   id: string;
   title: string;
@@ -22,7 +21,6 @@ export interface Resource {
   deletedBy?: string;
 }
 
-// Structure of items returned by Jeetix API
 interface JeetixFileItem {
   name: string;
   url: string;
@@ -34,7 +32,6 @@ interface JeetixFileItem {
   };
 }
 
-// Structure of the Jeetix API response
 interface JeetixApiResponse {
   status: string;
   data: JeetixFileItem[];
@@ -84,7 +81,7 @@ export const useResources = () => {
       .join(' ');
   };
 
-  // Fetch resources from Jeetix API, optionally including deleted resources
+  // Fetch resources from Jeetix API
   const fetchResources = useCallback(async (includeDeleted = false) => {
     setIsLoading(true);
     setIsError(false); // Reset error state on each fetch attempt
@@ -136,8 +133,8 @@ export const useResources = () => {
             resourceMetadata.category || category.charAt(0).toUpperCase() + category.slice(1),
           dateUploaded: uploadDate,
           fileSize: item.metadata?.size ? formatFileSize(parseInt(item.metadata.size)) : 'Unknown',
-          downloads: Math.floor(Math.random() * 100), // Placeholder since Jeetix doesn't track this
-          viewCount: Math.floor(Math.random() * 150), // Placeholder
+          downloads: Math.floor(Math.random() * 100),
+          viewCount: Math.floor(Math.random() * 150),
           fileUrl: item.url,
           fileName: item.name,
           visibility: resourceMetadata.visibility || 'all',
@@ -166,43 +163,6 @@ export const useResources = () => {
     } finally {
       setIsLoading(false);
     }
-
-    // BACKEND API IMPLEMENTATION (Commented out until backend is ready)
-    /*
-    try {
-      const response = await fetch("https://api.itca-hub.edu/api/resources/metadata", {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
-          'Content-Type': 'application/json',
-        },
-        params: {
-          includeDeleted: includeDeleted.toString()
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch resources from server");
-      }
-
-      const data = await response.json();
-      
-      if (data.status !== "success" || !Array.isArray(data.data)) {
-        throw new Error("Invalid response format from server");
-      }
-
-      setResources(data.data);
-      setIsError(false);
-    } catch (err) {
-      console.error("Error fetching resources:", err);
-      setIsError(true);
-      toast.error("Failed to load resources", {
-        description: err instanceof Error ? err.message : "An unknown error occurred",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-    */
   }, []);
 
   // Move a resource to recycle bin (soft delete)
@@ -243,27 +203,6 @@ export const useResources = () => {
       // Update the resources state to reflect the deletion
       setResources(resources.filter((r) => r.id !== resourceId));
 
-      // BACKEND API IMPLEMENTATION (Commented out until backend is ready)
-      /*
-      const response = await fetch(`https://api.itca-hub.edu/api/resources/${resourceId}/trash`, {
-        method: 'PATCH',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
-          'Content-Type': 'application/json',
-        }
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to move resource to recycle bin");
-      }
-
-      const data = await response.json();
-      if (data.status !== "success") {
-        throw new Error(data.message || "Failed to move resource to recycle bin");
-      }
-      */
-
       toast.success('Resource moved to recycle bin', {
         id: toastId,
         description: `${resourceTitle} has been moved to the recycle bin.`,
@@ -282,7 +221,7 @@ export const useResources = () => {
     }
   };
 
-  // NEW FUNCTION: Move multiple resources to recycle bin (batch delete)
+  // Move multiple resources to recycle bin (batch delete)
   const batchMoveToRecycleBin = async (resourceIds: string[]): Promise<boolean> => {
     if (resourceIds.length === 0) return false;
 
@@ -320,28 +259,6 @@ export const useResources = () => {
 
       // Update the resources state to remove the deleted resources
       setResources(resources.filter((r) => !resourceIds.includes(r.id)));
-
-      // BACKEND API IMPLEMENTATION (Commented out until backend is ready)
-      /*
-      const response = await fetch(`https://api.itca-hub.edu/api/resources/batch-trash`, {
-        method: 'PATCH',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ resourceIds })
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to move resources to recycle bin");
-      }
-
-      const data = await response.json();
-      if (data.status !== "success") {
-        throw new Error(data.message || "Failed to move resources to recycle bin");
-      }
-      */
 
       toast.success(`${resourceIds.length} resources moved to recycle bin`, {
         id: toastId,
@@ -396,27 +313,6 @@ export const useResources = () => {
         )
       );
 
-      // BACKEND API IMPLEMENTATION (Commented out until backend is ready)
-      /*
-      const response = await fetch(`https://api.itca-hub.edu/api/resources/${resourceId}/restore`, {
-        method: 'PATCH',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
-          'Content-Type': 'application/json',
-        }
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to restore resource");
-      }
-
-      const data = await response.json();
-      if (data.status !== "success") {
-        throw new Error(data.message || "Failed to restore resource");
-      }
-      */
-
       toast.success('Resource restored', {
         id: toastId,
         description: `${resourceTitle} has been restored from the recycle bin.`,
@@ -465,22 +361,6 @@ export const useResources = () => {
           localStorage.setItem('resourceMetadata', JSON.stringify(metadataMap));
         }
       }
-
-      // BACKEND API IMPLEMENTATION (Commented out until backend is ready)
-      /*
-      const metadataResponse = await fetch(`https://api.itca-hub.edu/api/resources/${resourceId}/permanent`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
-          'Content-Type': 'application/json',
-        }
-      });
-
-      if (!metadataResponse.ok) {
-        const errorData = await metadataResponse.json();
-        throw new Error(errorData.message || "Failed to delete resource metadata");
-      }
-      */
 
       // Remove from the resources state
       setResources(resources.filter((r) => r.fileName !== resourceFileName));
