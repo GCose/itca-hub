@@ -293,9 +293,9 @@ const ResourceTable = ({
                     key={resource.id}
                     onClick={(e) => toggleSelection(resource, e)}
                     onDoubleClick={() => handleDoubleClick(resource)}
-                    className={`even:bg-gray-100/80 hover:bg-gray-200/60 border-none transition-colors cursor-pointer ${
-                      selectedResources[resource.id] ? 'bg-amber-100/50' : ''
-                    }`}
+                    className={`${
+                      selectedResources[resource.id] ? 'bg-amber-100' : 'even:bg-gray-100/80'
+                    } hover:bg-gray-200/60 border-none transition-colors cursor-pointer`}
                   >
                     {/*==================== Resource Column ====================*/}
                     <td className="px-5 py-4">
@@ -363,25 +363,25 @@ const ResourceTable = ({
                     <td className="whitespace-nowrap px-5 py-4 text-sm font-medium">
                       <div className="flex space-x-2" onClick={(e) => e.stopPropagation()}>
                         <button
+                          title="Edit Resource"
                           onClick={(e) => handleEditResource(resource, e)}
                           className="rounded-full p-1.5 text-gray-500 hover:bg-gray-100 hover:text-blue-600"
-                          title="Edit Resource"
                         >
                           <Edit className="h-4 w-4" />
                         </button>
 
                         <button
+                          title="Download Resource"
                           onClick={(e) => handleDownload(resource, e)}
                           className="rounded-full p-1.5 text-gray-500 hover:bg-gray-100 hover:text-blue-600"
-                          title="Download Resource"
                         >
                           <Download className="h-4 w-4" />
                         </button>
 
                         <button
+                          title="View Analytics"
                           onClick={(e) => handleViewAnalytics(resource, e)}
                           className="rounded-full p-1.5 text-gray-500 hover:bg-gray-100 hover:text-blue-600"
-                          title="View Analytics"
                         >
                           <BarChart2 className="h-4 w-4" />
                         </button>
@@ -420,8 +420,8 @@ const ResourceTable = ({
                 </button>
                 <button
                   onClick={nextPage}
-                  className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
                   disabled={currentPage === totalPages}
+                  className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
                 >
                   Next
                 </button>
@@ -493,11 +493,11 @@ const ResourceTable = ({
       {/*==================== Delete Modal ====================*/}
       {showDeleteModal && (
         <DeleteResourceModal
-          isOpen={showDeleteModal}
           isDeleting={isDeleting}
-          resourceCount={hasMultipleSelected ? selectedCount : 1}
+          isOpen={showDeleteModal}
           onConfirm={confirmDelete}
           onClose={() => setShowDeleteModal(false)}
+          resourceCount={hasMultipleSelected ? selectedCount : 1}
         />
       )}
       {/*==================== End of Delete Modal ====================*/}

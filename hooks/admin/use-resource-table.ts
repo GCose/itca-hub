@@ -13,7 +13,6 @@ const useResourceTable = (
 ) => {
   const router = useRouter();
 
-  // Basic state definitions
   const [searchTerm, setSearchTerm] = useState('');
   const [department, setDepartment] = useState('all');
   const [fileType, setFileType] = useState('all');
