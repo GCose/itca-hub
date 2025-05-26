@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react';
 import StatsCard from '@/components/dashboard/student/stats-card';
 import { BookOpen, Calendar, FileText, Award } from 'lucide-react';
-import Link from 'next/link';
 import DashboardLayout from '@/components/dashboard/layout/dashboard-layout';
-import CourseList from '@/components/dashboard/student/course/course-list';
 import UpcomingEvents from '@/components/dashboard/student/upcoming-events';
 import ResourceList from '@/components/dashboard/student/resource/resource-list';
 import { NextApiRequest } from 'next';
@@ -172,20 +170,6 @@ const StudentDashboard = () => {
           isLoading={isLoading}
           valueClassName="text-purple-600"
         />
-      </div>
-
-      {/*==================== Courses Section ====================*/}
-      <div className="mb-8">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-semibold">My Courses</h2>
-          <Link
-            href="/student/courses"
-            className="text-sm font-medium text-blue-600 hover:text-blue-800"
-          >
-            View all
-          </Link>
-        </div>
-        <CourseList courses={dashboardData.courses} isLoading={isLoading} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

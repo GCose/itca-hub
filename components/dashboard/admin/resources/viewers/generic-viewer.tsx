@@ -1,6 +1,6 @@
-import React from "react";
-import { FileText, Download, ExternalLink } from "lucide-react";
-import useResourceAnalytics from "@/hooks/admin/use-resource-analytics";
+import React from 'react';
+import { FileText, Download, ExternalLink } from 'lucide-react';
+import useResourceAnalytics from '@/hooks/admin/resources/use-resource-analytics';
 
 interface GenericViewerProps {
   fileUrl: string;
@@ -9,12 +9,7 @@ interface GenericViewerProps {
   resourceId: string;
 }
 
-const GenericViewer: React.FC<GenericViewerProps> = ({
-  fileUrl,
-  title,
-  fileType,
-  resourceId,
-}) => {
+const GenericViewer: React.FC<GenericViewerProps> = ({ fileUrl, title, fileType, resourceId }) => {
   const { trackResourceDownload } = useResourceAnalytics();
 
   const handleDownload = async () => {
@@ -25,7 +20,7 @@ const GenericViewer: React.FC<GenericViewerProps> = ({
       // Then trigger download
       window.location.href = fileUrl;
     } catch (error) {
-      console.error("Error downloading resource:", error);
+      console.error('Error downloading resource:', error);
     }
   };
 
@@ -36,8 +31,7 @@ const GenericViewer: React.FC<GenericViewerProps> = ({
         <FileText className="h-16 w-16 text-gray-400 mb-4" />
         <h4 className="text-xl font-medium text-gray-700 mb-2">{title}</h4>
         <p className="text-gray-500 mb-6">
-          This file type ({fileType.toUpperCase()}) cannot be previewed
-          directly.
+          This file type ({fileType.toUpperCase()}) cannot be previewed directly.
         </p>
         <div className="flex space-x-4">
           <button

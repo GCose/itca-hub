@@ -21,6 +21,7 @@ export interface CustomError extends Error {
 }
 
 export interface UserAuth {
+  userId: unknown;
   token: string;
   role: string;
 }
