@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import DashboardLayout from '@/components/dashboard/layout/dashboard-layout';
-import { Calendar, Search, ListFilter, RefreshCw } from 'lucide-react';
+import { Calendar, Search, ListFilter, RefreshCw, ChevronLeft, ChevronRight } from 'lucide-react';
 import { toast } from 'sonner';
 import DeleteEventModal from '@/components/dashboard/admin/events/modal/delete-event-modal';
 import EventsEmptyState from '@/components/dashboard/admin/events/events-empty-state';
@@ -69,10 +69,26 @@ interface EditEventData {
   imageUrl?: string;
 }
 
-// Props interface
 interface AdminEventsPageProps {
   userData: UserAuth;
 }
+
+// Custom debounce hook
+const useDebounce = (value: string, delay: number) => {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+};
 
 // Convert API event to frontend event format
 const convertApiEvent = (apiEvent: ApiEvent): Event => {
@@ -89,6 +105,15 @@ const convertApiEvent = (apiEvent: ApiEvent): Event => {
     }
   };
 
+  // Auto-determine status based on current date
+  const eventDate = new Date(apiEvent.date);
+  const now = new Date();
+  let actualStatus = apiEvent.status;
+
+  if (eventDate < now && apiEvent.status !== 'completed') {
+    actualStatus = 'completed';
+  }
+
   return {
     id: apiEvent._id,
     title: apiEvent.title,
@@ -96,14 +121,13 @@ const convertApiEvent = (apiEvent: ApiEvent): Event => {
     date: apiEvent.date,
     time: formatTime(apiEvent.time),
     location: apiEvent.location,
-    status: apiEvent.status,
+    status: actualStatus,
     registrations: apiEvent.attendees.length,
     capacity: apiEvent.capacity,
     image: apiEvent.imageUrl,
   };
 };
 
-// Update component to receive userData prop
 const AdminEventsPage = ({ userData }: AdminEventsPageProps) => {
   const [events, setEvents] = useState<Event[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -114,69 +138,100 @@ const AdminEventsPage = ({ userData }: AdminEventsPageProps) => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [eventToDelete, setEventToDelete] = useState<string | null>(null);
   const [eventToEdit, setEventToEdit] = useState<Event | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [hasNext, setHasNext] = useState(false);
+  const [hasPrev, setHasPrev] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
 
-  // Pass token to useEvents hook
+  // Debounce search term - ONLY make API call after 500ms of no typing
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+
   const { isLoading, error, getAllEvents, createEvent, updateEvent, deleteEvent, refreshEvents } =
     useEvents(userData.token);
 
   const fetchEvents = useCallback(async () => {
     try {
+      // Show search loading when search term is being debounced
+      if (searchTerm !== debouncedSearchTerm) {
+        setIsSearching(true);
+        return;
+      }
+
+      setIsSearching(false);
+
       const response = await getAllEvents({
-        page: 1,
-        limit: 50,
+        page: currentPage,
+        limit: 9,
         status: status === 'all' ? undefined : status,
-        search: searchTerm || undefined,
+        search: debouncedSearchTerm || undefined, // Use debounced term
       });
 
-      // Convert API events to frontend format
-      const convertedEvents = response.map(convertApiEvent);
+      setTotalPages(response.pagination.totalPages);
+      setHasNext(response.pagination.hasNext);
+      setHasPrev(response.pagination.hasPrev);
+
+      const convertedEvents = response.data.map(convertApiEvent);
       setEvents(convertedEvents);
     } catch (error) {
       console.error('Error fetching events:', error);
+      setIsSearching(false);
     }
-  }, [status, searchTerm, getAllEvents]);
+  }, [status, debouncedSearchTerm, currentPage, getAllEvents, searchTerm]);
 
-  // Fetch events on component mount and when filters change
+  // Reset page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [status, debouncedSearchTerm]);
+
+  // Fetch events when debounced search term or other dependencies change
   useEffect(() => {
     fetchEvents();
   }, [fetchEvents]);
 
-  // Handle refresh
-  const handleRefresh = () => {
+  // Show search loading when user is typing
+  useEffect(() => {
+    if (searchTerm !== debouncedSearchTerm && searchTerm.length > 0) {
+      setIsSearching(true);
+    }
+  }, [searchTerm, debouncedSearchTerm]);
+
+  const handleRefresh = useCallback(() => {
     refreshEvents();
     fetchEvents();
-  };
+  }, [refreshEvents, fetchEvents]);
 
-  // Filter events (additional client-side filtering)
   const filteredEvents = events.filter((event) => {
     const matchesSearch =
-      !searchTerm ||
-      event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      event.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      event.location.toLowerCase().includes(searchTerm.toLowerCase());
+      !debouncedSearchTerm ||
+      event.title.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
+      event.description.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
+      event.location.toLowerCase().includes(debouncedSearchTerm.toLowerCase());
 
     return matchesSearch;
   });
 
-  const handleDeleteClick = (eventId: string) => {
+  const handleDeleteClick = useCallback((eventId: string) => {
     setEventToDelete(eventId);
     setShowDeleteModal(true);
-  };
+  }, []);
 
-  const handleEditClick = (eventId: string) => {
-    const event = events.find((e) => e.id === eventId);
-    if (event) {
-      setEventToEdit(event);
-      setShowEditModal(true);
-    }
-  };
+  const handleEditClick = useCallback(
+    (eventId: string) => {
+      const event = events.find((e) => e.id === eventId);
+      if (event) {
+        setEventToEdit(event);
+        setShowEditModal(true);
+      }
+    },
+    [events]
+  );
 
-  const handleDeleteConfirm = async () => {
+  const handleDeleteConfirm = useCallback(async () => {
     if (eventToDelete) {
       try {
         await deleteEvent(eventToDelete);
-        // Remove from local state
-        setEvents(events.filter((event) => event.id !== eventToDelete));
+        setEvents((prevEvents) => prevEvents.filter((event) => event.id !== eventToDelete));
         setShowDeleteModal(false);
         setEventToDelete(null);
         toast.success('Event deleted successfully');
@@ -185,51 +240,61 @@ const AdminEventsPage = ({ userData }: AdminEventsPageProps) => {
         toast.error('Failed to delete event. Please try again.');
       }
     }
-  };
+  }, [eventToDelete, deleteEvent]);
 
-  const handleCreateEvent = async (newEventData: CreateEventData) => {
-    try {
-      // Convert frontend data to API format
-      const apiEventData = {
-        title: newEventData.title,
-        description: newEventData.description,
-        date: newEventData.date,
-        time: newEventData.time,
-        location: newEventData.location,
-        capacity: newEventData.capacity,
-        registrationRequired: newEventData.registrationRequired || false,
-        imageUrl: newEventData.imageUrl,
-      };
+  const handleCreateEvent = useCallback(
+    async (newEventData: CreateEventData) => {
+      try {
+        const apiEventData = {
+          title: newEventData.title,
+          description: newEventData.description,
+          date: newEventData.date,
+          time: newEventData.time,
+          location: newEventData.location,
+          capacity: newEventData.capacity,
+          registrationRequired: newEventData.registrationRequired || false,
+          imageUrl: newEventData.imageUrl,
+        };
 
-      const newEvent = await createEvent(apiEventData);
+        const newEvent = await createEvent(apiEventData);
+        const convertedEvent = convertApiEvent(newEvent);
+        setEvents((prevEvents) => [convertedEvent, ...prevEvents]);
+      } catch (error) {
+        console.error('Error creating event:', error);
+        throw error;
+      }
+    },
+    [createEvent]
+  );
 
-      // Add to local state
-      const convertedEvent = convertApiEvent(newEvent);
-      setEvents([convertedEvent, ...events]);
-    } catch (error) {
-      console.error('Error creating event:', error);
-      throw error; // Re-throw so the modal can handle it
-    }
-  };
+  const handleEditEvent = useCallback(
+    async (eventId: string, eventData: EditEventData) => {
+      try {
+        const updatedEvent = await updateEvent(eventId, eventData);
+        const convertedEvent = convertApiEvent(updatedEvent);
+        setEvents((prevEvents) =>
+          prevEvents.map((event) => (event.id === eventId ? convertedEvent : event))
+        );
+      } catch (error) {
+        console.error('Error updating event:', error);
+        throw error;
+      }
+    },
+    [updateEvent]
+  );
 
-  const handleEditEvent = async (eventId: string, eventData: EditEventData) => {
-    try {
-      const updatedEvent = await updateEvent(eventId, eventData);
+  const goToNextPage = useCallback(() => {
+    if (hasNext) setCurrentPage((prev) => prev + 1);
+  }, [hasNext]);
 
-      // Update local state
-      const convertedEvent = convertApiEvent(updatedEvent);
-      setEvents(events.map((event) => (event.id === eventId ? convertedEvent : event)));
-    } catch (error) {
-      console.error('Error updating event:', error);
-      throw error; // Re-throw so the modal can handle it
-    }
-  };
+  const goToPrevPage = useCallback(() => {
+    if (hasPrev) setCurrentPage((prev) => prev - 1);
+  }, [hasPrev]);
 
   return (
     <DashboardLayout title="Event Management">
       {/*==================== Page content ====================*/}
       <div>
-        {/* Main Content */}
         <div className="relative z-10">
           {/*==================== Header Content ====================*/}
           <div className="mb-8">
@@ -279,7 +344,7 @@ const AdminEventsPage = ({ userData }: AdminEventsPageProps) => {
                   </div>
                   <input
                     type="search"
-                    className="w-full rounded-lg  bg-white pl-10 pr-4 py-2.5 text-sm text-gray-700 focus:border-blue-600 focus:outline-none focus:ring-blue-600 transition-colors"
+                    className="w-full rounded-lg bg-white pl-10 pr-4 py-2.5 text-sm text-gray-700 focus:border-blue-600 focus:outline-none focus:ring-blue-600 transition-colors"
                     placeholder="Search events by title, description, or location..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -294,7 +359,7 @@ const AdminEventsPage = ({ userData }: AdminEventsPageProps) => {
                   </div>
                   <select
                     title="select"
-                    className="w-full rounded-lg  bg-white py-2.5 pl-10 pr-8 text-sm text-gray-700 focus:border-blue-600 focus:outline-none focus:ring-blue-600 appearance-none cursor-pointer transition-colors"
+                    className="w-full rounded-lg bg-white py-2.5 pl-10 pr-8 text-sm text-gray-700 focus:border-blue-600 focus:outline-none focus:ring-blue-600 appearance-none cursor-pointer transition-colors"
                     value={status}
                     onChange={(e) => setStatus(e.target.value)}
                   >
@@ -321,7 +386,7 @@ const AdminEventsPage = ({ userData }: AdminEventsPageProps) => {
               </div>
 
               <div className="md:col-span-2">
-                <div className="flex items-center justify-center h-full rounded-lg  bg-white overflow-hidden">
+                <div className="flex items-center justify-center h-full rounded-lg bg-white overflow-hidden">
                   <button
                     className={`flex-1 h-full flex items-center justify-center px-3 transition-colors ${
                       viewMode === 'list'
@@ -352,7 +417,7 @@ const AdminEventsPage = ({ userData }: AdminEventsPageProps) => {
           {/*==================== End of Header Content ====================*/}
 
           {/*==================== Events Content ====================*/}
-          {isLoading ? (
+          {isLoading || isSearching ? (
             <EventsLoadingSkeleton />
           ) : error ? (
             <NetworkError
@@ -363,16 +428,50 @@ const AdminEventsPage = ({ userData }: AdminEventsPageProps) => {
           ) : events.length === 0 ? (
             <EventsEmptyState onCreateEvent={() => setShowCreateModal(true)} />
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredEvents.map((event) => (
-                <EventCard
-                  key={event.id}
-                  event={event}
-                  onEdit={handleEditClick}
-                  onDelete={handleDeleteClick}
-                />
-              ))}
-            </div>
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredEvents.map((event) => (
+                  <EventCard
+                    key={event.id}
+                    event={event}
+                    onEdit={handleEditClick}
+                    onDelete={handleDeleteClick}
+                  />
+                ))}
+              </div>
+
+              {/*==================== Pagination Controls ====================*/}
+              {events.length > 0 && totalPages > 1 && (
+                <div className="mt-8 flex items-center justify-between bg-white rounded-lg p-4">
+                  <div className="flex items-center text-sm text-gray-700">
+                    <span className="font-medium">
+                      Page {currentPage} of {totalPages}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center space-x-2">
+                    <button
+                      onClick={goToPrevPage}
+                      disabled={!hasPrev}
+                      className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-500"
+                    >
+                      <ChevronLeft className="h-4 w-4 mr-1" />
+                      Previous
+                    </button>
+
+                    <button
+                      onClick={goToNextPage}
+                      disabled={!hasNext}
+                      className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-500"
+                    >
+                      Next
+                      <ChevronRight className="h-4 w-4 ml-1" />
+                    </button>
+                  </div>
+                </div>
+              )}
+              {/*==================== End of Pagination Controls ====================*/}
+            </>
           )}
           {/*==================== End of Events Content ====================*/}
         </div>
@@ -414,7 +513,6 @@ const AdminEventsPage = ({ userData }: AdminEventsPageProps) => {
 
 export default AdminEventsPage;
 
-// Add getServerSideProps (copy from dashboard)
 export const getServerSideProps = async ({ req }: { req: NextApiRequest }) => {
   const userData = isLoggedIn(req);
 

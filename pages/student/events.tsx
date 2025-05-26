@@ -1,5 +1,5 @@
 import DashboardLayout from '@/components/dashboard/layout/dashboard-layout';
-import { Calendar, Search, ListFilter, RefreshCw } from 'lucide-react';
+import { Calendar, Search, ListFilter, RefreshCw, ChevronLeft, ChevronRight } from 'lucide-react';
 import EventsLoadingSkeleton from '@/components/dashboard/admin/events/events-loading-skeleton';
 import StudentEventCard from '@/components/dashboard/student/events/event-card';
 import { NetworkError } from '@/components/error-message';
@@ -27,6 +27,12 @@ const StudentEventsPage = ({ userData }: StudentEventsPageProps) => {
     handleRefresh,
     handleRegister,
     handleUnregister,
+    currentPage,
+    totalPages,
+    hasNext,
+    hasPrev,
+    goToNextPage,
+    goToPrevPage,
   } = useStudentEvents(userData.token);
 
   return (
@@ -164,16 +170,50 @@ const StudentEventsPage = ({ userData }: StudentEventsPageProps) => {
             <EventsLoadingSkeleton />
           )
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {events.map((event) => (
-              <StudentEventCard
-                key={event.id}
-                event={event}
-                onRegister={handleRegister}
-                onUnregister={handleUnregister}
-              />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {events.map((event) => (
+                <StudentEventCard
+                  key={event.id}
+                  event={event}
+                  onRegister={handleRegister}
+                  onUnregister={handleUnregister}
+                />
+              ))}
+            </div>
+
+            {/*==================== Pagination Controls ====================*/}
+            {events.length > 0 && totalPages > 1 && (
+              <div className="mt-8 flex items-center justify-between bg-white rounded-lg p-4">
+                <div className="flex items-center text-sm text-gray-700">
+                  <span className="font-medium">
+                    Page {currentPage} of {totalPages}
+                  </span>
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <button
+                    onClick={goToPrevPage}
+                    disabled={!hasPrev}
+                    className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-500"
+                  >
+                    <ChevronLeft className="h-4 w-4 mr-1" />
+                    Previous
+                  </button>
+
+                  <button
+                    onClick={goToNextPage}
+                    disabled={!hasNext}
+                    className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-500"
+                  >
+                    Next
+                    <ChevronRight className="h-4 w-4 ml-1" />
+                  </button>
+                </div>
+              </div>
+            )}
+            {/*==================== End of Pagination Controls ====================*/}
+          </>
         )}
         {/*==================== End of Events Content ====================*/}
       </div>

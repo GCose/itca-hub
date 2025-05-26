@@ -15,6 +15,8 @@ interface Event {
   image?: string;
   registrationRequired: boolean;
   isRegistered: boolean;
+  isRegistering?: boolean;
+  isUnregistering?: boolean;
 }
 
 interface StudentEventCardProps {
@@ -24,8 +26,8 @@ interface StudentEventCardProps {
 }
 
 const StudentEventCard = ({ event, onRegister, onUnregister }: StudentEventCardProps) => {
-  const [isLoading, setIsLoading] = useState(false);
   const [imageError, setImageError] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -49,8 +51,17 @@ const StudentEventCard = ({ event, onRegister, onUnregister }: StudentEventCardP
     });
   };
 
+  const handleImageLoad = () => {
+    setImageLoaded(true);
+    setImageError(false);
+  };
+
+  const handleImageError = () => {
+    setImageError(true);
+    setImageLoaded(false);
+  };
+
   const handleRegistration = async () => {
-    setIsLoading(true);
     try {
       if (event.isRegistered) {
         await onUnregister(event.id);
@@ -59,37 +70,47 @@ const StudentEventCard = ({ event, onRegister, onUnregister }: StudentEventCardP
       }
     } catch (error) {
       console.error('Registration error:', error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
   const canRegister = event.status === 'upcoming' && event.registrations < event.capacity;
   const isFull = event.registrations >= event.capacity;
+  const isLoading = event.isRegistering || event.isUnregistering;
+
+  // Show fallback if no image, image failed, or image hasn't loaded yet
+  const showFallback = !event.image || imageError || !imageLoaded;
 
   return (
     <div className="group relative overflow-hidden rounded-xl bg-white/50 transition-all duration-300">
       {/*==================== Event Image ====================*/}
       <div className="relative h-48 w-full overflow-hidden bg-gradient-to-br from-blue-50 to-amber-50">
-        {event.image && !imageError ? (
+        {event.image && !imageError && (
           <Image
             fill
             src={event.image}
             alt={event.title}
-            className="object-cover transition-transform duration-300 group-hover:scale-105"
-            onError={() => setImageError(true)}
+            className={`object-cover transition-all duration-300 group-hover:scale-105 ${
+              imageLoaded ? 'opacity-100' : 'opacity-0'
+            }`}
+            onLoad={handleImageLoad}
+            onError={handleImageError}
             unoptimized={
               event.image.includes('storage.googleapis.com') || event.image.includes('onrender.com')
             }
           />
-        ) : (
-          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-blue-100 to-amber-100">
-            <Calendar className="h-16 w-16 text-blue-400" />
-          </div>
         )}
 
+        {/* Fallback Icon - Always render but conditionally show */}
+        <div
+          className={`absolute inset-0 flex h-full w-full items-center justify-center bg-gradient-to-br from-blue-100 to-amber-100 transition-opacity duration-300 ${
+            showFallback ? 'opacity-100' : 'opacity-0'
+          }`}
+        >
+          <Calendar className="h-16 w-16 text-blue-400" />
+        </div>
+
         {/*==================== Status Badge ====================*/}
-        <div className="absolute top-3 right-3">
+        <div className="absolute top-3 right-3 z-10">
           <span
             className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium capitalize ${getStatusColor(event.status)}`}
           >
@@ -100,7 +121,7 @@ const StudentEventCard = ({ event, onRegister, onUnregister }: StudentEventCardP
 
         {/*==================== Registration Status ====================*/}
         {event.isRegistered && (
-          <div className="absolute top-3 left-3">
+          <div className="absolute top-3 left-3 z-10">
             <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
               <UserCheck className="h-3 w-3 mr-1" />
               Registered
@@ -175,7 +196,7 @@ const StudentEventCard = ({ event, onRegister, onUnregister }: StudentEventCardP
                 disabled={isLoading}
                 className="w-full inline-flex justify-center items-center rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-red-500 focus:ring-offset-2 transition-colors disabled:opacity-50"
               >
-                {isLoading ? (
+                {event.isUnregistering ? (
                   <>
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
                     Unregistering...
@@ -193,7 +214,7 @@ const StudentEventCard = ({ event, onRegister, onUnregister }: StudentEventCardP
                 disabled={isLoading}
                 className="w-full inline-flex justify-center items-center rounded-lg bg-gradient-to-r from-blue-600 to-blue-500 px-4 py-2 text-sm font-medium text-white hover:from-blue-700 hover:to-blue-600 focus:outline-none focus:ring-blue-500 focus:ring-offset-2 transition-all duration-300 shadow-md hover:shadow-lg disabled:opacity-50"
               >
-                {isLoading ? (
+                {event.isRegistering ? (
                   <>
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
                     Registering...
