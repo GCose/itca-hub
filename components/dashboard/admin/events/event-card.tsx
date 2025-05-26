@@ -1,5 +1,6 @@
 import { Calendar, MapPin, Users, Edit, Trash2 } from 'lucide-react';
 import Image from 'next/image';
+import { useState } from 'react';
 
 interface Event {
   id: string;
@@ -21,6 +22,9 @@ interface EventCardProps {
 }
 
 const EventCard = ({ event, onEdit, onDelete }: EventCardProps) => {
+  const [imageError, setImageError] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'upcoming':
@@ -43,26 +47,50 @@ const EventCard = ({ event, onEdit, onDelete }: EventCardProps) => {
     });
   };
 
+  const handleImageLoad = () => {
+    setImageLoaded(true);
+    setImageError(false);
+  };
+
+  const handleImageError = () => {
+    setImageError(true);
+    setImageLoaded(false);
+  };
+
+  // Show fallback if no image, image failed, or image hasn't loaded yet
+  const showFallback = !event.image || imageError || !imageLoaded;
+
   return (
     <div className="group relative overflow-hidden rounded-xl bg-white/50 transition-all duration-300">
       {/*==================== Event Image ====================*/}
       <div className="relative h-48 w-full overflow-hidden bg-gradient-to-br from-blue-50 to-amber-50">
-        {event.image ? (
+        {event.image && !imageError && (
           <Image
             fill
             src={event.image}
             alt={event.title}
-            className="object-cover transition-transform duration-300 group-hover:scale-105"
-            onError={() => console.error('Image failed to load:', event.image)}
+            className={`object-cover transition-all duration-300 group-hover:scale-105 ${
+              imageLoaded ? 'opacity-100' : 'opacity-0'
+            }`}
+            onLoad={handleImageLoad}
+            onError={handleImageError}
+            unoptimized={
+              event.image.includes('storage.googleapis.com') || event.image.includes('onrender.com')
+            }
           />
-        ) : (
-          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-blue-100 to-amber-100">
-            <Calendar className="h-16 w-16 text-blue-400" />
-          </div>
         )}
 
+        {/* Fallback Icon - Always render but conditionally show */}
+        <div
+          className={`absolute inset-0 flex h-full w-full items-center justify-center bg-gradient-to-br from-blue-100 to-amber-100 transition-opacity duration-300 ${
+            showFallback ? 'opacity-100' : 'opacity-0'
+          }`}
+        >
+          <Calendar className="h-16 w-16 text-blue-400" />
+        </div>
+
         {/*==================== Status Badge ====================*/}
-        <div className="absolute top-3 right-3">
+        <div className="absolute top-3 right-3 z-10">
           <span
             className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium capitalize ${getStatusColor(event.status)}`}
           >
@@ -72,7 +100,7 @@ const EventCard = ({ event, onEdit, onDelete }: EventCardProps) => {
         {/*==================== End of Status Badge ====================*/}
 
         {/*==================== Action Buttons ====================*/}
-        <div className="absolute top-3 left-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <div className="absolute top-3 left-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
           <div className="flex space-x-2">
             <button
               onClick={() => onEdit(event.id)}

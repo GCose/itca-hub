@@ -11,6 +11,39 @@ interface CreateEventData {
   imageUrl?: string;
 }
 
+interface ApiEvent {
+  _id: string;
+  title: string;
+  description: string;
+  date: string;
+  time: string;
+  location: string;
+  capacity: number;
+  registrationRequired: boolean;
+  imageUrl?: string;
+  status: 'upcoming' | 'ongoing' | 'completed';
+  attendees: Array<{
+    _id: string;
+    name: string;
+    email: string;
+  }>;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface EventsResponse {
+  status: string;
+  data: ApiEvent[];
+  pagination: {
+    page: number;
+    limit: number;
+    totalPages: number;
+    hasNext: boolean;
+    hasPrev: boolean;
+  };
+  total: number;
+}
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://itca-hub-backend.onrender.com';
 
 export const useEvents = (token: string) => {
@@ -47,15 +80,20 @@ export const useEvents = (token: string) => {
       return response.json();
     },
     [token]
-  ); // Only token as dependency since it's external
+  );
 
   /**================
-   * Get all events
+   * Get all events - NOW RETURNS FULL RESPONSE
    * @param params
    * @returns
    ================*/
   const getAllEvents = useCallback(
-    async (params?: { page?: number; limit?: number; status?: string; search?: string }) => {
+    async (params?: {
+      page?: number;
+      limit?: number;
+      status?: string;
+      search?: string;
+    }): Promise<EventsResponse> => {
       setIsLoading(true);
       setError(null);
 
@@ -68,11 +106,19 @@ export const useEvents = (token: string) => {
 
         const query = queryParams.toString();
         const response = await apiCall(query ? `?${query}` : '');
-        return response.data || [];
+
+        // Return the FULL response object now instead of just response.data
+        return response;
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Failed to fetch events';
         setError(errorMessage);
-        return [];
+        // Return empty structure on error
+        return {
+          status: 'error',
+          data: [],
+          pagination: { page: 1, limit: 9, totalPages: 1, hasNext: false, hasPrev: false },
+          total: 0,
+        };
       } finally {
         setIsLoading(false);
       }
