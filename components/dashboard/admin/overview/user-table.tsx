@@ -1,13 +1,13 @@
-import { useState, useEffect } from "react";
-import Link from "next/link";
-import { MoreHorizontal, Edit, Trash, User, ExternalLink } from "lucide-react";
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { MoreHorizontal, Edit, Trash, User, ExternalLink } from 'lucide-react';
 
 interface UserData {
   id: string;
   name: string;
   email: string;
   role: string;
-  status: "active" | "inactive" | "pending";
+  status: 'active' | 'inactive' | 'pending';
   joinedDate: string;
 }
 
@@ -30,50 +30,50 @@ const UserTable = ({ limit }: UserTableProps) => {
         // Mock data
         const mockUsers = [
           {
-            id: "1",
-            name: "John Doe",
-            email: "john.doe@utg.edu.gm",
-            role: "Student",
-            status: "active" as const,
-            joinedDate: "2023-09-15",
+            id: '1',
+            name: 'John Doe',
+            email: 'john.doe@utg.edu.gm',
+            role: 'Student',
+            status: 'active' as const,
+            joinedDate: '2023-09-15',
           },
           {
-            id: "2",
-            name: "Jane Smith",
-            email: "jane.smith@utg.edu.gm",
-            role: "Student",
-            status: "active" as const,
-            joinedDate: "2023-08-22",
+            id: '2',
+            name: 'Jane Smith',
+            email: 'jane.smith@utg.edu.gm',
+            role: 'Student',
+            status: 'active' as const,
+            joinedDate: '2023-08-22',
           },
           {
-            id: "3",
-            name: "Robert Johnson",
-            email: "robert.j@utg.edu.gm",
-            role: "Admin",
-            status: "active" as const,
-            joinedDate: "2023-07-10",
+            id: '3',
+            name: 'Robert Johnson',
+            email: 'robert.j@utg.edu.gm',
+            role: 'Admin',
+            status: 'active' as const,
+            joinedDate: '2023-07-10',
           },
           {
-            id: "4",
-            name: "Sarah Williams",
-            email: "sarah.w@utg.edu.gm",
-            role: "Student",
-            status: "inactive" as const,
-            joinedDate: "2023-06-05",
+            id: '4',
+            name: 'Sarah Williams',
+            email: 'sarah.w@utg.edu.gm',
+            role: 'Student',
+            status: 'inactive' as const,
+            joinedDate: '2023-06-05',
           },
           {
-            id: "5",
-            name: "Michael Brown",
-            email: "michael.b@utg.edu.gm",
-            role: "Student",
-            status: "pending" as const,
-            joinedDate: "2023-10-01",
+            id: '5',
+            name: 'Michael Brown',
+            email: 'michael.b@utg.edu.gm',
+            role: 'Student',
+            status: 'pending' as const,
+            joinedDate: '2023-10-01',
           },
         ];
 
         setUsers(limit ? mockUsers.slice(0, limit) : mockUsers);
       } catch (error) {
-        console.error("Error fetching users:", error);
+        console.error('Error fetching users:', error);
       } finally {
         setIsLoading(false);
       }
@@ -89,28 +89,25 @@ const UserTable = ({ limit }: UserTableProps) => {
   // Handle outside click to close dropdown
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        selectedUser &&
-        !(event.target as HTMLElement).closest(".user-menu")
-      ) {
+      if (selectedUser && !(event.target as HTMLElement).closest('.user-menu')) {
         setSelectedUser(null);
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [selectedUser]);
 
   const getStatusBadgeClass = (status: string) => {
     switch (status) {
-      case "active":
-        return "bg-green-100 text-green-800";
-      case "inactive":
-        return "bg-gray-100 text-gray-800";
-      case "pending":
-        return "bg-yellow-100 text-yellow-800";
+      case 'active':
+        return 'bg-green-100 text-green-800';
+      case 'inactive':
+        return 'bg-gray-100 text-gray-800';
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-800';
       default:
-        return "bg-gray-100 text-gray-800";
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
@@ -234,16 +231,12 @@ const UserTable = ({ limit }: UserTableProps) => {
                       <User className="h-5 w-5" />
                     </div>
                     <div className="ml-4">
-                      <div className="text-sm font-medium text-gray-900">
-                        {user.name}
-                      </div>
+                      <div className="text-sm font-medium text-gray-900">{user.name}</div>
                       <div className="text-sm text-gray-500">{user.email}</div>
                     </div>
                   </div>
                 </td>
-                <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                  {user.role}
-                </td>
+                <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">{user.role}</td>
                 <td className="whitespace-nowrap px-6 py-4">
                   <span
                     className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${getStatusBadgeClass(user.status)}`}
@@ -314,16 +307,13 @@ const UserTable = ({ limit }: UserTableProps) => {
           <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
             <div>
               <p className="text-sm text-gray-700">
-                Showing <span className="font-medium">1</span> to{" "}
-                <span className="font-medium">5</span> of{" "}
-                <span className="font-medium">25</span> results
+                Showing <span className="font-medium">1</span> to{' '}
+                <span className="font-medium">5</span> of <span className="font-medium">25</span>{' '}
+                results
               </p>
             </div>
             <div>
-              <nav
-                className="isolate inline-flex -space-x-px rounded-md"
-                aria-label="Pagination"
-              >
+              <nav className="isolate inline-flex -space-x-px rounded-md" aria-label="Pagination">
                 <a
                   href="#"
                   className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"

@@ -1,162 +1,234 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import DashboardLayout from '@/components/dashboard/layout/dashboard-layout';
-import { Calendar, Search, ListFilter } from 'lucide-react';
-import Link from 'next/link';
-import DeleteEventModal from '@/components/dashboard/admin/events/delete-event-modal';
+import { Calendar, Search, ListFilter, RefreshCw } from 'lucide-react';
+import { toast } from 'sonner';
+import DeleteEventModal from '@/components/dashboard/admin/events/modal/delete-event-modal';
 import EventsEmptyState from '@/components/dashboard/admin/events/events-empty-state';
-import EventsList from '@/components/dashboard/admin/events/events-list';
 import EventsLoadingSkeleton from '@/components/dashboard/admin/events/events-loading-skeleton';
+import EventCard from '@/components/dashboard/admin/events/event-card';
+import CreateEventModal from '@/components/dashboard/admin/events/modal/create-event-modal';
+import EditEventModal from '@/components/dashboard/admin/events/modal/edit-event-modal';
+import { NetworkError } from '@/components/error-message';
+import { useEvents } from '@/hooks/admin/events/use-events';
 import { NextApiRequest } from 'next';
 import { isLoggedIn } from '@/utils/auth';
 import { UserAuth } from '@/types';
 
-interface Event {
-  id: number;
+interface ApiEvent {
+  _id: string;
   title: string;
   description: string;
   date: string;
   time: string;
   location: string;
-  status: 'upcoming' | 'ongoing' | 'completed' | 'cancelled';
+  capacity: number;
+  registrationRequired: boolean;
+  imageUrl?: string;
+  status: 'upcoming' | 'ongoing' | 'completed';
+  attendees: Array<{
+    _id: string;
+    name: string;
+    email: string;
+  }>;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface Event {
+  id: string;
+  title: string;
+  description: string;
+  date: string;
+  time: string;
+  location: string;
+  status: 'upcoming' | 'ongoing' | 'completed';
   registrations: number;
   capacity: number;
   image?: string;
 }
 
-const AdminEventsPage = () => {
+interface CreateEventData {
+  title: string;
+  description: string;
+  date: string;
+  time: string;
+  location: string;
+  capacity: number;
+  registrationRequired: boolean;
+  imageUrl?: string;
+}
+
+interface EditEventData {
+  title: string;
+  description: string;
+  date: string;
+  time: string;
+  location: string;
+  capacity: number;
+  registrationRequired: boolean;
+  imageUrl?: string;
+}
+
+// Props interface
+interface AdminEventsPageProps {
+  userData: UserAuth;
+}
+
+// Convert API event to frontend event format
+const convertApiEvent = (apiEvent: ApiEvent): Event => {
+  const formatTime = (timeString: string) => {
+    try {
+      const date = new Date(timeString);
+      return date.toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+      });
+    } catch {
+      return timeString;
+    }
+  };
+
+  return {
+    id: apiEvent._id,
+    title: apiEvent.title,
+    description: apiEvent.description,
+    date: apiEvent.date,
+    time: formatTime(apiEvent.time),
+    location: apiEvent.location,
+    status: apiEvent.status,
+    registrations: apiEvent.attendees.length,
+    capacity: apiEvent.capacity,
+    image: apiEvent.imageUrl,
+  };
+};
+
+// Update component to receive userData prop
+const AdminEventsPage = ({ userData }: AdminEventsPageProps) => {
   const [events, setEvents] = useState<Event[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [status, setStatus] = useState('all');
   const [viewMode, setViewMode] = useState<'list' | 'calendar'>('list');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [eventToDelete, setEventToDelete] = useState<number | null>(null);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [eventToDelete, setEventToDelete] = useState<string | null>(null);
+  const [eventToEdit, setEventToEdit] = useState<Event | null>(null);
 
+  // Pass token to useEvents hook
+  const { isLoading, error, getAllEvents, createEvent, updateEvent, deleteEvent, refreshEvents } =
+    useEvents(userData.token);
+
+  const fetchEvents = useCallback(async () => {
+    try {
+      const response = await getAllEvents({
+        page: 1,
+        limit: 50,
+        status: status === 'all' ? undefined : status,
+        search: searchTerm || undefined,
+      });
+
+      // Convert API events to frontend format
+      const convertedEvents = response.map(convertApiEvent);
+      setEvents(convertedEvents);
+    } catch (error) {
+      console.error('Error fetching events:', error);
+    }
+  }, [status, searchTerm, getAllEvents]);
+
+  // Fetch events on component mount and when filters change
   useEffect(() => {
-    const fetchEvents = async () => {
-      setIsLoading(true);
-      try {
-        // Simulate API call
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-
-        // Mock data
-        const mockEvents = [
-          {
-            id: 1,
-            title: 'Web Development Workshop',
-            description:
-              'Learn the fundamentals of web development with HTML, CSS, and JavaScript.',
-            date: '2023-10-25',
-            time: '14:00-16:00',
-            location: 'Lab 302',
-            status: 'upcoming' as const,
-            registrations: 25,
-            capacity: 30,
-          },
-          {
-            id: 2,
-            title: 'AI & Machine Learning Seminar',
-            description:
-              'An introduction to artificial intelligence and machine learning concepts.',
-            date: '2023-11-10',
-            time: '15:00-17:00',
-            location: 'Virtual (Zoom)',
-            status: 'upcoming' as const,
-            registrations: 45,
-            capacity: 100,
-          },
-          {
-            id: 3,
-            title: 'Database Design Workshop',
-            description: 'Learn best practices for designing efficient and scalable databases.',
-            date: '2023-09-15',
-            time: '10:00-12:00',
-            location: 'Room 105',
-            status: 'completed' as const,
-            registrations: 20,
-            capacity: 25,
-          },
-          {
-            id: 4,
-            title: 'Cybersecurity Conference',
-            description:
-              'A conference focused on the latest trends and challenges in cybersecurity.',
-            date: '2023-10-05',
-            time: '09:00-17:00',
-            location: 'Main Auditorium',
-            status: 'completed' as const,
-            registrations: 120,
-            capacity: 150,
-          },
-          {
-            id: 5,
-            title: 'Mobile App Development Bootcamp',
-            description:
-              'Intensive bootcamp on developing mobile applications for iOS and Android.',
-            date: '2023-12-01',
-            time: '09:00-16:00',
-            location: 'Computer Lab 201',
-            status: 'upcoming' as const,
-            registrations: 15,
-            capacity: 20,
-          },
-        ];
-
-        setEvents(mockEvents);
-      } catch (error) {
-        console.error('Error fetching events:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     fetchEvents();
-  }, []);
+  }, [fetchEvents]);
 
-  // Filter events based on search term and status
+  // Handle refresh
+  const handleRefresh = () => {
+    refreshEvents();
+    fetchEvents();
+  };
+
+  // Filter events (additional client-side filtering)
   const filteredEvents = events.filter((event) => {
     const matchesSearch =
+      !searchTerm ||
       event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       event.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
       event.location.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = status === 'all' || event.status === status;
 
-    return matchesSearch && matchesStatus;
+    return matchesSearch;
   });
 
-  const handleDeleteClick = (eventId: number) => {
+  const handleDeleteClick = (eventId: string) => {
     setEventToDelete(eventId);
     setShowDeleteModal(true);
   };
 
-  const handleDeleteConfirm = () => {
+  const handleEditClick = (eventId: string) => {
+    const event = events.find((e) => e.id === eventId);
+    if (event) {
+      setEventToEdit(event);
+      setShowEditModal(true);
+    }
+  };
+
+  const handleDeleteConfirm = async () => {
     if (eventToDelete) {
-      // In a real app, this would call an API endpoint
-      setEvents(events.filter((event) => event.id !== eventToDelete));
-      setShowDeleteModal(false);
-      setEventToDelete(null);
+      try {
+        await deleteEvent(eventToDelete);
+        // Remove from local state
+        setEvents(events.filter((event) => event.id !== eventToDelete));
+        setShowDeleteModal(false);
+        setEventToDelete(null);
+        toast.success('Event deleted successfully');
+      } catch (error) {
+        console.error('Error deleting event:', error);
+        toast.error('Failed to delete event. Please try again.');
+      }
+    }
+  };
+
+  const handleCreateEvent = async (newEventData: CreateEventData) => {
+    try {
+      // Convert frontend data to API format
+      const apiEventData = {
+        title: newEventData.title,
+        description: newEventData.description,
+        date: newEventData.date,
+        time: newEventData.time,
+        location: newEventData.location,
+        capacity: newEventData.capacity,
+        registrationRequired: newEventData.registrationRequired || false,
+        imageUrl: newEventData.imageUrl,
+      };
+
+      const newEvent = await createEvent(apiEventData);
+
+      // Add to local state
+      const convertedEvent = convertApiEvent(newEvent);
+      setEvents([convertedEvent, ...events]);
+    } catch (error) {
+      console.error('Error creating event:', error);
+      throw error; // Re-throw so the modal can handle it
+    }
+  };
+
+  const handleEditEvent = async (eventId: string, eventData: EditEventData) => {
+    try {
+      const updatedEvent = await updateEvent(eventId, eventData);
+
+      // Update local state
+      const convertedEvent = convertApiEvent(updatedEvent);
+      setEvents(events.map((event) => (event.id === eventId ? convertedEvent : event)));
+    } catch (error) {
+      console.error('Error updating event:', error);
+      throw error; // Re-throw so the modal can handle it
     }
   };
 
   return (
     <DashboardLayout title="Event Management">
       {/*==================== Page content ====================*/}
-      <div className="relative">
-        {/* Decorative Background Elements */}
-        <div className="absolute -top-10 -right-10 h-64 w-64 rounded-full bg-amber-500/5 animate-pulse" />
-        <div
-          className="absolute top-40 right-20 h-40 w-40 rounded-full bg-blue-700/5 animate-pulse"
-          style={{ animationDelay: '1s' }}
-        />
-        <div
-          className="absolute -bottom-10 -left-10 h-80 w-80 rounded-full bg-blue-700/5 animate-pulse"
-          style={{ animationDelay: '1.5s' }}
-        />
-        <div
-          className="absolute bottom-40 left-20 h-48 w-48 rounded-full bg-amber-500/5 animate-pulse"
-          style={{ animationDelay: '0.5s' }}
-        />
-
+      <div>
         {/* Main Content */}
         <div className="relative z-10">
           {/*==================== Header Content ====================*/}
@@ -179,15 +251,22 @@ const AdminEventsPage = () => {
               </div>
 
               <div className="mt-4 sm:mt-0 flex space-x-2">
-                <Link
-                  href="/admin/events/new"
-                  className="group inline-flex items-center rounded-lg bg-gradient-to-r from-blue-700 to-blue-600 px-4 py-2 text-sm font-medium text-white hover:from-blue-800 hover:to-blue-700 focus:outline-none  focus:ring-blue-500 focus:ring-offset-2 transition-all duration-300 shadow-md hover:shadow-lg"
+                <button
+                  onClick={handleRefresh}
+                  className="inline-flex items-center rounded-lg bg-gray-100 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-blue-500 focus:ring-offset-2"
+                >
+                  <RefreshCw className="h-4 w-4 mr-2" />
+                  Refresh
+                </button>
+                <button
+                  onClick={() => setShowCreateModal(true)}
+                  className="group inline-flex items-center rounded-lg bg-gradient-to-r from-blue-700 to-blue-600 px-4 py-2 text-sm font-medium text-white hover:from-blue-800 hover:to-blue-700 focus:outline-none focus:ring-blue-500 focus:ring-offset-2 transition-all duration-300 shadow-md hover:shadow-lg"
                 >
                   <span className="mr-2 text-lg font-bold transition-transform duration-300 group-hover:rotate-90">
                     +
                   </span>
                   Create Event
-                </Link>
+                </button>
               </div>
             </div>
 
@@ -200,7 +279,7 @@ const AdminEventsPage = () => {
                   </div>
                   <input
                     type="search"
-                    className="w-full rounded-lg border border-gray-200 bg-white pl-10 pr-4 py-2.5 text-sm text-gray-700 focus:border-blue-600 focus:outline-none  focus:ring-blue-600 transition-colors"
+                    className="w-full rounded-lg  bg-white pl-10 pr-4 py-2.5 text-sm text-gray-700 focus:border-blue-600 focus:outline-none focus:ring-blue-600 transition-colors"
                     placeholder="Search events by title, description, or location..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -215,7 +294,7 @@ const AdminEventsPage = () => {
                   </div>
                   <select
                     title="select"
-                    className="w-full rounded-lg border border-gray-200 bg-white py-2.5 pl-10 pr-8 text-sm text-gray-700 focus:border-blue-600 focus:outline-none  focus:ring-blue-600 appearance-none cursor-pointer transition-colors"
+                    className="w-full rounded-lg  bg-white py-2.5 pl-10 pr-8 text-sm text-gray-700 focus:border-blue-600 focus:outline-none focus:ring-blue-600 appearance-none cursor-pointer transition-colors"
                     value={status}
                     onChange={(e) => setStatus(e.target.value)}
                   >
@@ -223,7 +302,6 @@ const AdminEventsPage = () => {
                     <option value="upcoming">Upcoming</option>
                     <option value="ongoing">Ongoing</option>
                     <option value="completed">Completed</option>
-                    <option value="cancelled">Cancelled</option>
                   </select>
                   <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
                     <svg
@@ -243,7 +321,7 @@ const AdminEventsPage = () => {
               </div>
 
               <div className="md:col-span-2">
-                <div className="flex items-center justify-center h-full rounded-lg border border-gray-200 bg-white overflow-hidden">
+                <div className="flex items-center justify-center h-full rounded-lg  bg-white overflow-hidden">
                   <button
                     className={`flex-1 h-full flex items-center justify-center px-3 transition-colors ${
                       viewMode === 'list'
@@ -273,13 +351,30 @@ const AdminEventsPage = () => {
           </div>
           {/*==================== End of Header Content ====================*/}
 
+          {/*==================== Events Content ====================*/}
           {isLoading ? (
             <EventsLoadingSkeleton />
-          ) : filteredEvents.length === 0 ? (
-            <EventsEmptyState />
+          ) : error ? (
+            <NetworkError
+              title="Unable to fetch events"
+              description="Please check your internet connection and try again."
+              onRetry={handleRefresh}
+            />
+          ) : events.length === 0 ? (
+            <EventsEmptyState onCreateEvent={() => setShowCreateModal(true)} />
           ) : (
-            <EventsList events={filteredEvents} onDeleteClick={handleDeleteClick} />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredEvents.map((event) => (
+                <EventCard
+                  key={event.id}
+                  event={event}
+                  onEdit={handleEditClick}
+                  onDelete={handleDeleteClick}
+                />
+              ))}
+            </div>
           )}
+          {/*==================== End of Events Content ====================*/}
         </div>
       </div>
       {/*==================== End of Page content ====================*/}
@@ -292,6 +387,26 @@ const AdminEventsPage = () => {
           onConfirm={handleDeleteConfirm}
         />
       )}
+
+      {showCreateModal && (
+        <CreateEventModal
+          isOpen={showCreateModal}
+          onClose={() => setShowCreateModal(false)}
+          onSave={handleCreateEvent}
+        />
+      )}
+
+      {showEditModal && (
+        <EditEventModal
+          isOpen={showEditModal}
+          event={eventToEdit}
+          onClose={() => {
+            setShowEditModal(false);
+            setEventToEdit(null);
+          }}
+          onSave={handleEditEvent}
+        />
+      )}
       {/*==================== End of Modals ====================*/}
     </DashboardLayout>
   );
@@ -299,6 +414,7 @@ const AdminEventsPage = () => {
 
 export default AdminEventsPage;
 
+// Add getServerSideProps (copy from dashboard)
 export const getServerSideProps = async ({ req }: { req: NextApiRequest }) => {
   const userData = isLoggedIn(req);
 

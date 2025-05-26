@@ -12,7 +12,6 @@ import {
   HelpCircle,
   LogOut,
   User,
-  BookOpen,
   BarChart2,
   X,
   LayoutDashboardIcon,
@@ -71,16 +70,6 @@ const Sidebar = ({ open, setOpen }: SidebarProps) => {
   const studentNavItems: NavItem[] = [
     { name: 'Dashboard', href: '/student', icon: <Home className="h-5 w-5" /> },
     {
-      name: 'Profile',
-      href: '/student/profile',
-      icon: <User className="h-5 w-5" />,
-    },
-    {
-      name: 'Courses',
-      href: '/student/courses',
-      icon: <BookOpen className="h-5 w-5" />,
-    },
-    {
       name: 'Events',
       href: '/student/events',
       icon: <Calendar className="h-5 w-5" />,
@@ -89,6 +78,11 @@ const Sidebar = ({ open, setOpen }: SidebarProps) => {
       name: 'Resources',
       href: '/student/resources',
       icon: <FileText className="h-5 w-5" />,
+    },
+    {
+      name: 'Profile',
+      href: '/student/profile',
+      icon: <User className="h-5 w-5" />,
     },
     {
       name: 'Help',

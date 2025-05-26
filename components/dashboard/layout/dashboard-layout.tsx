@@ -24,7 +24,7 @@ const DashboardLayout = ({ children, title = 'Dashboard' }: DashboardLayoutProps
         {/*==================== Background Elements ====================*/}
         <div className="absolute inset-0 pointer-events-none z-0">
           {/*==================== Prominent Geometric Elements - Top Right ====================*/}
-          <div className="absolute top-0 right-0 w-2/3 h-full overflow-hidden">
+          <div className="absolute top-0 right-0 w-2/3 h-full">
             <div className="absolute top-10 right-0 w-full h-full">
               <div className="absolute top-10 right-[-200px] h-[500px] w-[500px] rounded-full border-[40px] border-amber-500/8 animate-pulse"></div>
               <div

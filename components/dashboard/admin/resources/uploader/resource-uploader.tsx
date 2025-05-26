@@ -1,15 +1,8 @@
-import useResourceUploader from "@/hooks/admin/use-resource-uploader";
-import {
-  Upload,
-  FileText,
-  Image as ImageIcon,
-  Video,
-  FileType,
-  Loader,
-} from "lucide-react";
+import useResourceUploader from '@/hooks/admin/resources/use-resource-uploader';
+import { Upload, FileText, Image as ImageIcon, Video, FileType, Loader } from 'lucide-react';
 
 // Define proper types
-type Visibility = "all" | "admin";
+type Visibility = 'all' | 'admin';
 
 interface ResourceUploaderProps {
   onUploadComplete?: (fileData: {
@@ -21,10 +14,7 @@ interface ResourceUploaderProps {
   onError?: (error: string) => void;
 }
 
-const ResourceUploader = ({
-  onUploadComplete,
-  onError,
-}: ResourceUploaderProps) => {
+const ResourceUploader = ({ onUploadComplete, onError }: ResourceUploaderProps) => {
   const {
     file,
     title,
@@ -51,17 +41,17 @@ const ResourceUploader = ({
 
     const type = file.type;
 
-    if (type.startsWith("image/")) {
+    if (type.startsWith('image/')) {
       return <ImageIcon className="h-6 w-6 text-purple-500" />;
-    } else if (type.startsWith("video/")) {
+    } else if (type.startsWith('video/')) {
       return <Video className="h-6 w-6 text-blue-500" />;
-    } else if (type.includes("pdf")) {
+    } else if (type.includes('pdf')) {
       return <FileText className="h-6 w-6 text-red-500" />;
-    } else if (type.includes("word") || type.includes("document")) {
+    } else if (type.includes('word') || type.includes('document')) {
       return <FileText className="h-6 w-6 text-blue-500" />;
-    } else if (type.includes("spreadsheet") || type.includes("excel")) {
+    } else if (type.includes('spreadsheet') || type.includes('excel')) {
       return <FileText className="h-6 w-6 text-green-500" />;
-    } else if (type.includes("presentation") || type.includes("powerpoint")) {
+    } else if (type.includes('presentation') || type.includes('powerpoint')) {
       return <FileText className="h-6 w-6 text-orange-500" />;
     }
 
@@ -69,14 +59,11 @@ const ResourceUploader = ({
   };
 
   // Check if form is valid
-  const isFormValid =
-    file && title.trim() && description.trim() && category && department;
+  const isFormValid = file && title.trim() && description.trim() && category && department;
 
   return (
     <div className="rounded-2xl bg-white/50 p-6">
-      <h3 className="text-lg font-medium text-gray-900 mb-4">
-        Upload New Resource
-      </h3>
+      <h3 className="text-lg font-medium text-gray-900 mb-4">Upload New Resource</h3>
 
       <form onSubmit={handleSubmit}>
         {/*==================== File Upload Section ====================*/}
@@ -84,9 +71,7 @@ const ResourceUploader = ({
           <label
             htmlFor="file-upload"
             className={`flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer transition-colors ${
-              file
-                ? "border-blue-300 bg-blue-50"
-                : "border-gray-300 bg-gray-50 hover:bg-gray-100"
+              file ? 'border-blue-300 bg-blue-50' : 'border-gray-300 bg-gray-50 hover:bg-gray-100'
             }`}
           >
             <div className="flex flex-col items-center justify-center pt-5 pb-6">
@@ -97,19 +82,14 @@ const ResourceUploader = ({
                   <p className="text-sm font-medium text-gray-900 break-words overflow-hidden line-clamp-2">
                     {file.name}
                   </p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    {formatFileSize(file.size)}
-                  </p>
+                  <p className="text-xs text-gray-500 mt-1">{formatFileSize(file.size)}</p>
                 </div>
               ) : (
                 <>
                   <p className="mb-2 text-md text-gray-500">
-                    <span className="font-medium">Click to upload</span> or drag
-                    and drop
+                    <span className="font-medium">Click to upload</span> or drag and drop
                   </p>
-                  <p className="text-xs text-gray-500">
-                    All file types supported (Max: 100MB)
-                  </p>
+                  <p className="text-xs text-gray-500">All file types supported (Max: 100MB)</p>
                 </>
               )}
             </div>
@@ -127,10 +107,7 @@ const ResourceUploader = ({
         {/*==================== Title and Category Section ====================*/}
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <div>
-            <label
-              htmlFor="title"
-              className="block text-md font-medium text-gray-700 mb-1"
-            >
+            <label htmlFor="title" className="block text-md font-medium text-gray-700 mb-1">
               Title <span className="text-red-500">*</span>
             </label>
             <input
@@ -145,10 +122,7 @@ const ResourceUploader = ({
           </div>
 
           <div>
-            <label
-              htmlFor="category"
-              className="block text-md font-medium text-gray-700 mb-1"
-            >
+            <label htmlFor="category" className="block text-md font-medium text-gray-700 mb-1">
               Category <span className="text-red-500">*</span>
             </label>
             <select
@@ -171,10 +145,7 @@ const ResourceUploader = ({
 
         {/*==================== Description Section ====================*/}
         <div className="mt-6">
-          <label
-            htmlFor="description"
-            className="block text-md font-medium text-gray-700 mb-1"
-          >
+          <label htmlFor="description" className="block text-md font-medium text-gray-700 mb-1">
             Description <span className="text-red-500">*</span>
           </label>
           <textarea
@@ -192,10 +163,7 @@ const ResourceUploader = ({
         {/*==================== Visibility and Department Section ====================*/}
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 mt-4">
           <div>
-            <label
-              htmlFor="visibility"
-              className="block text-md font-medium text-gray-700 mb-1"
-            >
+            <label htmlFor="visibility" className="block text-md font-medium text-gray-700 mb-1">
               Visibility <span className="text-red-500">*</span>
             </label>
             <select
@@ -211,10 +179,7 @@ const ResourceUploader = ({
           </div>
 
           <div>
-            <label
-              htmlFor="department"
-              className="block text-md font-medium text-gray-700 mb-1"
-            >
+            <label htmlFor="department" className="block text-md font-medium text-gray-700 mb-1">
               Department <span className="text-red-500">*</span>
             </label>
             <select

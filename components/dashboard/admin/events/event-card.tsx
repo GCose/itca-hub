@@ -1,15 +1,14 @@
-import { Calendar, Clock, MapPin, Users, Edit, Trash } from "lucide-react";
-import Link from "next/link";
-import { useState } from "react";
+import { Calendar, MapPin, Users, Edit, Trash2 } from 'lucide-react';
+import Image from 'next/image';
 
 interface Event {
-  id: number;
+  id: string;
   title: string;
   description: string;
   date: string;
   time: string;
   location: string;
-  status: "upcoming" | "ongoing" | "completed" | "cancelled";
+  status: 'upcoming' | 'ongoing' | 'completed';
   registrations: number;
   capacity: number;
   image?: string;
@@ -17,198 +16,126 @@ interface Event {
 
 interface EventCardProps {
   event: Event;
-  onDeleteClick: (eventId: number) => void;
+  onEdit: (eventId: string) => void;
+  onDelete: (eventId: string) => void;
 }
 
-const EventCard = ({ event, onDeleteClick }: EventCardProps) => {
-  const [isHovered, setIsHovered] = useState(false);
-
-  // Format date to readable format
-  const formatDate = (dateString: string) => {
-    const options: Intl.DateTimeFormatOptions = {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    };
-    return new Date(dateString).toLocaleDateString(undefined, options);
-  };
-
-  // Get status badge styling
-  const getStatusBadge = (status: string) => {
+const EventCard = ({ event, onEdit, onDelete }: EventCardProps) => {
+  const getStatusColor = (status: string) => {
     switch (status) {
-      case "upcoming":
-        return {
-          bg: "bg-gradient-to-r from-blue-100 to-blue-50",
-          border: "border-blue-200",
-          text: "text-blue-700",
-          icon: (
-            <div className="absolute -left-1 -top-1 h-2 w-2 rounded-full bg-blue-600"></div>
-          ),
-        };
-      case "ongoing":
-        return {
-          bg: "bg-gradient-to-r from-green-100 to-green-50",
-          border: "border-green-200",
-          text: "text-green-700",
-          icon: (
-            <div className="absolute -left-1 -top-1 h-2 w-2 rounded-full animate-pulse bg-green-600"></div>
-          ),
-        };
-      case "completed":
-        return {
-          bg: "bg-gradient-to-r from-gray-100 to-gray-50",
-          border: "border-gray-200",
-          text: "text-gray-700",
-          icon: (
-            <div className="absolute -left-1 -top-1 h-2 w-2 rounded-full bg-gray-600"></div>
-          ),
-        };
-      case "cancelled":
-        return {
-          bg: "bg-gradient-to-r from-red-100 to-red-50",
-          border: "border-red-200",
-          text: "text-red-700",
-          icon: (
-            <div className="absolute -left-1 -top-1 h-2 w-2 rounded-full bg-red-600"></div>
-          ),
-        };
+      case 'upcoming':
+        return 'bg-blue-100 text-blue-800';
+      case 'ongoing':
+        return 'bg-green-100 text-green-800';
+      case 'completed':
+        return 'bg-gray-100 text-gray-800';
       default:
-        return {
-          bg: "bg-gradient-to-r from-gray-100 to-gray-50",
-          border: "border-gray-200",
-          text: "text-gray-700",
-          icon: null,
-        };
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
-  const statusBadge = getStatusBadge(event.status);
-  const capacityPercentage = (event.registrations / event.capacity) * 100;
-  const capacityColorClass =
-    capacityPercentage >= 90
-      ? "bg-amber-500"
-      : capacityPercentage >= 70
-        ? "bg-blue-600"
-        : "bg-blue-400";
+  const formatDate = (dateStr: string) => {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    });
+  };
 
   return (
-    <div
-      className={`relative overflow-hidden rounded-xl transition-all duration-300 
-                 ${isHovered ? "shadow-lg ring-1 ring-gray-200" : "shadow-md"}`}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      {/* Background gradients */}
-      <div className="absolute inset-0 bg-white"></div>
-      <div
-        className={`absolute left-0 top-0 h-full w-1 ${
-          event.status === "upcoming"
-            ? "bg-blue-600"
-            : event.status === "ongoing"
-              ? "bg-green-600"
-              : event.status === "completed"
-                ? "bg-gray-400"
-                : "bg-red-500"
-        }`}
-      ></div>
-
-      {isHovered && (
-        <div className="absolute -bottom-6 -right-6 h-32 w-32 bg-gradient-to-br from-amber-500/10 to-blue-600/5 rounded-full"></div>
-      )}
-
-      <div className="relative p-5">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-          <div className="flex-1">
-            <div className="mb-2 flex items-center">
-              <span
-                className={`relative mr-3 inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium ${statusBadge.bg} ${statusBadge.border} ${statusBadge.text}`}
-              >
-                {statusBadge.icon}
-                {event.status.charAt(0).toUpperCase() + event.status.slice(1)}
-              </span>
-
-              <h3 className="text-lg font-medium text-gray-900 hover:text-blue-700 transition-colors">
-                <Link href={`/admin/events/${event.id}`}>{event.title}</Link>
-              </h3>
-            </div>
-
-            <p className="text-sm text-gray-600 mb-4 line-clamp-2 max-w-3xl">
-              {event.description}
-            </p>
-
-            <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm text-gray-500">
-              <div className="flex items-center">
-                <Calendar className="mr-1.5 h-4 w-4 text-blue-600" />
-                <span>{formatDate(event.date)}</span>
-              </div>
-
-              <div className="flex items-center">
-                <Clock className="mr-1.5 h-4 w-4 text-blue-600" />
-                <span>{event.time}</span>
-              </div>
-
-              <div className="flex items-center">
-                <MapPin className="mr-1.5 h-4 w-4 text-blue-600" />
-                <span>{event.location}</span>
-              </div>
-            </div>
+    <div className="group relative overflow-hidden rounded-xl bg-white/50 transition-all duration-300">
+      {/*==================== Event Image ====================*/}
+      <div className="relative h-48 w-full overflow-hidden bg-gradient-to-br from-blue-50 to-amber-50">
+        {event.image ? (
+          <Image
+            fill
+            src={event.image}
+            alt={event.title}
+            className="object-cover transition-transform duration-300 group-hover:scale-105"
+            onError={() => console.error('Image failed to load:', event.image)}
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-blue-100 to-amber-100">
+            <Calendar className="h-16 w-16 text-blue-400" />
           </div>
+        )}
 
-          <div className="mt-4 md:mt-0 md:ml-6 flex flex-col items-end">
-            <div className="mb-4 flex items-center">
-              <Users className="mr-2 h-5 w-5 text-amber-500" />
-              <div className="flex items-center">
-                <span className="font-medium text-gray-900">
-                  {event.registrations}
-                </span>
-                <span className="mx-1 text-gray-600">/</span>
-                <span className="text-gray-600">{event.capacity}</span>
-              </div>
-            </div>
+        {/*==================== Status Badge ====================*/}
+        <div className="absolute top-3 right-3">
+          <span
+            className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium capitalize ${getStatusColor(event.status)}`}
+          >
+            {event.status}
+          </span>
+        </div>
+        {/*==================== End of Status Badge ====================*/}
 
-            <div className="w-36 mb-3">
-              <div className="h-2 w-full bg-gray-200 rounded-full overflow-hidden">
-                <div
-                  className={`h-full ${capacityColorClass} transition-all duration-500 ease-out`}
-                  style={{ width: `${capacityPercentage}%` }}
-                ></div>
-              </div>
-              <div className="mt-1 flex justify-between text-xs">
-                <span className="text-gray-500">Registrations</span>
-                <span className="font-medium text-gray-900">
-                  {Math.round(capacityPercentage)}%
-                </span>
-              </div>
-            </div>
-
-            <div className="flex space-x-2">
-              <Link
-                href={`/admin/events/${event.id}/registrations`}
-                className="flex items-center rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 transition-colors"
-              >
-                <Users className="mr-1 h-3.5 w-3.5" />
-                Registrations
-              </Link>
-
-              <Link
-                href={`/admin/events/${event.id}/edit`}
-                className="flex items-center rounded-lg border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs font-medium text-blue-700 hover:bg-blue-100 transition-colors"
-              >
-                <Edit className="mr-1 h-3.5 w-3.5" />
-                Edit
-              </Link>
-
-              <button
-                className="flex items-center rounded-lg border border-red-200 bg-white px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50 transition-colors"
-                onClick={() => onDeleteClick(event.id)}
-              >
-                <Trash className="mr-1 h-3.5 w-3.5" />
-                Delete
-              </button>
-            </div>
+        {/*==================== Action Buttons ====================*/}
+        <div className="absolute top-3 left-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <div className="flex space-x-2">
+            <button
+              onClick={() => onEdit(event.id)}
+              className="flex h-8 w-8 items-center justify-center rounded-full bg-white/90 backdrop-blur-sm text-blue-600 hover:bg-white hover:text-blue-700 transition-colors"
+            >
+              <Edit className="h-4 w-4" />
+            </button>
+            <button
+              onClick={() => onDelete(event.id)}
+              className="flex h-8 w-8 items-center justify-center rounded-full bg-white/90 backdrop-blur-sm text-red-600 hover:bg-white hover:text-red-700 transition-colors"
+            >
+              <Trash2 className="h-4 w-4" />
+            </button>
           </div>
         </div>
+        {/*==================== End of Action Buttons ====================*/}
       </div>
+      {/*==================== End of Event Image ====================*/}
+
+      {/*==================== Event Content ====================*/}
+      <div className="p-5">
+        {/*==================== Event Title ====================*/}
+        <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">{event.title}</h3>
+        {/*==================== End of Event Title ====================*/}
+
+        {/*==================== Event Description ====================*/}
+        <p className="text-sm text-gray-600 mb-4 line-clamp-2">{event.description}</p>
+        {/*==================== End of Event Description ====================*/}
+
+        {/*==================== Event Details ====================*/}
+        <div className="space-y-2 mb-4">
+          <div className="flex items-center text-sm text-gray-500">
+            <Calendar className="h-4 w-4 mr-2 text-blue-500" />
+            <span>
+              {formatDate(event.date)} • {event.time}
+            </span>
+          </div>
+          <div className="flex items-center text-sm text-gray-500">
+            <MapPin className="h-4 w-4 mr-2 text-amber-500" />
+            <span className="truncate">{event.location}</span>
+          </div>
+          <div className="flex items-center text-sm text-gray-500">
+            <Users className="h-4 w-4 mr-2 text-green-500" />
+            <span>
+              {event.registrations}/{event.capacity} registered
+            </span>
+          </div>
+        </div>
+        {/*==================== End of Event Details ====================*/}
+
+        {/*==================== Progress Bar ====================*/}
+        <div className="w-full bg-gray-200 rounded-full h-2">
+          <div
+            className="bg-gradient-to-r from-blue-500 to-blue-600 h-2 rounded-full transition-all duration-300"
+            style={{ width: `${Math.min((event.registrations / event.capacity) * 100, 100)}%` }}
+          />
+        </div>
+        <div className="mt-1 text-xs text-gray-500 text-right">
+          {Math.round((event.registrations / event.capacity) * 100)}% filled
+        </div>
+        {/*==================== End of Progress Bar ====================*/}
+      </div>
+      {/*==================== End of Event Content ====================*/}
     </div>
   );
 };

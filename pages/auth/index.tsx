@@ -56,7 +56,6 @@ const SignIn = () => {
       const { data } = await axios.post('/api/login', { schoolEmail, password });
 
       // Show that alert user is logged in
-
       toast.success('Login In Successful', { description: 'You have been logged in sucessfully' });
 
       switch (data.role) {

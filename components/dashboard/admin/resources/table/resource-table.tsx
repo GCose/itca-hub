@@ -14,7 +14,7 @@ import {
   RefreshCw,
 } from 'lucide-react';
 import { Resource } from '@/types';
-import useResourceTable from '@/hooks/admin/use-resource-table';
+import useResourceTable from '@/hooks/admin/resources/use-resource-table';
 import ResourceTableSkeleton from './resource-table-skeleton';
 import ResourceFilters from './resource-table-filters';
 import ResourceAnalytics from '../modals/analytics-resource-modal';

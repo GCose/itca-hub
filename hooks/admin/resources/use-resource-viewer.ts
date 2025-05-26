@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Resource } from '@/types';
-import useResourceAnalytics from '@/hooks/admin/use-resource-analytics';
+import useResourceAnalytics from '@/hooks/admin/resources/use-resource-analytics';
 
 interface UseResourceViewerProps {
   resourceId?: string;

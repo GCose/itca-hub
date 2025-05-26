@@ -23,7 +23,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { UserAuth } from '@/types';
 import { isLoggedIn } from '@/utils/auth';
 import { NextApiRequest } from 'next';
-import { useResources } from '@/hooks/admin/use-resources';
+import { useResources } from '@/hooks/admin/resources/use-resources';
 
 const RecycleBinPage = () => {
   const {
