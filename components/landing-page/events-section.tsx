@@ -34,7 +34,7 @@ const events: Event[] = [
     location: 'UTG KANIFING CAMPUS',
     description:
       'Anual Developer festival organized by Google Developer Group.',
-    image: '/images/General.png',
+    image: '/images/DevFest.jpg',
     category: 'conference',
   },
   {
@@ -42,7 +42,7 @@ const events: Event[] = [
     title: 'Nationwide School Tour',
     date: 'TBD',
     time: 'TBD',
-    location: 'NAtionwide',
+    location: 'Nationwide',
     description: 'A nationwide high school tour to raise awarenesr about Technology and The University of The Gambia School of Information Technology and Communication.',
     image: '/images/event-2.jpg',
     category: 'workshop',
@@ -61,11 +61,11 @@ const events: Event[] = [
     id: 5,
     title: 'GradTalk Seminar',
     date: 'November 10, 2023',
-    time: '3:00 PM - 5:00 PM',
-    location: 'Virtual (Zoom)',
+    time: '11:00 AM - 1:00 PM',
+    location: 'UTG KANIFING CAMPUS',
     description:
       'Learn about the the importance of doing a final year projct from the seniors.',
-    image: '/images/event-1.jpg',
+    image: '/images/GT.jpg',
     category: 'seminar',
   },
   {
@@ -76,7 +76,7 @@ const events: Event[] = [
     location: 'Water Front Beach',
     description:
       'A social gathering to have fun, network and connect with colleauges.',
-    image: '/images/event-1.jpg',
+    image: '/images/Retreat.jpg',
     category: 'social',
   },
   {
@@ -87,7 +87,7 @@ const events: Event[] = [
     location: 'Palm Beach',
     description:
       'A social gathering to welcome our new students, have fun, network and connect with colleauges.',
-    image: '/images/event-1.jpg',
+    image: '/images/SC.jpg',
     category: 'social',
   },
 ];
