@@ -17,12 +17,12 @@ type Event = {
 const events: Event[] = [
   {
     id: 1,
-    title: 'Annual Tech Conference 2023',
-    date: 'November 15, 2023',
-    time: '9:00 AM - 5:00 PM',
-    location: 'Main Auditorium',
+    title: 'ITCA Innovation Week 2025',
+    date: 'May 27th to May 29th, 2025',
+    time: '10:00 AM - 4:45 PM',
+    location: 'UTG-ITC FARABA CAMPUS',
     description:
-      'Join us for our annual technology conference featuring industry leaders and innovative showcases.',
+      'Join us for our first annual technology conference featuring industry leaders and innovative showcases.',
     image: '/images/event-1.jpg',
     category: 'conference',
   },
