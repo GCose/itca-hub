@@ -23,7 +23,7 @@ const events: Event[] = [
     location: 'UTG-ITC FARABA CAMPUS',
     description:
       'Join us for our first annual technology conference featuring industry leaders and innovative showcases.',
-    image: '/images/event-1.jpg',
+    image: '/images/General.png',
     category: 'conference',
   },
   {
