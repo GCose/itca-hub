@@ -13,8 +13,8 @@ interface UserData {
 
 interface UserTableProps {
   limit?: number;
-  users: UserData[];
-  isLoading: boolean;
+  users?: UserData[];
+  isLoading?: boolean;
 }
 
 const UserTable = ({ limit, users = [], isLoading = false }: UserTableProps) => {

@@ -90,7 +90,7 @@ const AdminUsersPage = () => {
 
       <div className="grid grid-cols-1 gap-6">
         <div className="overflow-hidden rounded-lg bg-white">
-          <UserTable />
+          <UserTable users={[]} />
         </div>
       </div>
     </DashboardLayout>
