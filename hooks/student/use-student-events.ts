@@ -73,7 +73,6 @@ export const useStudentEvents = (token: string) => {
   const [events, setEvents] = useState<Event[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [status, setStatus] = useState('upcoming');
-  const [viewMode, setViewMode] = useState<'list' | 'calendar'>('list');
   const [initialLoading, setInitialLoading] = useState(true);
 
   const { isLoading, error, getAllEvents, registerForEvent, unregisterFromEvent, refreshEvents } =
@@ -176,8 +175,6 @@ export const useStudentEvents = (token: string) => {
     setSearchTerm,
     status,
     setStatus,
-    viewMode,
-    setViewMode,
     isLoading,
     error,
     initialLoading,

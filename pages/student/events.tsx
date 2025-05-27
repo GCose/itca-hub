@@ -19,8 +19,6 @@ const StudentEventsPage = ({ userData }: StudentEventsPageProps) => {
     setSearchTerm,
     status,
     setStatus,
-    viewMode,
-    setViewMode,
     isLoading,
     error,
     initialLoading,
@@ -80,7 +78,7 @@ const StudentEventsPage = ({ userData }: StudentEventsPageProps) => {
               </div>
             </div>
 
-            <div className="md:col-span-2">
+            <div className="md:col-span-4">
               <div className="relative">
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                   <ListFilter className="h-5 w-5 text-gray-400" />
@@ -110,22 +108,6 @@ const StudentEventsPage = ({ userData }: StudentEventsPageProps) => {
                     />
                   </svg>
                 </div>
-              </div>
-            </div>
-
-            <div className="md:col-span-2">
-              <div className="flex items-center justify-center h-full rounded-lg bg-white overflow-hidden">
-                <button
-                  className={`flex-1 h-full flex items-center justify-center px-3 transition-colors ${
-                    viewMode === 'calendar'
-                      ? 'bg-gradient-to-r from-blue-100 to-blue-50 text-blue-700'
-                      : 'text-gray-500 hover:bg-gray-50'
-                  }`}
-                  onClick={() => setViewMode('calendar')}
-                >
-                  <Calendar className="h-4 w-4" />
-                  <span className="ml-1.5 text-sm font-medium">Calendar</span>
-                </button>
               </div>
             </div>
           </div>
