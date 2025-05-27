@@ -1,12 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, FC } from 'react';
 import { Calendar, Users, FileText, PieChart } from 'lucide-react';
 import DashboardLayout from '@/components/dashboard/layout/dashboard-layout';
 import StatsCard from '@/components/dashboard/admin/overview/stats-card';
 import UserTable from '@/components/dashboard/admin/overview/user-table';
-import RecentActivity from '@/components/dashboard/admin/overview/recent-activity';
+// import RecentActivity from '@/components/dashboard/admin/overview/recent-activity';
 import { isLoggedIn } from '@/utils/auth';
 import { NextApiRequest } from 'next';
 import { UserAuth } from '@/types';
+import axios from 'axios';
+import { BASE_URL } from '@/utils/url';
 
 // Types for dashboard data
 interface DashboardStats {
@@ -16,40 +18,53 @@ interface DashboardStats {
   activeUsers: number;
 }
 
-const AdminDashboard = () => {
+type UserProps = {
+  userData: UserAuth;
+};
+
+const AdminDashboard: FC<UserProps> = ({ userData }) => {
   const [stats, setStats] = useState<DashboardStats>({
     totalUsers: 0,
     totalEvents: 0,
     totalResources: 0,
     activeUsers: 0,
   });
+  const [recentRegistrations, setRecentRegistrations] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  const fetchDashboardData = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const headers = {
+        Authorization: `Bearer ${userData.token}`,
+      };
+
+      const [stats, recentRegistrations] = await Promise.all([
+        axios.get(`${BASE_URL}/admin/stats`, {
+          headers,
+        }),
+        axios.get(`${BASE_URL}/admin/recent-registrations`, {
+          headers,
+        }),
+      ]);
+
+      setStats({
+        totalUsers: stats.data.data.totalUsers,
+        totalEvents: stats.data.data.activeEvents,
+        totalResources: stats.data.data.resources,
+        activeUsers: stats.data.data.activeUsers,
+      });
+      setRecentRegistrations(recentRegistrations.data.data);
+    } catch (error) {
+      console.error('Error fetching dashboard data:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [userData.token]);
+
   useEffect(() => {
-    // Fetch dashboard data from API
-    // This would be replaced with actual API calls -Ebrima Mbye
-    const fetchDashboardData = async () => {
-      setIsLoading(true);
-      try {
-        // Simulate API call
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-
-        // Mock data
-        setStats({
-          totalUsers: 256,
-          totalEvents: 12,
-          totalResources: 148,
-          activeUsers: 124,
-        });
-      } catch (error) {
-        console.error('Error fetching dashboard data:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     fetchDashboardData();
-  }, []);
+  }, [fetchDashboardData]);
 
   return (
     <DashboardLayout title="Admin Dashboard">
@@ -70,7 +85,7 @@ const AdminDashboard = () => {
       {/*==================== Stats Cards ====================*/}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <StatsCard
-          trend={'+5.2%'}
+          // trend={'+5.2%'}
           title="Total Users"
           trendDirection="up"
           isLoading={isLoading}
@@ -78,7 +93,7 @@ const AdminDashboard = () => {
           icon={<Users className="h-6 w-6 text-blue-600" />}
         />
         <StatsCard
-          trend={'+2.4%'}
+          // trend={'+2.4%'}
           trendDirection="up"
           title="Active Events"
           isLoading={isLoading}
@@ -86,7 +101,7 @@ const AdminDashboard = () => {
           icon={<Calendar className="h-6 w-6 text-amber-500" />}
         />
         <StatsCard
-          trend={'+8.1%'}
+          // trend={'+8.1%'}
           title="Resources"
           trendDirection="up"
           isLoading={isLoading}
@@ -94,7 +109,7 @@ const AdminDashboard = () => {
           icon={<FileText className="h-6 w-6 text-green-500" />}
         />
         <StatsCard
-          trend={'-1.8%'}
+          // trend={'-1.8%'}
           title="Active Users"
           trendDirection="down"
           isLoading={isLoading}
@@ -104,19 +119,19 @@ const AdminDashboard = () => {
       </div>
       {/*==================== End of Stats Cards ====================*/}
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pt-4">
+      <div className="grid grid-cols-1 gap-6 pt-4">
         {/*==================== Recent User Activity ====================*/}
         <div className="lg:col-span-2">
           <h2 className="text-lg font-semibold mb-4">Recent Registrations</h2>
-          <UserTable />
+          <UserTable users={recentRegistrations} isLoading={isLoading} />
         </div>
         {/*==================== End of Recent User Activity ====================*/}
 
-        {/*==================== Activity Feed ====================*/}
-        <div>
+        {/* ==================== Activity Feed ==================== */}
+        {/* <div>
           <h2 className="text-lg font-semibold mb-4">System Activity</h2>
           <RecentActivity />
-        </div>
+        </div> */}
         {/*==================== End of Activity Feed ====================*/}
       </div>
     </DashboardLayout>

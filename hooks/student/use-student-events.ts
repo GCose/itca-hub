@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { toast } from 'sonner';
 import { useEvents } from '@/hooks/admin/events/use-events';
+import { BASE_URL } from '@/utils/url';
 
 interface ApiEvent {
   _id: string;
@@ -81,7 +82,7 @@ export const useStudentEvents = (token: string) => {
   const fetchEvents = useCallback(async () => {
     try {
       // Step 1: Get current user ID first
-      const userResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/profile`, {
+      const userResponse = await fetch(`${BASE_URL}/users/profile`, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',

@@ -13,74 +13,12 @@ interface UserData {
 
 interface UserTableProps {
   limit?: number;
+  users: UserData[];
+  isLoading: boolean;
 }
 
-const UserTable = ({ limit }: UserTableProps) => {
-  const [users, setUsers] = useState<UserData[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+const UserTable = ({ limit, users = [], isLoading = false }: UserTableProps) => {
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchUsers = async () => {
-      setIsLoading(true);
-      try {
-        // Simulate API call
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-
-        // Mock data
-        const mockUsers = [
-          {
-            id: '1',
-            name: 'John Doe',
-            email: 'john.doe@utg.edu.gm',
-            role: 'Student',
-            status: 'active' as const,
-            joinedDate: '2023-09-15',
-          },
-          {
-            id: '2',
-            name: 'Jane Smith',
-            email: 'jane.smith@utg.edu.gm',
-            role: 'Student',
-            status: 'active' as const,
-            joinedDate: '2023-08-22',
-          },
-          {
-            id: '3',
-            name: 'Robert Johnson',
-            email: 'robert.j@utg.edu.gm',
-            role: 'Admin',
-            status: 'active' as const,
-            joinedDate: '2023-07-10',
-          },
-          {
-            id: '4',
-            name: 'Sarah Williams',
-            email: 'sarah.w@utg.edu.gm',
-            role: 'Student',
-            status: 'inactive' as const,
-            joinedDate: '2023-06-05',
-          },
-          {
-            id: '5',
-            name: 'Michael Brown',
-            email: 'michael.b@utg.edu.gm',
-            role: 'Student',
-            status: 'pending' as const,
-            joinedDate: '2023-10-01',
-          },
-        ];
-
-        setUsers(limit ? mockUsers.slice(0, limit) : mockUsers);
-      } catch (error) {
-        console.error('Error fetching users:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchUsers();
-  }, [limit]);
 
   const toggleUserMenu = (userId: string) => {
     setSelectedUser(selectedUser === userId ? null : userId);
@@ -97,19 +35,6 @@ const UserTable = ({ limit }: UserTableProps) => {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [selectedUser]);
-
-  const getStatusBadgeClass = (status: string) => {
-    switch (status) {
-      case 'active':
-        return 'bg-green-100 text-green-800';
-      case 'inactive':
-        return 'bg-gray-100 text-gray-800';
-      case 'pending':
-        return 'bg-yellow-100 text-yellow-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
 
   if (isLoading) {
     return (
@@ -205,12 +130,6 @@ const UserTable = ({ limit }: UserTableProps) => {
                 scope="col"
                 className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
               >
-                Status
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
-              >
                 Joined
               </th>
               <th
@@ -223,67 +142,69 @@ const UserTable = ({ limit }: UserTableProps) => {
           </thead>
 
           <tbody className="divide-y divide-gray-200 bg-white">
-            {users.map((user) => (
-              <tr key={user.id} className="hover:bg-gray-50">
-                <td className="whitespace-nowrap px-6 py-4">
-                  <div className="flex items-center">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-blue-700">
-                      <User className="h-5 w-5" />
-                    </div>
-                    <div className="ml-4">
-                      <div className="text-sm font-medium text-gray-900">{user.name}</div>
-                      <div className="text-sm text-gray-500">{user.email}</div>
-                    </div>
-                  </div>
-                </td>
-                <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">{user.role}</td>
-                <td className="whitespace-nowrap px-6 py-4">
-                  <span
-                    className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${getStatusBadgeClass(user.status)}`}
-                  >
-                    {user.status.charAt(0).toUpperCase() + user.status.slice(1)}
-                  </span>
-                </td>
-                <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                  {new Date(user.joinedDate).toLocaleDateString()}
-                </td>
-                <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
-                  <div className="relative inline-block text-left user-menu">
-                    <button
-                      onClick={() => toggleUserMenu(user.id)}
-                      className="rounded-full p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none"
-                    >
-                      <MoreHorizontal className="h-5 w-5" />
-                    </button>
-
-                    {selectedUser === user.id && (
-                      <div className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white ring-1 ring-black ring-opacity-5">
-                        <div className="py-1">
-                          <Link
-                            href={`/admin/users/${user.id}`}
-                            className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                          >
-                            <ExternalLink className="mr-3 h-4 w-4 text-gray-500" />
-                            View Details
-                          </Link>
-                          <Link
-                            href={`/admin/users/${user.id}/edit`}
-                            className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                          >
-                            <Edit className="mr-3 h-4 w-4 text-gray-500" />
-                            Edit
-                          </Link>
-                          <button className="flex w-full items-center px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
-                            <Trash className="mr-3 h-4 w-4 text-red-500" />
-                            Delete
-                          </button>
-                        </div>
+            {users &&
+              users.map((user) => (
+                <tr key={user.id} className="hover:bg-gray-50">
+                  <td className="whitespace-nowrap px-6 py-4">
+                    <div className="flex items-center">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-blue-700">
+                        <User className="h-5 w-5" />
                       </div>
-                    )}
-                  </div>
-                </td>
-              </tr>
-            ))}
+                      <div className="ml-4">
+                        <div className="text-sm font-medium text-gray-900">{user.name}</div>
+                        <div className="text-sm text-gray-500">{user.email}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">{user.role}</td>
+                  {/* <td className="whitespace-nowrap px-6 py-4">
+                    <span
+                      className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${getStatusBadgeClass(user.status)}`}
+                    >
+                      {user.status.charAt(0).toUpperCase() + user.status.slice(1)}
+                    </span>
+                  </td> */}
+                  <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                    {new Date(user.joinedDate).toLocaleDateString()}
+                  </td>
+                  <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
+                    <div className="relative inline-block text-left user-menu">
+                      <button
+                        title="button"
+                        onClick={() => toggleUserMenu(user.id)}
+                        className="rounded-full p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none"
+                      >
+                        <MoreHorizontal className="h-5 w-5" />
+                      </button>
+
+                      {selectedUser === user.id && (
+                        <div className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white ring-1 ring-black ring-opacity-5">
+                          <div className="py-1">
+                            <Link
+                              href={`/admin/users/${user.id}`}
+                              className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                            >
+                              <ExternalLink className="mr-3 h-4 w-4 text-gray-500" />
+                              View Details
+                            </Link>
+                            <Link
+                              href={`/admin/users/${user.id}/edit`}
+                              className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                            >
+                              <Edit className="mr-3 h-4 w-4 text-gray-500" />
+                              Edit
+                            </Link>
+                            <button className="flex w-full items-center px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
+                              <Trash className="mr-3 h-4 w-4 text-red-500" />
+                              Delete
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </table>
       </div>
