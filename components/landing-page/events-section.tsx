@@ -11,38 +11,39 @@ type Event = {
   location: string;
   description: string;
   image: string;
-  category: 'workshop' | 'conference' | 'hackathon' | 'seminar';
+  category: 'workshop' | 'conference' | 'hackathon' | 'seminar' | 'social';
 };
 
 const events: Event[] = [
   {
     id: 1,
-    title: 'Annual Tech Conference 2023',
-    date: 'November 15, 2023',
-    time: '9:00 AM - 5:00 PM',
-    location: 'Main Auditorium',
+    title: 'ITCA Innovation Week 2025',
+    date: 'May 27th - 29th 2025',
+    time: '10:00 AM - 4:45PM',
+    location: 'UTG-ITC Faraba Campus',
     description:
-      'Join us for our annual technology conference featuring industry leaders and innovative showcases.',
-    image: '/images/event-1.jpg',
+      'Join us for our first technology conference featuring industry leaders and innovative showcases.',
+    image: '/images/General.png',
     category: 'conference',
   },
   {
     id: 2,
-    title: 'Web Development Workshop',
-    date: 'October 25, 2023',
-    time: '2:00 PM - 4:00 PM',
-    location: 'Lab 302',
-    description: 'Hands-on workshop on modern web development techniques and frameworks.',
-    image: '/images/event-2.jpg',
-    category: 'workshop',
+    title: 'Google Developer Festival (DevFest)',
+    date: 'November 30, 2024',
+    time: '10:00 AM - 4:45 PM',
+    location: 'UTG KANIFING CAMPUS',
+    description: 'Anual Developer festival organized by Google Developer Group.',
+    image: '/images/DevFest.jpg',
+    category: 'conference',
   },
   {
     id: 3,
-    title: 'Cybersecurity Hackathon',
-    date: 'December 5-7, 2023',
-    time: 'All day',
-    location: 'ICT Building',
-    description: 'A 48-hour hackathon focused on solving real-world cybersecurity challenges.',
+    title: 'Nationwide School Tour',
+    date: 'TBD',
+    time: 'TBD',
+    location: 'Nationwide',
+    description:
+      'A nationwide high school tour to raise awarenesr about Technology and The University of The Gambia School of Information Technology and Communication.',
     image: '/images/event-3.jpg',
     category: 'hackathon',
   },
@@ -54,8 +55,40 @@ const events: Event[] = [
     location: 'Virtual (Zoom)',
     description:
       'Learn about the latest advancements in AI and machine learning from industry experts.',
-    image: '/images/event-1.jpg',
+    image: '/images/event-2.jpg',
     category: 'seminar',
+  },
+  {
+    id: 5,
+    title: 'GradTalk Seminar',
+    date: 'November 10, 2023',
+    time: '3:00 PM - 5:00 PM',
+    location: 'Virtual (Zoom)',
+    description:
+      'Learn about the latest advancements in AI and machine learning from industry experts.',
+    image: '/images/Faculty.jpg',
+    category: 'seminar',
+  },
+  {
+    id: 6,
+    title: 'ITCA Retreat',
+    date: 'February 8, 2025',
+    time: '12:00 PM - 12:00 AM',
+    location: 'Water Front Beach',
+    description: 'A social gathering to have fun, network and connect with colleauges.',
+    image: '/images/event-1.jpg',
+    category: 'social',
+  },
+  {
+    id: 7,
+    title: "ITCA Freshers' Connect",
+    date: 'February 26th - 27th, 2025',
+    time: '3:00 PM - 8:00 AM',
+    location: 'Palm Beach',
+    description:
+      'A social gathering to welcome our new students, have fun, network and connect with colleauges.',
+    image: '/images/event-2.jpg',
+    category: 'social',
   },
 ];
 
@@ -75,12 +108,12 @@ const EventCard = ({ event, index }: { event: Event; index: number }) => (
     <div className="flex flex-col h-full">
       <div className="relative h-56 w-full overflow-hidden">
         <Image
-          src={event.image || '/placeholder.svg'}
-          alt={event.title}
           fill
-          className="object-cover transition-transform duration-500 group-hover:scale-110"
-          sizes="(max-width: 768px) 100vw, 50vw"
+          alt={event.title}
           placeholder="blur"
+          sizes="(max-width: 768px) 100vw, 50vw"
+          src={event.image || '/placeholder.svg'}
+          className="object-cover transition-transform duration-500 group-hover:scale-110"
           blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
@@ -157,17 +190,17 @@ const EventsSection = () => {
 
   const filterButtons = [
     { key: 'all', label: 'All Events' },
-    { key: 'workshop', label: 'Workshops' },
     { key: 'conference', label: 'Conferences' },
     { key: 'hackathon', label: 'Hackathons' },
     { key: 'seminar', label: 'Seminars' },
+    { key: 'social', label: 'Social' },
   ];
 
   return (
     <section
       id="events"
-      className="relative py-24 overflow-hidden bg-gradient-to-b from-white to-gray-100"
       style={{ contain: 'layout style' }}
+      className="relative py-24 overflow-hidden bg-gradient-to-b from-white to-gray-100"
     >
       <div className="absolute inset-0 z-10 overflow-hidden opacity-20">
         <div className="absolute top-1/4 left-0 h-[1px] w-full bg-gradient-to-r from-transparent via-amber-500/40 to-transparent"></div>
