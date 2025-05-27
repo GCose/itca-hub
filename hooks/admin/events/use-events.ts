@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import {BASE_URL} from "@/utils/url"
 
 interface CreateEventData {
   title: string;
@@ -10,8 +11,6 @@ interface CreateEventData {
   registrationRequired: boolean;
   imageUrl?: string;
 }
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://itca-hub-backend.onrender.com';
 
 export const useEvents = (token: string) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -25,7 +24,7 @@ export const useEvents = (token: string) => {
    =============================*/
   const apiCall = useCallback(
     async (endpoint: string, options: RequestInit = {}) => {
-      const response = await fetch(`${API_BASE_URL}/api/events${endpoint}`, {
+      const response = await fetch(`${BASE_URL}/events/${endpoint}`, {
         ...options,
         headers: {
           'Content-Type': 'application/json',
