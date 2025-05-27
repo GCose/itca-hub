@@ -11,7 +11,7 @@ type Event = {
   location: string;
   description: string;
   image: string;
-  category: 'workshop' | 'conference' | 'hackathon' | 'seminar';
+  category: 'workshop' | 'conference' | 'hackathon' | 'seminar' | 'social';
 };
 
 const events: Event[] = [
@@ -28,16 +28,27 @@ const events: Event[] = [
   },
   {
     id: 2,
-    title: 'Web Development Workshop',
-    date: 'October 25, 2023',
-    time: '2:00 PM - 4:00 PM',
-    location: 'Lab 302',
-    description: 'Hands-on workshop on modern web development techniques and frameworks.',
+    title: 'Google Developer Festival (DevFest)',
+    date: 'November 30, 2024',
+    time: '10:00 AM - 4:45 PM',
+    location: 'UTG KANIFING CAMPUS',
+    description:
+      'Anual Developer festival organized by Google Developer Group.',
+    image: '/images/General.png',
+    category: 'conference',
+  },
+  {
+    id: 3,
+    title: 'Nationwide School Tour',
+    date: 'TBD',
+    time: 'TBD',
+    location: 'NAtionwide',
+    description: 'A nationwide high school tour to raise awarenesr about Technology and The University of The Gambia School of Information Technology and Communication.',
     image: '/images/event-2.jpg',
     category: 'workshop',
   },
   {
-    id: 3,
+    id: 4,
     title: 'Cybersecurity Hackathon',
     date: 'December 5-7, 2023',
     time: 'All day',
@@ -47,15 +58,37 @@ const events: Event[] = [
     category: 'hackathon',
   },
   {
-    id: 4,
-    title: 'AI & Machine Learning Seminar',
+    id: 5,
+    title: 'GradTalk Seminar',
     date: 'November 10, 2023',
     time: '3:00 PM - 5:00 PM',
     location: 'Virtual (Zoom)',
     description:
-      'Learn about the latest advancements in AI and machine learning from industry experts.',
+      'Learn about the the importance of doing a final year projct from the seniors.',
     image: '/images/event-1.jpg',
     category: 'seminar',
+  },
+  {
+    id: 6,
+    title: 'ITCA Retreat',
+    date: 'February 8, 2025',
+    time: '12:00 PM - 12:00 AM',
+    location: 'Water Front Beach',
+    description:
+      'A social gathering to have fun, network and connect with colleauges.',
+    image: '/images/event-1.jpg',
+    category: 'social',
+  },
+  {
+    id: 6,
+    title: "ITCA Freshers' Connect",
+    date: 'February 26th - 27th, 2025',
+    time: '3:00 PM - 8:00 AM',
+    location: 'Palm Beach',
+    description:
+      'A social gathering to welcome our new students, have fun, network and connect with colleauges.',
+    image: '/images/event-1.jpg',
+    category: 'social',
   },
 ];
 
@@ -161,6 +194,7 @@ const EventsSection = () => {
     { key: 'conference', label: 'Conferences' },
     { key: 'hackathon', label: 'Hackathons' },
     { key: 'seminar', label: 'Seminars' },
+    { key: 'social', label: 'Social' },
   ];
 
   return (
