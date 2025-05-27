@@ -11,6 +11,7 @@ import { useRouter } from 'next/router';
 import { NextApiRequest } from 'next';
 import { isLoggedIn } from '@/utils/auth';
 import { toast } from 'sonner';
+import { getErrorMessage } from '@/utils/error';
 
 const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -68,8 +69,9 @@ const SignIn = () => {
         default:
           break;
       }
-    } catch {
-      setError('Unable to sign you in. You need an internet connection to sign-in.');
+    } catch (error: any) {
+      const { message } = getErrorMessage(error);
+      setError(message);
     } finally {
       setIsLoading(false);
     }
