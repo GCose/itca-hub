@@ -15,6 +15,7 @@ import { useRouter } from 'next/router';
 import { NextApiRequest } from 'next';
 import { isLoggedIn } from '@/utils/auth';
 import { toast } from 'sonner';
+import { getErrorMessage } from '@/utils/error';
 
 const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -79,12 +80,12 @@ const SignUp = () => {
       });
 
       router.push('/auth');
-    } catch {
+    } catch (error: any) {
+      const { message } = getErrorMessage(error);
       toast.error('Unable to sign in', {
-        description:
-          'You need an internet connection to sign in. Check your internet connection and try again',
+        description: message,
       });
-      setError('You need an internet connection to create an account');
+      setError(message);
     } finally {
       setIsLoading(false);
     }
