@@ -54,7 +54,7 @@ const AdminResourceUploadPage = () => {
           {/*==================== End of Resource Uploader Component ====================*/}
 
           {/*==================== Guidelines Section ====================*/}
-          <div className="mt-6 rounded-xl bg-white/50 p-6">
+          <div className="mt-6 mb-6 rounded-xl bg-white/50 p-6">
             <h1 className="text-2xl font-bold flex items-center">
               <span className="text-blue-700 mr-2">Upload</span>
               <span className="text-amber-500">Guidelines</span>

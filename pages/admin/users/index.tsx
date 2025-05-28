@@ -50,10 +50,10 @@ const AdminUsersPage = () => {
             </div>
             <input
               type="search"
-              className="w-full rounded-lg border bg-white pl-10 pr-4 py-2.5 text-sm text-gray-700 focus:border-blue-500 focus:outline-none  focus:ring-blue-500"
-              placeholder="Search users by name or email..."
               value={searchTerm}
+              placeholder="Search users by name or email..."
               onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full rounded-lg border bg-white pl-10 pr-4 py-2.5 text-sm text-gray-700 focus:border-blue-500 focus:outline-none  focus:ring-blue-500"
             />
           </div>
         </div>
@@ -61,10 +61,10 @@ const AdminUsersPage = () => {
         <div className="grid grid-cols-2 gap-4">
           <div>
             <select
-              title="select"
-              className="w-full rounded-lg border bg-white py-2.5 pl-3 pr-8 text-sm text-gray-700 focus:border-blue-500 focus:outline-none  focus:ring-blue-500"
               value={role}
+              title="select"
               onChange={(e) => setRole(e.target.value)}
+              className="w-full rounded-lg border bg-white py-2.5 pl-3 pr-8 text-sm text-gray-700 focus:border-blue-500 focus:outline-none  focus:ring-blue-500"
             >
               <option value="all">All Roles</option>
               <option value="admin">Admin</option>
@@ -75,9 +75,9 @@ const AdminUsersPage = () => {
           <div>
             <select
               title="select"
-              className="w-full rounded-lg border bg-white py-2.5 pl-3 pr-8 text-sm text-gray-700 focus:border-blue-500 focus:outline-none  focus:ring-blue-500"
               value={status}
               onChange={(e) => setStatus(e.target.value)}
+              className="w-full rounded-lg border bg-white py-2.5 pl-3 pr-8 text-sm text-gray-700 focus:border-blue-500 focus:outline-none  focus:ring-blue-500"
             >
               <option value="all">All Status</option>
               <option value="active">Active</option>

@@ -129,17 +129,17 @@ const Sidebar = ({ open, setOpen }: SidebarProps) => {
 
       {/*==================== Sidebar ====================*/}
       <div
-        className={`fixed rounded-tr-4xl inset-y-0 z-50 w-60 transform overflow-hidden max-[968px]:bg-white lg:bg-white transition-transform ease-in-out duration-700 
+        className={`fixed inset-y-0 z-50 w-60 transform overflow-hidden max-[968px]:bg-white lg:bg-white transition-transform ease-in-out duration-700 
                     ${open ? 'translate-x-0' : '-translate-x-full'} 
                     min-[968px]:translate-x-0 min-[968px]:static min-[968px]:z-0`}
       >
         {/*==================== Decorative Elements  ====================*/}
         <div className="absolute inset-0 pointer-events-none">
           {/*==================== Top Right - Tech Circuit Pattern ====================*/}
-          <div className="absolute top-5 right-8">
-            <div className="w-8 h-8 rounded-full bg-blue-500/15"></div>
-            <div className="absolute top-4 right-4 w-6 h-6 rounded-full bg-amber-500/15"></div>
-            <div className="absolute top-6 right-11 w-4 h-4 rounded-full bg-blue-500/10"></div>
+          <div className="absolute top-5 right-5">
+            <div className="w-8 h-8 rounded-sm bg-blue-500/15"></div>
+            <div className="absolute top-4 right-4 w-6 h-6 rounded-sm bg-amber-500/15"></div>
+            <div className="absolute top-8 right-7 w-4 h-4 rounded-xs bg-blue-500/10"></div>
           </div>
           {/*==================== End of Top Right - Tech Circuit Pattern ====================*/}
         </div>

@@ -157,13 +157,6 @@ const UserTable = ({ limit, users = [], isLoading = false }: UserTableProps) => 
                     </div>
                   </td>
                   <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">{user.role}</td>
-                  {/* <td className="whitespace-nowrap px-6 py-4">
-                    <span
-                      className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${getStatusBadgeClass(user.status)}`}
-                    >
-                      {user.status.charAt(0).toUpperCase() + user.status.slice(1)}
-                    </span>
-                  </td> */}
                   <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                     {new Date(user.joinedDate).toLocaleDateString()}
                   </td>
