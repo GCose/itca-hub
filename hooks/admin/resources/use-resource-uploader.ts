@@ -1,7 +1,10 @@
 import { useState, useRef, FormEvent } from 'react';
 import { toast } from 'sonner';
+import { BASE_URL } from '@/utils/url';
+import { CreateResourcePayload } from '@/types';
 
 interface ResourceUploadHookProps {
+  token: string;
   onUploadComplete?: (fileData: {
     fileName: string;
     fileUrl: string;
@@ -11,36 +14,15 @@ interface ResourceUploadHookProps {
   onError?: (error: string) => void;
 }
 
-// Define a proper interface for resource metadata
-interface ResourceMetadata {
-  fileName: string;
-  fileUrl: string;
-  title: string;
-  description: string;
-  category: string;
-  visibility: 'all' | 'admin';
-  featuredOnLanding?: boolean;
-  academicLevel?: 'undergraduate' | 'postgraduate' | 'all';
-  department?: string;
-  isDeleted?: boolean;
-  deletedAt?: string;
-  deletedBy?: string;
-}
-
-const useResourceUploader = ({ onUploadComplete, onError }: ResourceUploadHookProps) => {
+const useResourceUploader = ({ token, onUploadComplete, onError }: ResourceUploadHookProps) => {
   const [file, setFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [isCheckingDuplicate, setIsCheckingDuplicate] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  // Basic fields
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');
-
-  // Additional fields
   const [visibility, setVisibility] = useState<'all' | 'admin'>('all');
-  const [featuredOnLanding, setFeaturedOnLanding] = useState(false);
   const [academicLevel, setAcademicLevel] = useState<'undergraduate' | 'postgraduate' | 'all'>(
     'all'
   );
@@ -48,50 +30,70 @@ const useResourceUploader = ({ onUploadComplete, onError }: ResourceUploadHookPr
 
   // Available categories
   const categories = [
-    'Lecture Notes',
-    'Assignments',
-    'Past Papers',
-    'Tutorials',
-    'Textbooks',
-    'Research Papers',
+    'lecture_note',
+    'assignment',
+    'past_papers',
+    'tutorial',
+    'textbook',
+    'research_papers',
   ];
 
-  // Function to check if a file with similar title already exists
-  // This should ideally be a backend call but I will be using the local storage for now
-  const checkForDuplicates = async (fileName: string, fileTitle: string): Promise<boolean> => {
+  /**==================================================================================
+   * Checks for duplicate resources based on title.
+   * @param resourceTitle The title of the resource to check for duplicates.
+   * @returns Promise<boolean> Returns true if a duplicate is found, false otherwise.
+   ==================================================================================*/
+  const checkForDuplicates = async (resourceTitle: string): Promise<boolean> => {
     setIsCheckingDuplicate(true);
 
     try {
-      // TEMPORARY IMPLEMENTATION (localStorage)
-      // Get existing metadata from localStorage
-      const storedMetadata = localStorage.getItem('resourceMetadata');
-      if (!storedMetadata) return false;
-
-      const metadataMap: Record<string, ResourceMetadata> = JSON.parse(storedMetadata);
-
-      // Check for duplicate file names (case insensitive)
-      const hasDuplicateFileName = Object.keys(metadataMap).some(
-        (key) => key.toLowerCase() === fileName.toLowerCase()
+      // Search for resources with similar title using the API
+      const response = await fetch(
+        `${BASE_URL}/resources?page=0&limit=10&search=${encodeURIComponent(resourceTitle)}`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
       );
 
-      // Check for duplicate titles (case insensitive)
-      const hasDuplicateTitle = Object.values(metadataMap).some(
-        (metadata: ResourceMetadata) =>
-          metadata.title && metadata.title.toLowerCase() === fileTitle.toLowerCase()
-      );
+      if (!response.ok) {
+        console.warn('Could not check for duplicates:', response.statusText);
+        // Don't block upload if we can't check for duplicates
+        return false;
+      }
 
-      return hasDuplicateFileName || hasDuplicateTitle;
+      const data = await response.json();
+
+      if (data.status === 'success' && data.data.resources) {
+        const resources = data.data.resources;
+
+        // Check for exact title match (case insensitive)
+        const hasDuplicateTitle = resources.some(
+          (resource: { title: string }) =>
+            resource.title.toLowerCase() === resourceTitle.toLowerCase()
+        );
+
+        return hasDuplicateTitle;
+      }
+
+      return false;
     } catch (error) {
       console.error('Error checking for duplicates:', error);
       // Default to false on error to not block upload
-      // In production, I might have to handle this differently
       return false;
     } finally {
       setIsCheckingDuplicate(false);
     }
   };
 
-  // Function to format file size
+  /**============================================================
+   * Formats a file size in bytes into a human-readable string.
+   * @param sizeInBytes Size in bytes to format.
+   * @returns Formatted file size string (e.g., "1.23 MB").
+   ============================================================*/
   const formatFileSize = (sizeInBytes: number): string => {
     if (sizeInBytes === 0) return '0 B';
 
@@ -104,7 +106,11 @@ const useResourceUploader = ({ onUploadComplete, onError }: ResourceUploadHookPr
     );
   };
 
-  // Handle file selection
+  /**==================================================
+   * Handles file selection from the file input.
+   * @param e  The change event from the file input.
+   * @returns void
+   ==================================================*/
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) {
       return;
@@ -138,7 +144,11 @@ const useResourceUploader = ({ onUploadComplete, onError }: ResourceUploadHookPr
     }
   };
 
-  // Handle form submission
+  /**========================================================
+   * Handles the form submission for uploading a resource.
+   * @param e The form submission event.
+   * @returns void
+   ========================================================*/
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
@@ -177,16 +187,12 @@ const useResourceUploader = ({ onUploadComplete, onError }: ResourceUploadHookPr
       return;
     }
 
-    // Calculate potential folder path for the file
-    const folderName = category.toLowerCase().replace(/\s+/g, '-');
-    const potentialFileName = `${folderName}/${file.name}`;
-
-    // First check for duplicates before starting the upload
-    const isDuplicate = await checkForDuplicates(potentialFileName, title);
+    // Check for duplicates before starting the upload
+    const isDuplicate = await checkForDuplicates(title);
     if (isDuplicate) {
       toast.error('Duplicate resource', {
         description:
-          'A resource with the same name or title already exists. Please rename your file or choose a different title.',
+          'A resource with the same title already exists. Please choose a different title.',
       });
       return;
     }
@@ -194,19 +200,11 @@ const useResourceUploader = ({ onUploadComplete, onError }: ResourceUploadHookPr
     setIsUploading(true);
 
     try {
-      // Create FormData for the file upload
+      // Step 1: Upload the file to Jeetix API
       const formData = new FormData();
       formData.append('file', file);
+      formData.append('folder', 'itca-resources');
 
-      // Add the category as a folder parameter with itca prefix
-      if (category) {
-        const folderName = `itca/${category.toLowerCase().replace(/\s+/g, '-')}`;
-        formData.append('folder', folderName);
-      } else {
-        formData.append('folder', 'itca');
-      }
-
-      // Upload the file to Jeetix API
       const uploadResponse = await fetch(
         'https://jeetix-file-service.onrender.com/api/storage/upload',
         {
@@ -225,27 +223,36 @@ const useResourceUploader = ({ onUploadComplete, onError }: ResourceUploadHookPr
         throw new Error(uploadData.message || 'File upload failed');
       }
 
-      // Store the metadata
-      const metadataPayload: ResourceMetadata = {
-        fileName: uploadData.data.fileName,
-        fileUrl: uploadData.data.fileUrl,
-        title: title,
-        description: description,
+      // Step 2: Create resource via ITCA API
+      const resourcePayload: CreateResourcePayload = {
+        title: title.trim(),
+        description: description.trim(),
         category: category,
+        fileUrls: [uploadData.data.fileUrl],
         visibility: visibility,
-        featuredOnLanding: featuredOnLanding,
         academicLevel: academicLevel,
         department: department,
       };
 
-      // TEMPORARY IMPLEMENTATION (localStorage)
-      // Store in localStorage for now until the backend API is available
-      const existingMetadata = localStorage.getItem('resourceMetadata');
-      const metadataMap: Record<string, ResourceMetadata> = existingMetadata
-        ? JSON.parse(existingMetadata)
-        : {};
-      metadataMap[uploadData.data.fileName] = metadataPayload;
-      localStorage.setItem('resourceMetadata', JSON.stringify(metadataMap));
+      const createResponse = await fetch(`${BASE_URL}/resources`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(resourcePayload),
+      });
+
+      if (!createResponse.ok) {
+        const errorData = await createResponse.json().catch(() => ({}));
+        throw new Error(errorData.message || 'Failed to create resource');
+      }
+
+      const createData = await createResponse.json();
+
+      if (createData.status !== 'success') {
+        throw new Error(createData.message || 'Failed to create resource');
+      }
 
       // Call the onUploadComplete callback with the file data
       if (onUploadComplete) {
@@ -280,14 +287,15 @@ const useResourceUploader = ({ onUploadComplete, onError }: ResourceUploadHookPr
     }
   };
 
-  // Reset the form
+  /**=================================================
+   * Resets the form fields to their initial state.
+   =================================================*/
   const resetForm = () => {
     setFile(null);
     setTitle('');
     setDescription('');
     setCategory('');
     setVisibility('all');
-    setFeaturedOnLanding(false);
     setAcademicLevel('all');
     setDepartment('');
 
@@ -315,8 +323,6 @@ const useResourceUploader = ({ onUploadComplete, onError }: ResourceUploadHookPr
     formatFileSize,
     visibility,
     setVisibility,
-    featuredOnLanding,
-    setFeaturedOnLanding,
     academicLevel,
     setAcademicLevel,
     department,

@@ -1,7 +1,8 @@
 import { useState, useMemo, useCallback } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Calendar, Clock, MapPin, ArrowRight, Bookmark } from 'lucide-react';
+import { Calendar, Clock, MapPin, ArrowRight, Bookmark, ChevronRight } from 'lucide-react';
+import Link from 'next/link';
 
 type Event = {
   id: number;
@@ -103,7 +104,7 @@ const EventCard = ({ event, index }: { event: Event; index: number }) => (
       delay: index * 0.05,
       layout: { duration: 0.3 },
     }}
-    className="group relative overflow-hidden rounded-xl border border-gray-200 bg-white/80 backdrop-blur-sm shadow-sm transition-all duration-300 hover:border-blue-700/30 hover:shadow-lg hover:shadow-blue-700/5"
+    className="group relative overflow-hidden rounded-xl border border-gray-200 bg-white/80 transition-all duration-300 hover:border-blue-700/30 hover:shadow-lg hover:shadow-blue-700/5"
   >
     <div className="flex flex-col h-full">
       <div className="relative h-56 w-full overflow-hidden">
@@ -162,8 +163,10 @@ const EventCard = ({ event, index }: { event: Event; index: number }) => (
 
         <div className="mt-6">
           <button className="group/btn relative overflow-hidden rounded-full border border-blue-700/50 bg-transparent px-5 py-2 text-sm text-blue-700 transition-all hover:bg-blue-700 hover:text-white hover:border-blue-700 flex items-center">
-            <span>Learn more</span>
-            <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover/btn:translate-x-1" />
+            <Link href="/auth" className="relative z-10 flex items-center justify-center">
+              <span>Register Now</span>
+              <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover/btn:translate-x-1" />
+            </Link>
           </button>
         </div>
       </div>
@@ -270,18 +273,18 @@ const EventsSection = () => {
         </div>
 
         <motion.div
+          viewport={{ once: true }}
+          className="mt-16 text-center"
           initial={{ opacity: 0, y: 70 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.4 }}
-          className="mt-16 text-center"
         >
-          <button className="group relative overflow-hidden rounded-full bg-blue-700 px-8 py-3 font-medium text-white transition-all duration-300 hover:shadow-lg hover:shadow-blue-700/30">
-            <span className="relative z-10 flex items-center justify-center">
-              View All Events
-              <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-            </span>
-            <span className="absolute inset-0 -z-10 translate-y-full bg-amber-500 transition-transform duration-300 group-hover:translate-y-0"></span>
+          <button className="group relative overflow-hidden rounded-full border-2 border-blue-500 bg-transparent px-6 sm:px-8 py-2.5 sm:py-3 text-sm sm:text-base text-blue-500 transition-all duration-300 hover:text-white hover:shadow-lg hover:shadow-blue-500/30">
+            <Link href="/auth" className="relative z-10 flex items-center justify-center">
+              Sign in to view all events
+              <ChevronRight className="ml-1 h-3 w-3 sm:h-4 sm:w-4 transition-transform duration-300 group-hover:translate-x-1" />
+            </Link>
+            <span className="absolute inset-0 -z-10 translate-y-full bg-blue-500 transition-transform duration-300 group-hover:translate-y-0"></span>
           </button>
         </motion.div>
       </div>

@@ -6,7 +6,11 @@ import { UserAuth } from '@/types';
 import { isLoggedIn } from '@/utils/auth';
 import { NextApiRequest } from 'next';
 
-const AdminResourceUploadPage = () => {
+interface AdminResourceUploadPageProps {
+  userData: UserAuth;
+}
+
+const AdminResourceUploadPage = ({ userData }: AdminResourceUploadPageProps) => {
   const handleUploadComplete = (_fileData: {
     fileName: string;
     fileUrl: string;
@@ -14,7 +18,7 @@ const AdminResourceUploadPage = () => {
     fileSize: string;
   }) => {
     // Logging the successful upload for debugging purposes because I can
-    // console.error('Upload completed successfully:', fileData);
+    // console.log('Upload completed successfully:', fileData);
   };
 
   return (
@@ -50,11 +54,11 @@ const AdminResourceUploadPage = () => {
           {/*==================== End of Header Section ====================*/}
 
           {/*==================== Resource Uploader Component ====================*/}
-          <ResourceUploader onUploadComplete={handleUploadComplete} />
+          <ResourceUploader token={userData.token} onUploadComplete={handleUploadComplete} />
           {/*==================== End of Resource Uploader Component ====================*/}
 
           {/*==================== Guidelines Section ====================*/}
-          <div className="mt-6 mb-6 rounded-xl bg-white/50 p-6">
+          <div className="mt-6 rounded-xl bg-white/50 p-6">
             <h1 className="text-2xl font-bold flex items-center">
               <span className="text-blue-700 mr-2">Upload</span>
               <span className="text-amber-500">Guidelines</span>

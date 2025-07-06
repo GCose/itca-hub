@@ -45,7 +45,7 @@ const Header = ({ sidebarOpen, setSidebarOpen }: HeaderProps) => {
           {/*==================== Top Left - Tech Circuit Pattern ====================*/}
           <div className="absolute top-3 left-15 max-[990px]:left-25">
             <div className="w-8 h-8 rounded-full bg-blue-500/15"></div>
-            <div className="absolute top-4 right-4 w-6 h-6 rounded-full bg-amber-500/15"></div>
+            <div className="absolute top-4 right-5 w-6 h-6 rounded-full bg-amber-500/15"></div>
             <div className="absolute top-6 right-11 w-4 h-4 rounded-full bg-blue-500/10"></div>
           </div>
           {/*==================== End of Top Left - Tech Circuit Pattern ====================*/}

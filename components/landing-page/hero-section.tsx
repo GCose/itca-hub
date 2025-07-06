@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowDownCircle, Target, Eye, ChevronRight } from 'lucide-react';
+import { Target, Eye, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 
 const HeroSection = () => {
@@ -36,101 +36,32 @@ const HeroSection = () => {
 
       {/*==================== Particle Effect ====================*/}
       <div className="absolute inset-0 z-5 opacity-20">
-        {Array.from({ length: 15 }).map((_, index) => (
+        {Array.from({ length: 45 }).map((_, index) => (
           <div
             key={index}
             className="absolute h-1 w-1 rounded-full bg-blue-500"
             style={{
+              opacity: 1,
               top: `${Math.random() * 100}%`,
               left: `${Math.random() * 100}%`,
-              opacity: 1,
-              animation: `float 7s infinite ease-in-out`,
+              animation: `float 3s infinite ease-in-out`,
             }}
           ></div>
         ))}
-        {Array.from({ length: 15 }).map((_, index) => (
+        {Array.from({ length: 45 }).map((_, index) => (
           <div
             key={`amber-${index}`}
             className="absolute h-1 w-1 rounded-full bg-amber-500"
             style={{
+              opacity: 1,
               top: `${Math.random() * 100}%`,
               left: `${Math.random() * 100}%`,
-              opacity: 1,
-              animation: `float 9s infinite ease-in-out`,
+              animation: `float 2s infinite ease-in-out`,
             }}
           ></div>
         ))}
       </div>
       {/*==================== End of Particle Effect ====================*/}
-
-      {/*==================== Animated Grid Lines ====================*/}
-      <div className="absolute inset-0 z-10 overflow-hidden">
-        {/*==================== Horizontal animated lines ====================*/}
-        <div className="absolute top-1/4 left-0 h-[1px] sm:h-[2px] w-full bg-gradient-to-r from-transparent via-amber-500/60 to-transparent animate-pulse"></div>
-        <div
-          style={{ animationDelay: '1s' }}
-          className="absolute top-2/4 left-0 h-[1px] sm:h-[2px] w-full bg-gradient-to-r from-transparent via-blue-700/60 to-transparent animate-pulse"
-        ></div>
-        <div
-          style={{ animationDelay: '2s' }}
-          className="absolute top-3/4 left-0 h-[1px] sm:h-[2px] w-full bg-gradient-to-r from-transparent via-amber-500/60 to-transparent animate-pulse"
-        ></div>
-
-        {/*==================== Vertical animated lines ====================*/}
-        <div className="absolute top-0 left-1/4 h-full w-[1px] sm:w-[2px] bg-gradient-to-b from-transparent via-blue-700/60 to-transparent animate-pulse"></div>
-        <div
-          style={{ animationDelay: '1.5s' }}
-          className="absolute top-0 left-2/4 h-full w-[1px] sm:w-[2px] bg-gradient-to-b from-transparent via-amber-500/60 to-transparent animate-pulse"
-        ></div>
-        <div
-          style={{ animationDelay: '2.5s' }}
-          className="absolute top-0 left-3/4 h-full w-[1px] sm:w-[2px] bg-gradient-to-b from-transparent via-blue-700/60 to-transparent animate-pulse"
-        ></div>
-      </div>
-      {/*==================== End of Animated Grid Lines ====================*/}
-
-      {/*==================== Glowing Dots At Intersections ====================*/}
-      <div className="absolute inset-0 z-10">
-        {/*==================== First row ====================*/}
-        <div className="absolute top-1/4 left-1/4 h-2 w-2 sm:h-3 sm:w-3 rounded-full bg-blue-500/70 animate-pulse shadow-lg shadow-blue-500/50"></div>
-        <div
-          className="absolute top-1/4 left-2/4 h-2 w-2 sm:h-3 sm:w-3 rounded-full bg-amber-500/70 animate-pulse shadow-lg shadow-amber-500/50"
-          style={{ animationDelay: '0.5s' }}
-        ></div>
-        <div
-          className="absolute top-1/4 left-3/4 h-2 w-2 sm:h-3 sm:w-3 rounded-full bg-blue-500/70 animate-pulse shadow-lg shadow-blue-500/50"
-          style={{ animationDelay: '1s' }}
-        ></div>
-
-        {/*==================== Second row ====================*/}
-        <div
-          className="absolute top-2/4 left-1/4 h-2 w-2 sm:h-3 sm:w-3 rounded-full bg-amber-500/70 animate-pulse shadow-lg shadow-amber-500/50"
-          style={{ animationDelay: '1.5s' }}
-        ></div>
-        <div
-          className="absolute top-2/4 left-2/4 h-2 w-2 sm:h-3 sm:w-3 rounded-full bg-blue-500/70 animate-pulse shadow-lg shadow-blue-500/50"
-          style={{ animationDelay: '2s' }}
-        ></div>
-        <div
-          className="absolute top-2/4 left-3/4 h-2 w-2 sm:h-3 sm:w-3 rounded-full bg-amber-500/70 animate-pulse shadow-lg shadow-amber-500/50"
-          style={{ animationDelay: '2.5s' }}
-        ></div>
-
-        {/*==================== Third row ====================*/}
-        <div
-          className="absolute top-3/4 left-1/4 h-2 w-2 sm:h-3 sm:w-3 rounded-full bg-blue-500/70 animate-pulse shadow-lg shadow-blue-500/50"
-          style={{ animationDelay: '3s' }}
-        ></div>
-        <div
-          className="absolute top-3/4 left-2/4 h-2 w-2 sm:h-3 sm:w-3 rounded-full bg-amber-500/70 animate-pulse shadow-lg shadow-amber-500/50"
-          style={{ animationDelay: '3.5s' }}
-        ></div>
-        <div
-          className="absolute top-3/4 left-3/4 h-2 w-2 sm:h-3 sm:w-3 rounded-full bg-blue-500/70 animate-pulse shadow-lg shadow-blue-500/50"
-          style={{ animationDelay: '4s' }}
-        ></div>
-      </div>
-      {/*==================== End of Glowing Dots At Intersections ====================*/}
 
       {/*==================== Content ====================*/}
       <div className="relative z-20 flex h-full min-h-screen flex-col items-center justify-center px-4 py-16 sm:py-24 md:py-32 text-white">
@@ -231,13 +162,13 @@ const HeroSection = () => {
         >
           <button className="group relative overflow-hidden rounded-full bg-blue-700 px-6 sm:px-8 py-2.5 sm:py-3 text-sm sm:text-base text-white transition-all duration-300 hover:bg-blue-600 hover:shadow-lg hover:shadow-blue-700/30">
             <Link href={'/#degrees'} className="relative z-10 flex items-center justify-center">
-              Explore Programs
+              Learn More about ITCA
               <ChevronRight className="ml-1 h-3 w-3 sm:h-4 sm:w-4 transition-transform duration-300 group-hover:translate-x-1" />
             </Link>
             <span className="absolute inset-0 -z-10 translate-y-full bg-amber-500 transition-transform duration-300 group-hover:translate-y-0"></span>
           </button>
           <button className="group relative overflow-hidden rounded-full border-2 border-amber-500 bg-transparent px-6 sm:px-8 py-2.5 sm:py-3 text-sm sm:text-base text-amber-500 transition-all duration-300 hover:text-white hover:shadow-lg hover:shadow-amber-500/30">
-            <Link href={'/auth/sign-up'} className="relative z-10 flex items-center justify-center">
+            <Link href="/auth/sign-up" className="relative z-10 flex items-center justify-center">
               Join ITCA
               <ChevronRight className="ml-1 h-3 w-3 sm:h-4 sm:w-4 transition-transform duration-300 group-hover:translate-x-1" />
             </Link>
@@ -245,18 +176,6 @@ const HeroSection = () => {
           </button>
         </motion.div>
         {/*==================== End of Hero Section CTA ====================*/}
-
-        {/*==================== Scroll Indicator ====================*/}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 1.2 }}
-          className="absolute bottom-4 sm:bottom-6 md:bottom-8 hidden xs:flex flex-col items-center"
-        >
-          <span className="text-xs text-gray-400 mb-2">Scroll to explore</span>
-          <ArrowDownCircle className="h-6 w-6 sm:h-8 sm:w-8 md:h-10 md:w-10 animate-float text-amber-500" />
-        </motion.div>
-        {/*==================== End of Scroll Indicator ====================*/}
       </div>
       {/*==================== End of Content ====================*/}
 
@@ -277,7 +196,7 @@ const HeroSection = () => {
             <div className="p-4 text-center">
               <div className="flex flex-col items-center justify-center">
                 <span className="text-2xl font-bold text-amber-500">15+</span>
-                <span className="text-xs text-gray-400">Programs</span>
+                <span className="text-xs text-gray-400">Resources</span>
               </div>
             </div>
             {/*==================== End of Stats Card 2 ====================*/}

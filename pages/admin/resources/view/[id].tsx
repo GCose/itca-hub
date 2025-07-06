@@ -1,37 +1,42 @@
 import { useRouter } from 'next/router';
 import { ArrowLeft, Download, FileText, Loader } from 'lucide-react';
-import VideoViewer from '@/components/dashboard/admin/resources/viewers/video-viewer';
 import Link from 'next/link';
-import DashboardLayout from '@/components/dashboard/layout/dashboard-layout';
-import useResourceViewer from '@/hooks/admin/resources/use-resource-viewer';
-import PDFViewer from '@/components/dashboard/admin/resources/viewers/pdf-viewer';
-import ImageViewer from '@/components/dashboard/admin/resources/viewers/image-viewer';
-import GenericViewer from '@/components/dashboard/admin/resources/viewers/generic-viewer';
-import formatDepartment from '@/utils/admin/format-department';
-import useResourceAnalytics from '@/hooks/admin/resources/use-resource-analytics';
-import AudioViewer from '@/components/dashboard/admin/resources/viewers/audio-viewer';
-import TextViewer from '@/components/dashboard/admin/resources/viewers/text-viewer';
 import { UserAuth } from '@/types';
 import { isLoggedIn } from '@/utils/auth';
 import { NextApiRequest } from 'next';
+import DashboardLayout from '@/components/dashboard/layout/dashboard-layout';
+import AudioViewer from '@/components/dashboard/resource-viewers/audio-viewer';
+import GenericViewer from '@/components/dashboard/resource-viewers/generic-viewer';
+import ImageViewer from '@/components/dashboard/resource-viewers/image-viewer';
+import PDFViewer from '@/components/dashboard/resource-viewers/pdf-viewer';
+import TextViewer from '@/components/dashboard/resource-viewers/text-viewer';
+import VideoViewer from '@/components/dashboard/resource-viewers/video-viewer';
+import useResourceAnalytics from '@/hooks/admin/resources/use-resource-analytics';
+import useResourceViewer from '@/hooks/admin/resources/use-resource-viewer';
+import formatDepartment from '@/utils/admin/format-department';
 
-const ResourceViewPage = () => {
+interface ResourceViewPageProps {
+  userData: UserAuth;
+}
+
+const ResourceViewPage = ({ userData }: ResourceViewPageProps) => {
   const router = useRouter();
   const { id } = router.query;
 
   const { resource, isLoading, error, fileType } = useResourceViewer({
     resourceId: id as string,
+    token: userData.token,
   });
 
-  const { trackResourceDownload } = useResourceAnalytics();
+  const { trackResourceDownload } = useResourceAnalytics({ token: userData.token });
 
   const handleDownload = async () => {
     if (!resource) return;
 
     try {
-      await trackResourceDownload(resource.id);
+      await trackResourceDownload(resource.resourceId, userData.token);
       const link = document.createElement('a');
-      link.href = `/api/resources/download/${resource.id}`;
+      link.href = resource.fileUrl;
       link.download = resource.fileName || resource.title || 'resource';
       document.body.appendChild(link);
       link.click();
@@ -48,23 +53,43 @@ const ResourceViewPage = () => {
     switch (fileType) {
       case 'pdf':
         return (
-          <PDFViewer title={resource.title} fileUrl={resource.fileUrl} resourceId={resource.id} />
+          <PDFViewer
+            title={resource.title}
+            fileUrl={resource.fileUrl}
+            resourceId={resource.resourceId}
+          />
         );
       case 'image':
         return (
-          <ImageViewer title={resource.title} resourceId={resource.id} fileUrl={resource.fileUrl} />
+          <ImageViewer
+            title={resource.title}
+            resourceId={resource.resourceId}
+            fileUrl={resource.fileUrl}
+          />
         );
       case 'video':
         return (
-          <VideoViewer title={resource.title} resourceId={resource.id} fileUrl={resource.fileUrl} />
+          <VideoViewer
+            title={resource.title}
+            resourceId={resource.resourceId}
+            fileUrl={resource.fileUrl}
+          />
         );
       case 'audio':
         return (
-          <AudioViewer title={resource.title} resourceId={resource.id} fileUrl={resource.fileUrl} />
+          <AudioViewer
+            title={resource.title}
+            resourceId={resource.resourceId}
+            fileUrl={resource.fileUrl}
+          />
         );
       case 'text':
         return (
-          <TextViewer title={resource.title} resourceId={resource.id} fileUrl={resource.fileUrl} />
+          <TextViewer
+            title={resource.title}
+            resourceId={resource.resourceId}
+            fileUrl={resource.fileUrl}
+          />
         );
       default:
         return (
@@ -72,7 +97,8 @@ const ResourceViewPage = () => {
             fileUrl={resource.fileUrl}
             title={resource.title}
             fileType={resource.type}
-            resourceId={resource.id}
+            resourceId={resource.resourceId}
+            token={userData.token}
           />
         );
     }

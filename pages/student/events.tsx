@@ -2,8 +2,8 @@ import DashboardLayout from '@/components/dashboard/layout/dashboard-layout';
 import { Calendar, Search, ListFilter, RefreshCw } from 'lucide-react';
 import EventsLoadingSkeleton from '@/components/dashboard/admin/events/events-loading-skeleton';
 import StudentEventCard from '@/components/dashboard/student/events/event-card';
-import { NetworkError } from '@/components/error-message';
-import { useStudentEvents } from '@/hooks/student/use-student-events';
+import { NetworkError } from '@/components/dashboard/error-message';
+import { useStudentEvents } from '@/hooks/student/events/use-student-events';
 import { NextApiRequest } from 'next';
 import { isLoggedIn } from '@/utils/auth';
 import { UserAuth } from '@/types';
@@ -70,10 +70,10 @@ const StudentEventsPage = ({ userData }: StudentEventsPageProps) => {
                 </div>
                 <input
                   type="search"
-                  className="w-full rounded-lg bg-white pl-10 pr-4 py-2.5 text-sm text-gray-700 focus:border-blue-600 focus:outline-none focus:ring-blue-600 transition-colors"
-                  placeholder="Search events by title, description, or location..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="Search events by title, description, or location..."
+                  className="w-full rounded-lg bg-white pl-10 pr-4 py-2.5 text-sm text-gray-700 focus:border-blue-600 focus:outline-none focus:ring-blue-600 transition-colors"
                 />
               </div>
             </div>
@@ -149,8 +149,8 @@ const StudentEventsPage = ({ userData }: StudentEventsPageProps) => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {events.map((event) => (
               <StudentEventCard
-                key={event.id}
                 event={event}
+                key={event.id}
                 onRegister={handleRegister}
                 onUnregister={handleUnregister}
               />

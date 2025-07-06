@@ -1,5 +1,5 @@
 import { ResourceFiltersProps } from '@/types';
-import { Filter } from 'lucide-react';
+import { Filter, Building2, FileText, Tag, Eye } from 'lucide-react';
 
 const ResourceFilters = ({
   searchTerm,
@@ -16,6 +16,15 @@ const ResourceFilters = ({
   categories,
   clearFilters,
 }: ResourceFiltersProps) => {
+  /**============================================================================================
+   * Formats a category string by replacing underscores with spaces and capitalizing each word.
+   * @param category - The category string to format.
+   * @returns  Formatted category name with spaces and capitalized words.
+   ============================================================================================*/
+  const formatCategoryName = (category: string) => {
+    return category.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
+  };
+
   return (
     <div className="mb-6 bg-white rounded-xl p-4">
       <div className="flex items-center justify-between mb-4">
@@ -61,15 +70,20 @@ const ResourceFilters = ({
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 pt-2">
         {/*==================== Department Filter ====================*/}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Department</label>
+          <label className="flex items-center text-sm text-gray-700 mb-2">
+            <div className="bg-blue-100/70 p-1 rounded-full mr-2">
+              <Building2 className="h-5 w-5 text-blue-600" />
+            </div>
+            Department
+          </label>
           <select
             value={department}
             onChange={(e) => setDepartment(e.target.value)}
             className="w-full rounded-lg bg-gray-100/70 py-2.5 pl-3 pr-8 text-sm text-gray-500 focus:bg-slate-100 focus:outline-none transition-colors"
           >
             <option value="all">All Departments</option>
-            <option value="computer-science">Computer Science</option>
-            <option value="information-systems">Information Systems</option>
+            <option value="computer_science">Computer Science</option>
+            <option value="information_systems">Information Systems</option>
             <option value="telecommunications">Telecommunications</option>
           </select>
         </div>
@@ -77,7 +91,12 @@ const ResourceFilters = ({
 
         {/*==================== File Type Filter ====================*/}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">File Type</label>
+          <label className="flex items-center text-sm text-gray-700 mb-2">
+            <div className="bg-green-100/70 p-1 rounded-full mr-2">
+              <FileText className="h-5 w-5 text-green-600" />
+            </div>
+            File Type
+          </label>
           <select
             value={fileType}
             onChange={(e) => setFileType(e.target.value)}
@@ -93,9 +112,14 @@ const ResourceFilters = ({
         </div>
         {/*==================== End of File Type Filter ====================*/}
 
-        {/*==================== Category Filter (replaced Status) ====================*/}
+        {/*==================== Category Filter ====================*/}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+          <label className="flex items-center text-sm text-gray-700 mb-2">
+            <div className="bg-purple-100/70 p-1 rounded-full mr-2">
+              <Tag className="h-5 w-5 text-purple-600" />
+            </div>
+            Category
+          </label>
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
@@ -104,7 +128,7 @@ const ResourceFilters = ({
             <option value="all">All Categories</option>
             {categories.map((cat) => (
               <option key={cat} value={cat}>
-                {cat}
+                {formatCategoryName(cat)}
               </option>
             ))}
           </select>
@@ -113,14 +137,19 @@ const ResourceFilters = ({
 
         {/*==================== Visibility Filter ====================*/}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Visibility</label>
+          <label className="flex items-center text-sm text-gray-700 mb-2">
+            <div className="bg-orange-100/70 p-1 rounded-full mr-2">
+              <Eye className="h-5 w-5 text-orange-600" />
+            </div>
+            Visibility
+          </label>
           <select
             value={visibility}
             onChange={(e) => setVisibility(e.target.value)}
             className="w-full rounded-lg bg-gray-100/70 py-2.5 pl-3 pr-8 text-sm text-gray-500 focus:bg-slate-100 focus:outline-none transition-colors"
           >
-            <option value="all">All Visibility</option>
-            <option value="all">All Users</option> <option value="admin">Admin Only</option>
+            <option value="all">All Users</option>
+            <option value="admin">Admin Only</option>
           </select>
         </div>
         {/*==================== End of Visibility Filter ====================*/}

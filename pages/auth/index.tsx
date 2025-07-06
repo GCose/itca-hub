@@ -5,8 +5,8 @@ import Link from 'next/link';
 import AuthLayout from '@/components/authentication/auth-layout';
 import AuthButton from '@/components/authentication/auth-button';
 import useTimedError from '@/hooks/timed-error';
-import axios from 'axios';
-import { UserAuth } from '@/types';
+import axios, { AxiosError } from 'axios';
+import { CustomError, ErrorResponseData, UserAuth } from '@/types';
 import { useRouter } from 'next/router';
 import { NextApiRequest } from 'next';
 import { isLoggedIn } from '@/utils/auth';
@@ -69,8 +69,10 @@ const SignIn = () => {
         default:
           break;
       }
-    } catch (error: any) {
-      const { message } = getErrorMessage(error);
+    } catch (error) {
+      const { message } = getErrorMessage(
+        error as AxiosError<ErrorResponseData> | CustomError | Error
+      );
       setError(message);
     } finally {
       setIsLoading(false);

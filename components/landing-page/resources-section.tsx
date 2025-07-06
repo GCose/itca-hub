@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { motion } from "framer-motion";
+import { motion } from 'framer-motion';
 import {
   Lock,
   BookOpen,
@@ -13,53 +13,61 @@ import {
   Zap,
   BookMarked,
   ArrowRight,
-} from "lucide-react";
-import Link from "next/link";
+} from 'lucide-react';
+import Link from 'next/link';
 
 const ResourcesSection = () => {
   const resourceCategories = [
     {
-      name: "E-Books & Guides",
+      name: 'E-Books & Guides',
       icon: <BookOpen className="h-6 w-6" />,
       count: 120,
-      color: "blue",
+      color: 'blue',
     },
     {
-      name: "Lecture Notes",
+      name: 'Lecture Notes',
       icon: <FileText className="h-6 w-6" />,
       count: 85,
-      color: "amber",
+      color: 'amber',
     },
     {
-      name: "Tutorial Videos",
+      name: 'Tutorial Videos',
       icon: <Video className="h-6 w-6" />,
       count: 64,
-      color: "blue",
+      color: 'blue',
     },
     {
-      name: "Code Samples",
+      name: 'Code Samples',
       icon: <Code className="h-6 w-6" />,
       count: 230,
-      color: "amber",
+      color: 'amber',
     },
     {
-      name: "Software Tools",
+      name: 'Software Tools',
       icon: <Download className="h-6 w-6" />,
       count: 46,
-      color: "blue",
+      color: 'blue',
     },
     {
-      name: "Practice Projects",
+      name: 'Practice Projects',
       icon: <Layers className="h-6 w-6" />,
       count: 37,
-      color: "amber",
+      color: 'amber',
     },
   ];
 
   return (
     <section id="resources" className="relative py-24 overflow-hidden">
-      {/* Background elements */}
-      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-white to-gray-50"></div>
+      {/*==================== Subtle Dot Pattern ====================*/}
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundImage:
+            'radial-gradient(circle at 1px 1px, rgba(30,64,175,1) 1px, transparent 0)',
+          backgroundSize: '30px 30px',
+        }}
+      ></div>
+      {/*==================== End of Subtle Dot Pattern ====================*/}
 
       {/*==================== Decorative Background Elements ====================*/}
       <div className="absolute inset-0 -z-5 opacity-50">
@@ -68,7 +76,7 @@ const ResourcesSection = () => {
           {/*==================== Circuit Lines ====================*/}
           <div className="absolute top-16 right-16 w-[500px] h-[500px]">
             <div className="absolute top-0 left-[30%] w-1 h-[70%] bg-gradient-to-b from-blue-700/0 via-blue-700/90 to-blue-700/0"></div>
-            <div className="absolute top-[30%] left-0 w-[70%] h-1 bg-gradient-to-r from-blue-700/0 via-blue-700/90 to-blue-700/0"></div>
+            <div className="absolute top-[30%] left-0 w-[70%] h-1 bg-gradient-to-r from-blue-700/0 via-amber-500/90 to-amber-700/0"></div>
 
             {/*==================== Circuit Nodes ====================*/}
             <div className="absolute top-[30%] left-[30%] w-4 h-4 rounded-full border-2 border-blue-700/90 bg-white"></div>
@@ -91,7 +99,7 @@ const ResourcesSection = () => {
                 className="absolute h-[2px]"
                 style={{
                   bottom: `${20 + index * 12}%`,
-                  left: "5%",
+                  left: '5%',
                   width: `${30 + index * 10}%`,
                   background: `linear-gradient(to right, rgba(245, 158, 11, 0.1), rgba(245, 158, 11, ${0.05 + index * 0.02}))`,
                 }}
@@ -100,22 +108,13 @@ const ResourcesSection = () => {
 
             {/*==================== Book Icons ====================*/}
             <div className="absolute bottom-[31.85%] left-[15%] opacity-60">
-              <BookMarked
-                strokeWidth={1.5}
-                className="w-16 h-16 text-amber-500"
-              />
+              <BookMarked strokeWidth={1.5} className="w-16 h-16 text-amber-500" />
             </div>
             <div className="absolute bottom-[20%] left-[35%] opacity-70 rotate-12">
-              <BookMarked
-                strokeWidth={1.5}
-                className="w-10 h-10 text-amber-500"
-              />
+              <BookMarked strokeWidth={1.5} className="w-10 h-10 text-amber-500" />
             </div>
             <div className="absolute bottom-[20%] left-[2%] opacity-70 -rotate-12">
-              <BookMarked
-                strokeWidth={1.5}
-                className="w-10 h-10 text-amber-500"
-              />
+              <BookMarked strokeWidth={1.5} className="w-10 h-10 text-amber-500" />
             </div>
             {/*==================== End of Book Icons ====================*/}
           </div>
@@ -132,16 +131,14 @@ const ResourcesSection = () => {
           transition={{ duration: 0.6 }}
           className="mb-12 text-center"
         >
-          <span className="inline-block text-blue-700 font-semibold mb-2">
-            ACADEMIC SUPPORT
-          </span>
+          <span className="inline-block text-blue-700 font-semibold mb-2">ACADEMIC SUPPORT</span>
           <h2 className="mb-4 text-4xl font-bold text-gray-900 md:text-5xl">
             Learning <span className="text-amber-500">Resources</span>
           </h2>
           <div className="mx-auto h-1 w-24 bg-gradient-to-r from-blue-700 via-amber-500 to-blue-700 rounded-full mb-6"></div>
           <p className="mx-auto max-w-2xl text-lg text-gray-600">
-            Access our comprehensive collection of learning materials, tools,
-            and resources designed to enhance your journey in the ICT field.
+            Access our comprehensive collection of learning materials, tools, and resources designed
+            to enhance your journey in the ICT field.
           </p>
         </motion.div>
 
@@ -169,31 +166,27 @@ const ResourcesSection = () => {
                     viewport={{ once: true }}
                     transition={{ duration: 0.4, delay: 0.1 + index * 0.1 }}
                     className={`group relative overflow-hidden rounded-xl border ${
-                      category.color === "blue"
-                        ? "border-blue-100 bg-blue-50/50"
-                        : "border-amber-100 bg-amber-50/50"
+                      category.color === 'blue'
+                        ? 'border-blue-100 bg-blue-50/50'
+                        : 'border-amber-100 bg-amber-50/50'
                     } p-4 hover:shadow-md transition-all duration-300`}
                   >
                     <div className="flex items-start">
                       <div
                         className={`mr-4 p-3 rounded-lg ${
-                          category.color === "blue"
-                            ? "bg-blue-100 text-blue-700"
-                            : "bg-amber-100 text-amber-700"
+                          category.color === 'blue'
+                            ? 'bg-blue-100 text-blue-700'
+                            : 'bg-amber-100 text-amber-700'
                         }`}
                       >
                         {category.icon}
                       </div>
                       <div>
-                        <h4 className="font-semibold text-gray-900">
-                          {category.name}
-                        </h4>
+                        <h4 className="font-semibold text-gray-900">{category.name}</h4>
                         <div className="mt-1 flex items-center">
                           <span
                             className={`text-sm ${
-                              category.color === "blue"
-                                ? "text-blue-700"
-                                : "text-amber-700"
+                              category.color === 'blue' ? 'text-blue-700' : 'text-amber-700'
                             }`}
                           >
                             {category.count}+ resources
@@ -228,14 +221,11 @@ const ResourcesSection = () => {
                   <Lock className="h-8 w-8 text-amber-500" />
                 </div>
 
-                <h3 className="text-2xl font-bold mb-3">
-                  Unlock Premium Resources
-                </h3>
+                <h3 className="text-2xl font-bold mb-3">Unlock Premium Resources</h3>
 
                 <p className="text-gray-300 mb-8">
-                  Sign in to your ITCA account to access our complete library of
-                  learning resources, downloadable materials, and exclusive
-                  content.
+                  Sign in to your ITCA account to access our complete library of learning resources,
+                  downloadable materials, and exclusive content.
                 </p>
 
                 <div className="space-y-3 mb-8">
@@ -243,31 +233,25 @@ const ResourcesSection = () => {
                     <div className="mr-3 h-6 w-6 rounded-full bg-blue-700/20 flex items-center justify-center">
                       <ChevronRight className="h-4 w-4 text-blue-500" />
                     </div>
-                    <span className="text-gray-300">
-                      Access to all resources
-                    </span>
+                    <span className="text-gray-300">Access to all resources</span>
                   </div>
                   <div className="flex items-center">
                     <div className="mr-3 h-6 w-6 rounded-full bg-blue-700/20 flex items-center justify-center">
                       <ChevronRight className="h-4 w-4 text-blue-500" />
                     </div>
-                    <span className="text-gray-300">
-                      Download materials for offline use
-                    </span>
+                    <span className="text-gray-300">Download materials for offline use</span>
                   </div>
                   <div className="flex items-center">
                     <div className="mr-3 h-6 w-6 rounded-full bg-blue-700/20 flex items-center justify-center">
                       <ChevronRight className="h-4 w-4 text-blue-500" />
                     </div>
-                    <span className="text-gray-300">
-                      Track your learning progress
-                    </span>
+                    <span className="text-gray-300">Track your learning progress</span>
                   </div>
                 </div>
               </div>
 
               <Link
-                href={"/auth"}
+                href={'/auth'}
                 className="group relative block w-full overflow-hidden rounded-lg bg-blue-700 px-6 py-3 text-center font-medium text-white transition-all hover:bg-blue-600"
               >
                 <span className="relative z-10 flex items-center justify-center">

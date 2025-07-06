@@ -8,7 +8,7 @@ import EventsLoadingSkeleton from '@/components/dashboard/admin/events/events-lo
 import EventCard from '@/components/dashboard/admin/events/event-card';
 import CreateEventModal from '@/components/dashboard/admin/events/modal/create-event-modal';
 import EditEventModal from '@/components/dashboard/admin/events/modal/edit-event-modal';
-import { NetworkError } from '@/components/error-message';
+import { NetworkError } from '@/components/dashboard/error-message';
 import { useEvents } from '@/hooks/admin/events/use-events';
 import { NextApiRequest } from 'next';
 import { isLoggedIn } from '@/utils/auth';
@@ -228,154 +228,151 @@ const AdminEventsPage = ({ userData }: AdminEventsPageProps) => {
   return (
     <DashboardLayout title="Event Management">
       {/*==================== Page content ====================*/}
-      <div>
-        {/* Main Content */}
-        <div className="relative z-10">
-          {/*==================== Header Content ====================*/}
-          <div className="mb-8">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900 mb-2 flex items-center">
-                  <span className="text-blue-700 mr-2">Event</span>
-                  <span className="text-amber-500">Management</span>
-                  <span className="ml-3 relative">
-                    <span className="absolute -top-1 -right-1 flex h-3 w-3">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
-                    </span>
+      <div className="relative z-10">
+        {/*==================== Header Content ====================*/}
+        <div className="mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900 mb-2 flex items-center">
+                <span className="text-blue-700 mr-2">Event</span>
+                <span className="text-amber-500">Management</span>
+                <span className="ml-3 relative">
+                  <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
                   </span>
-                </h1>
-                <p className="text-gray-600">
-                  Create and manage ITCA events, workshops, and seminars with ease
-                </p>
-              </div>
+                </span>
+              </h1>
+              <p className="text-gray-600">
+                Create and manage ITCA events, workshops, and seminars with ease
+              </p>
+            </div>
 
-              <div className="mt-4 sm:mt-0 flex space-x-2">
-                <button
-                  onClick={handleRefresh}
-                  className="inline-flex items-center rounded-lg bg-gray-100 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-blue-500 focus:ring-offset-2"
-                >
-                  <RefreshCw className="h-4 w-4 mr-2" />
-                  Refresh
-                </button>
-                <button
-                  onClick={() => setShowCreateModal(true)}
-                  className="group inline-flex items-center rounded-lg bg-gradient-to-r from-blue-700 to-blue-600 px-4 py-2 text-sm font-medium text-white hover:from-blue-800 hover:to-blue-700 focus:outline-none focus:ring-blue-500 focus:ring-offset-2 transition-all duration-300 shadow-md hover:shadow-lg"
-                >
-                  <span className="mr-2 text-lg font-bold transition-transform duration-300 group-hover:rotate-90">
-                    +
-                  </span>
-                  Create Event
-                </button>
+            <div className="mt-4 sm:mt-0 flex space-x-2">
+              <button
+                onClick={handleRefresh}
+                className="inline-flex items-center rounded-lg bg-gray-100 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-blue-500 focus:ring-offset-2"
+              >
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Refresh
+              </button>
+              <button
+                onClick={() => setShowCreateModal(true)}
+                className="group inline-flex items-center rounded-lg bg-gradient-to-r from-blue-700 to-blue-600 px-4 py-2 text-sm font-medium text-white hover:from-blue-800 hover:to-blue-700 focus:outline-none focus:ring-blue-500 focus:ring-offset-2 transition-all duration-300 shadow-md hover:shadow-lg"
+              >
+                <span className="mr-2 text-lg font-bold transition-transform duration-300 group-hover:rotate-90">
+                  +
+                </span>
+                Create Event
+              </button>
+            </div>
+          </div>
+
+          {/*==================== Search and Filters ====================*/}
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-12 mb-6">
+            <div className="md:col-span-7">
+              <div className="relative">
+                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                  <Search className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  type="search"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="Search events by title, description, or location..."
+                  className="w-full rounded-lg  bg-white pl-10 pr-4 py-2.5 text-sm text-gray-700 focus:border-blue-600 focus:outline-none focus:ring-blue-600 transition-colors"
+                />
               </div>
             </div>
 
-            {/*==================== Search and Filters ====================*/}
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-12 mb-6">
-              <div className="md:col-span-7">
-                <div className="relative">
-                  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                    <Search className="h-5 w-5 text-gray-400" />
-                  </div>
-                  <input
-                    type="search"
-                    className="w-full rounded-lg  bg-white pl-10 pr-4 py-2.5 text-sm text-gray-700 focus:border-blue-600 focus:outline-none focus:ring-blue-600 transition-colors"
-                    placeholder="Search events by title, description, or location..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
+            <div className="md:col-span-3">
+              <div className="relative">
+                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                  <ListFilter className="h-5 w-5 text-gray-400" />
+                </div>
+                <select
+                  title="select"
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value)}
+                  className="w-full rounded-lg  bg-white py-2.5 pl-10 pr-8 text-sm text-gray-700 focus:border-blue-600 focus:outline-none focus:ring-blue-600 appearance-none cursor-pointer transition-colors"
+                >
+                  <option value="all">All Status</option>
+                  <option value="upcoming">Upcoming</option>
+                  <option value="ongoing">Ongoing</option>
+                  <option value="completed">Completed</option>
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+                  <svg
+                    className="h-5 w-5 text-gray-400"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      clipRule="evenodd"
+                      d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+                    />
+                  </svg>
                 </div>
               </div>
+            </div>
 
-              <div className="md:col-span-3">
-                <div className="relative">
-                  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                    <ListFilter className="h-5 w-5 text-gray-400" />
-                  </div>
-                  <select
-                    title="select"
-                    className="w-full rounded-lg  bg-white py-2.5 pl-10 pr-8 text-sm text-gray-700 focus:border-blue-600 focus:outline-none focus:ring-blue-600 appearance-none cursor-pointer transition-colors"
-                    value={status}
-                    onChange={(e) => setStatus(e.target.value)}
-                  >
-                    <option value="all">All Status</option>
-                    <option value="upcoming">Upcoming</option>
-                    <option value="ongoing">Ongoing</option>
-                    <option value="completed">Completed</option>
-                  </select>
-                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-                    <svg
-                      className="h-5 w-5 text-gray-400"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                      aria-hidden="true"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-
-              <div className="md:col-span-2">
-                <div className="flex items-center justify-center h-full rounded-lg  bg-white overflow-hidden">
-                  <button
-                    className={`flex-1 h-full flex items-center justify-center px-3 transition-colors ${
-                      viewMode === 'list'
-                        ? 'bg-gradient-to-r from-blue-100 to-blue-50 text-blue-700'
-                        : 'text-gray-500 hover:bg-gray-50'
-                    }`}
-                    onClick={() => setViewMode('list')}
-                  >
-                    <ListFilter className="h-4 w-4" />
-                    <span className="ml-1.5 text-sm font-medium">List</span>
-                  </button>
-                  <div className="h-full w-px bg-gray-200"></div>
-                  <button
-                    className={`flex-1 h-full flex items-center justify-center px-3 transition-colors ${
-                      viewMode === 'calendar'
-                        ? 'bg-gradient-to-r from-blue-100 to-blue-50 text-blue-700'
-                        : 'text-gray-500 hover:bg-gray-50'
-                    }`}
-                    onClick={() => setViewMode('calendar')}
-                  >
-                    <Calendar className="h-4 w-4" />
-                    <span className="ml-1.5 text-sm font-medium">Calendar</span>
-                  </button>
-                </div>
+            <div className="md:col-span-2">
+              <div className="flex items-center justify-center h-full rounded-lg  bg-white overflow-hidden">
+                <button
+                  className={`flex-1 h-full flex items-center justify-center px-3 transition-colors ${
+                    viewMode === 'list'
+                      ? 'bg-gradient-to-r from-blue-100 to-blue-50 text-blue-700'
+                      : 'text-gray-500 hover:bg-gray-50'
+                  }`}
+                  onClick={() => setViewMode('list')}
+                >
+                  <ListFilter className="h-4 w-4" />
+                  <span className="ml-1.5 text-sm font-medium">List</span>
+                </button>
+                <div className="h-full w-px bg-gray-200"></div>
+                <button
+                  className={`flex-1 h-full flex items-center justify-center px-3 transition-colors ${
+                    viewMode === 'calendar'
+                      ? 'bg-gradient-to-r from-blue-100 to-blue-50 text-blue-700'
+                      : 'text-gray-500 hover:bg-gray-50'
+                  }`}
+                  onClick={() => setViewMode('calendar')}
+                >
+                  <Calendar className="h-4 w-4" />
+                  <span className="ml-1.5 text-sm font-medium">Calendar</span>
+                </button>
               </div>
             </div>
           </div>
-          {/*==================== End of Header Content ====================*/}
-
-          {/*==================== Events Content ====================*/}
-          {isLoading ? (
-            <EventsLoadingSkeleton />
-          ) : error ? (
-            <NetworkError
-              title="Unable to fetch events"
-              description="Please check your internet connection and try again."
-              onRetry={handleRefresh}
-            />
-          ) : events.length === 0 ? (
-            <EventsEmptyState onCreateEvent={() => setShowCreateModal(true)} />
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredEvents.map((event) => (
-                <EventCard
-                  key={event.id}
-                  event={event}
-                  onEdit={handleEditClick}
-                  onDelete={handleDeleteClick}
-                />
-              ))}
-            </div>
-          )}
-          {/*==================== End of Events Content ====================*/}
         </div>
+        {/*==================== End of Header Content ====================*/}
+
+        {/*==================== Events Content ====================*/}
+        {isLoading ? (
+          <EventsLoadingSkeleton />
+        ) : error ? (
+          <NetworkError
+            title="Unable to fetch events"
+            description="Please check your internet connection and try again."
+            onRetry={handleRefresh}
+          />
+        ) : events.length === 0 ? (
+          <EventsEmptyState onCreateEvent={() => setShowCreateModal(true)} />
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredEvents.map((event) => (
+              <EventCard
+                event={event}
+                key={event.id}
+                onEdit={handleEditClick}
+                onDelete={handleDeleteClick}
+              />
+            ))}
+          </div>
+        )}
+        {/*==================== End of Events Content ====================*/}
       </div>
       {/*==================== End of Page content ====================*/}
 

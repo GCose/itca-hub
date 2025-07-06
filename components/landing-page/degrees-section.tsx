@@ -3,7 +3,6 @@ import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Clock,
-  ChevronRight,
   BookOpen,
   Check,
   Code,
@@ -11,7 +10,6 @@ import {
   Radio,
   Users,
   GraduationCap,
-  ArrowRight,
   ChevronDown,
 } from 'lucide-react';
 
@@ -113,7 +111,7 @@ const DegreesSection = () => {
   return (
     <section id="degrees" className="relative py-24 overflow-hidden">
       {/*==================== Dynamic Background with geometric shapes ====================*/}
-      <div className="absolute inset-0 -z-10 bg-gradient-to-br from-gray-50 to-gray-100"></div>
+      <div className="absolute inset-0 -z-10 bg-gradient-to-br from-white to-gray-100"></div>
 
       {/*==================== Prominent Geometric Elements - Top Right ====================*/}
       <div className="absolute top-0 right-0 w-2/3 h-full overflow-hidden -z-5">
@@ -131,47 +129,13 @@ const DegreesSection = () => {
       </div>
       {/*==================== End of Prominent Geometric Elements - Top Right ====================*/}
 
-      {/*==================== Prominent Geometric Elements - Bottom Left ====================*/}
-      <div className="absolute bottom-0 left-0 w-2/3 h-full overflow-hidden -z-5">
-        <div className="absolute bottom-10 left-0 w-full h-full">
-          <div
-            className="absolute bottom-10 left-[-200px] h-[500px] w-[500px] rounded-full border-[40px] border-blue-700/5 animate-pulse"
-            style={{ animationDelay: '0.5s' }}
-          ></div>
-          <div
-            className="absolute bottom-40 left-[-150px] h-[400px] w-[400px] rounded-full border-[30px] border-amber-500/5 animate-pulse"
-            style={{ animationDelay: '1.5s' }}
-          ></div>
-          <div
-            className="absolute bottom-60 left-[-100px] h-[300px] w-[300px] rounded-full border-[20px] border-blue-700/5 animate-pulse"
-            style={{ animationDelay: '2.5s' }}
-          ></div>
-        </div>
-      </div>
-      {/*==================== End of Prominent Geometric Elements - Bottom Left ====================*/}
-
-      <div className="absolute -bottom-20 -left-20 w-96 h-96 bg-gradient-to-br from-blue-700/5 to-transparent rounded-full blur-3xl"></div>
-      <div className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-tr from-amber-500/5 to-transparent rounded-full blur-2xl"></div>
-      <div className="absolute bottom-40 right-10 w-64 h-64 bg-gradient-to-tl from-blue-700/5 to-transparent rounded-full blur-2xl"></div>
-
-      {/*==================== Pattern Background ====================*/}
-      <div
-        className="absolute inset-0 -z-5 opacity-20"
-        style={{
-          backgroundImage:
-            'radial-gradient(circle at 1px 1px, rgba(0,0,0,0.05) 1px, transparent 0)',
-          backgroundSize: '40px 40px',
-        }}
-      ></div>
-      {/*==================== End of Pattern Background ====================*/}
-
       <div className="container relative z-10 mx-auto px-4">
         <motion.div
+          viewport={{ once: true }}
+          className="mb-16 text-center"
+          transition={{ duration: 0.6 }}
           initial={{ opacity: 0, y: 70 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="mb-16 text-center"
         >
           <span className="inline-block text-blue-700 font-semibold mb-2">ACADEMIC EXCELLENCE</span>
           <h2 className="mb-4 text-4xl font-bold text-gray-900 md:text-5xl">
@@ -197,7 +161,7 @@ const DegreesSection = () => {
             <div className="relative mx-auto max-w-sm mb-8">
               <button
                 onClick={() => setShowMobileDropdown(!showMobileDropdown)}
-                className="w-full flex items-center justify-between p-4 bg-white/70 backdrop-blur-sm rounded-xl border border-white/50 shadow-md text-gray-800"
+                className="w-full flex items-center justify-between p-4 bg-white/70 rounded-xl shadow-md shadow-blue-700/5 text-gray-800"
               >
                 <div className="flex items-center">
                   {selectedDegree && (
@@ -219,7 +183,7 @@ const DegreesSection = () => {
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
-                    className="absolute z-20 top-full left-0 right-0 mt-1 bg-white/90 backdrop-blur-sm rounded-xl border border-white/50 shadow-lg overflow-hidden"
+                    className="absolute z-20 top-full left-0 right-0 mt-1 bg-white/90 rounded-xl overflow-hidden"
                   >
                     {degrees.map((degree) => (
                       <div
@@ -258,8 +222,8 @@ const DegreesSection = () => {
 
           {/*==================== Desktop Tabs ====================*/}
           {!isMobileView && (
-            <div className="relative flex justify-center mx-auto w-full backdrop-blur-sm rounded-2xl p-2 bg-white/30 border border-white/40 shadow-lg shadow-blue-700/5 overflow-hidden">
-              {/*==================== Active Tab Indicator - Animated Background ====================*/}
+            <div className="relative flex justify-center mx-auto w-full backdrop-blur-sm rounded-2xl p-2 shadow-lg shadow-blue-700/5 overflow-hidden">
+              {/*==================== Active Tab Indicator ====================*/}
               {selectedDegree && (
                 <motion.div
                   initial={false}
@@ -271,20 +235,20 @@ const DegreesSection = () => {
                   className="absolute top-0 left-0 h-full z-0 rounded-xl bg-gradient-to-r from-blue-700/90 to-blue-600/90 shadow-md"
                 />
               )}
-              {/*==================== End of Active Tab Indicator - Animated Background ====================*/}
+              {/*==================== End of Active Tab Indicator ====================*/}
 
               {degrees.map((degree, index) => (
                 <motion.div
                   key={degree.id}
+                  whileTap={{ scale: 0.98 }}
                   ref={(el) => {
                     tabRefs.current[index] = el;
                   }}
-                  className={`relative z-10 px-3 sm:px-4 md:px-6 lg:px-8 py-3 sm:py-4 cursor-pointer transition-all duration-300 flex-1 flex flex-col items-center rounded-xl
-                    ${selectedDegree?.id === degree.id ? 'text-white' : 'text-gray-700 hover:text-blue-700'}`}
+                  onMouseLeave={() => setHoveredTab(null)}
                   onClick={() => setSelectedDegree(degree)}
                   onMouseEnter={() => setHoveredTab(degree.id)}
-                  onMouseLeave={() => setHoveredTab(null)}
-                  whileTap={{ scale: 0.98 }}
+                  className={`relative z-10 px-3 sm:px-4 md:px-6 lg:px-8 py-3 sm:py-4 cursor-pointer transition-all duration-300 flex-1 flex flex-col items-center rounded-xl
+                    ${selectedDegree?.id === degree.id ? 'text-white' : 'text-gray-700 hover:text-blue-700'}`}
                 >
                   <div
                     className={`flex items-center justify-center mb-2 transition-all duration-300 ${
@@ -329,16 +293,16 @@ const DegreesSection = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.5 }}
-              className="bg-white/80 backdrop-blur-md rounded-2xl shadow-xl overflow-hidden mx-auto max-w-7xl border border-white/50"
+              className="bg-white rounded-2xl shadow-xl shadow-blue-700/5 overflow-hidden mx-auto max-w-7xl"
             >
               <div className="flex flex-col lg:flex-row">
                 <div className="lg:w-2/5 relative">
                   <div className="h-64 lg:h-full w-full relative">
                     <Image
-                      src={selectedDegree.image || '/placeholder.svg'}
-                      alt={selectedDegree.title}
                       fill
                       className="object-cover"
+                      alt={selectedDegree.title}
+                      src={selectedDegree.image || '/placeholder.svg'}
                     />
 
                     {/*==================== Dark gradient overlay ====================*/}
@@ -372,7 +336,8 @@ const DegreesSection = () => {
                   </div>
                 </div>
 
-                <div className="lg:w-3/5 p-4 sm:p-6 md:p-8">
+                {/*==================== RightSide Content ====================*/}
+                <div className="lg:w-3/5 p-4 sm:p-6 md:px-8 md:py-6">
                   <div className="mb-6">
                     <div className="flex items-center mb-4">
                       <GraduationCap className="w-6 h-6 text-blue-700 mr-2" />
@@ -404,24 +369,8 @@ const DegreesSection = () => {
                       ))}
                     </div>
                   </div>
-
-                  <div className="pt-4 border-t border-gray-200 flex flex-wrap gap-4 justify-between items-center">
-                    <button className="group relative overflow-hidden rounded-lg bg-gradient-to-r from-blue-700 to-blue-600 px-5 sm:px-6 py-2.5 sm:py-3 font-medium text-white transition-all hover:shadow-lg hover:shadow-blue-500/30 flex items-center">
-                      <span className="relative z-10 flex items-center">
-                        Program Details
-                        <ChevronRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                      </span>
-                      <span className="absolute inset-0 -z-10 translate-y-full bg-gradient-to-r from-amber-500 to-amber-400 transition-transform duration-300 group-hover:translate-y-0"></span>
-                    </button>
-
-                    <button className="group px-5 sm:px-6 py-2.5 sm:py-3 font-medium text-blue-700 hover:text-blue-600 transition-all flex items-center">
-                      <span className="relative z-10 flex items-center">
-                        Download Brochure
-                        <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                      </span>
-                    </button>
-                  </div>
                 </div>
+                {/*==================== End of RightSide Content ====================*/}
               </div>
             </motion.div>
           ) : (

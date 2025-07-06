@@ -1,10 +1,10 @@
 import useResourceUploader from '@/hooks/admin/resources/use-resource-uploader';
 import { Upload, FileText, Image as ImageIcon, Video, FileType, Loader } from 'lucide-react';
 
-// Define proper types
 type Visibility = 'all' | 'admin';
 
 interface ResourceUploaderProps {
+  token: string;
   onUploadComplete?: (fileData: {
     fileName: string;
     fileUrl: string;
@@ -14,7 +14,7 @@ interface ResourceUploaderProps {
   onError?: (error: string) => void;
 }
 
-const ResourceUploader = ({ onUploadComplete, onError }: ResourceUploaderProps) => {
+const ResourceUploader = ({ token, onUploadComplete, onError }: ResourceUploaderProps) => {
   const {
     file,
     title,
@@ -33,9 +33,12 @@ const ResourceUploader = ({ onUploadComplete, onError }: ResourceUploaderProps) 
     setVisibility,
     department,
     setDepartment,
-  } = useResourceUploader({ onUploadComplete, onError });
+  } = useResourceUploader({ token, onUploadComplete, onError });
 
-  // Function to get file icon based on mime type
+  /**==================================================================================
+   * Get the appropriate file icon based on the file type (mime type).
+   * @returns JSX.Element - Returns the appropriate file icon based on the file type.
+   ==================================================================================*/
   const getFileIcon = () => {
     if (!file) return <Upload className="h-6 w-6 text-gray-400" />;
 
@@ -56,6 +59,15 @@ const ResourceUploader = ({ onUploadComplete, onError }: ResourceUploaderProps) 
     }
 
     return <FileType className="h-6 w-6 text-gray-500" />;
+  };
+
+  /**===========================================================================================
+   * Formats the category name by replacing underscores with spaces and capitalizing each word.
+   * @param category - The category string to format.
+   * @returns Formatted category name with spaces and capitalized words.
+   ===========================================================================================*/
+  const formatCategoryName = (category: string) => {
+    return category.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
   };
 
   // Check if form is valid
@@ -135,7 +147,7 @@ const ResourceUploader = ({ onUploadComplete, onError }: ResourceUploaderProps) 
               <option value="">Select category</option>
               {categories.map((cat) => (
                 <option key={cat} value={cat}>
-                  {cat}
+                  {formatCategoryName(cat)}
                 </option>
               ))}
             </select>
@@ -190,8 +202,8 @@ const ResourceUploader = ({ onUploadComplete, onError }: ResourceUploaderProps) 
               className="w-full rounded-lg bg-gray-100 p-2.5 text-md text-gray-700 focus:bg-gray-200/50 focus:outline-none"
             >
               <option value="">Select Department</option>
-              <option value="computer-science">Computer Science</option>
-              <option value="information-systems">Information Systems</option>
+              <option value="computer_science">Computer Science</option>
+              <option value="information_systems">Information Systems</option>
               <option value="telecommunications">Telecommunications</option>
             </select>
           </div>

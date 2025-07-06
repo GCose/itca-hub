@@ -3,7 +3,6 @@ import { Calendar, Users, FileText, PieChart } from 'lucide-react';
 import DashboardLayout from '@/components/dashboard/layout/dashboard-layout';
 import StatsCard from '@/components/dashboard/admin/overview/stats-card';
 import UserTable from '@/components/dashboard/admin/overview/user-table';
-// import RecentActivity from '@/components/dashboard/admin/overview/recent-activity';
 import { isLoggedIn } from '@/utils/auth';
 import { NextApiRequest } from 'next';
 import { UserAuth } from '@/types';
@@ -85,7 +84,6 @@ const AdminDashboard: FC<UserProps> = ({ userData }) => {
       {/*==================== Stats Cards ====================*/}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <StatsCard
-          // trend={'+5.2%'}
           title="Total Users"
           trendDirection="up"
           isLoading={isLoading}
@@ -93,7 +91,6 @@ const AdminDashboard: FC<UserProps> = ({ userData }) => {
           icon={<Users className="h-6 w-6 text-blue-600" />}
         />
         <StatsCard
-          // trend={'+2.4%'}
           trendDirection="up"
           title="Active Events"
           isLoading={isLoading}
@@ -101,7 +98,6 @@ const AdminDashboard: FC<UserProps> = ({ userData }) => {
           icon={<Calendar className="h-6 w-6 text-amber-500" />}
         />
         <StatsCard
-          // trend={'+8.1%'}
           title="Resources"
           trendDirection="up"
           isLoading={isLoading}
@@ -109,7 +105,6 @@ const AdminDashboard: FC<UserProps> = ({ userData }) => {
           icon={<FileText className="h-6 w-6 text-green-500" />}
         />
         <StatsCard
-          // trend={'-1.8%'}
           title="Active Users"
           trendDirection="down"
           isLoading={isLoading}
@@ -126,13 +121,6 @@ const AdminDashboard: FC<UserProps> = ({ userData }) => {
           <UserTable users={recentRegistrations} isLoading={isLoading} />
         </div>
         {/*==================== End of Recent User Activity ====================*/}
-
-        {/* ==================== Activity Feed ==================== */}
-        {/* <div>
-          <h2 className="text-lg font-semibold mb-4">System Activity</h2>
-          <RecentActivity />
-        </div> */}
-        {/*==================== End of Activity Feed ====================*/}
       </div>
     </DashboardLayout>
   );
