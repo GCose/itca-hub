@@ -16,7 +16,7 @@ import {
   File,
 } from 'lucide-react';
 import Link from 'next/link';
-import { NetworkError } from '@/components/error-message';
+import { NetworkError } from '@/components/dashboard/error-message';
 import formatDepartment from '@/utils/admin/format-department';
 import DashboardLayout from '@/components/dashboard/layout/dashboard-layout';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -25,7 +25,11 @@ import { isLoggedIn } from '@/utils/auth';
 import { NextApiRequest } from 'next';
 import { useResources } from '@/hooks/admin/resources/use-resources';
 
-const RecycleBinPage = () => {
+interface RecycleBinPageProps {
+  userData: UserAuth;
+}
+
+const RecycleBinPage = ({ userData }: RecycleBinPageProps) => {
   const {
     resources,
     isLoading,
@@ -33,7 +37,7 @@ const RecycleBinPage = () => {
     fetchResources,
     permanentlyDeleteResource,
     restoreFromRecycleBin,
-  } = useResources();
+  } = useResources({ token: userData.token });
 
   const [deletedResources, setDeletedResources] = useState<typeof resources>([]);
   const [selectedResource, setSelectedResource] = useState<(typeof resources)[0] | null>(null);
@@ -42,7 +46,9 @@ const RecycleBinPage = () => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isRestoring, setIsRestoring] = useState(false);
 
-  // Fetch all resources including deleted ones
+  /**==========================================================
+   * This effect fetches all resources including deleted ones
+   ==========================================================*/
   useEffect(() => {
     const fetchAllResources = async () => {
       await fetchResources(true); // true means include deleted resources
@@ -51,24 +57,31 @@ const RecycleBinPage = () => {
     fetchAllResources();
   }, [fetchResources]);
 
-  // Filter for deleted resources only
+  /**================================================
+   * This effect updates the deletedResources state
+   ================================================*/
   useEffect(() => {
     setDeletedResources(resources.filter((r) => r.isDeleted));
   }, [resources]);
 
-  // Handle permanent deletion confirmation
+  /**===============================================================
+   * Handles the confirmation for permanently deleting a resource.
+   * @returns Promise<void>
+   ===============================================================*/
   const handleConfirmDelete = async () => {
     if (!selectedResource) return;
 
     setIsDeleting(true);
     try {
       const success = await permanentlyDeleteResource(
-        selectedResource.fileName,
+        selectedResource.resourceId,
         selectedResource.title
       );
 
       if (success) {
-        setDeletedResources((prev) => prev.filter((r) => r.id !== selectedResource.id));
+        setDeletedResources((prev) =>
+          prev.filter((r) => r.resourceId !== selectedResource.resourceId)
+        );
         setShowDeleteModal(false);
         setSelectedResource(null);
       }
@@ -79,16 +92,24 @@ const RecycleBinPage = () => {
     }
   };
 
-  // Handle restore confirmation
+  /**========================================================================
+   * Handles the confirmation for restoring a resource from the recycle bin.
+   * @returns Promise<void>
+   ========================================================================*/
   const handleConfirmRestore = async () => {
     if (!selectedResource) return;
 
     setIsRestoring(true);
     try {
-      const success = await restoreFromRecycleBin(selectedResource.id, selectedResource.title);
+      const success = await restoreFromRecycleBin(
+        selectedResource.resourceId,
+        selectedResource.title
+      );
 
       if (success) {
-        setDeletedResources((prev) => prev.filter((r) => r.id !== selectedResource.id));
+        setDeletedResources((prev) =>
+          prev.filter((r) => r.resourceId !== selectedResource.resourceId)
+        );
         setShowRestoreModal(false);
         setSelectedResource(null);
       }
@@ -99,34 +120,44 @@ const RecycleBinPage = () => {
     }
   };
 
-  // Format date for display
+  /**=============================================================================
+   * Formats a date string into a readable format.
+   * @param dateString - The date string to format.
+   * @returns A formatted date string or 'Unknown' if the date is not provided.
+   =============================================================================*/
   const formatDate = (dateString?: string) => {
     if (!dateString) return 'Unknown';
     const date = new Date(dateString);
     return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
   };
 
-  // Get category icon
+  /**==============================================================
+   * Returns the appropriate icon for a given resource category.
+   * @param category - The category of the resource.
+   * @returns JSX element representing the icon for the category.
+   ==============================================================*/
   const getCategoryIcon = (category: string) => {
     switch (category) {
-      case 'Lecture Notes':
+      case 'lecture_note':
         return <BookOpen className="h-4 w-4 text-blue-500 mr-1" />;
-      case 'Assignments':
+      case 'assignment':
         return <ScrollText className="h-4 w-4 text-green-500 mr-1" />;
-      case 'Past Papers':
+      case 'past_papers':
         return <FileQuestion className="h-4 w-4 text-orange-500 mr-1" />;
-      case 'Tutorials':
+      case 'tutorial':
         return <GraduationCap className="h-4 w-4 text-purple-500 mr-1" />;
-      case 'Textbooks':
+      case 'textbook':
         return <BookMarked className="h-4 w-4 text-red-500 mr-1" />;
-      case 'Research Papers':
+      case 'research_papers':
         return <FileCode className="h-4 w-4 text-indigo-500 mr-1" />;
       default:
         return <File className="h-4 w-4 text-gray-500 mr-1" />;
     }
   };
 
-  // Close modal on escape key
+  /**================================================================
+   * Effect to handle closing modals when the Escape key is pressed.
+   ================================================================*/
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -256,7 +287,7 @@ const RecycleBinPage = () => {
               </thead>
               <tbody className="divide-y divide-gray-200 bg-white">
                 {deletedResources.map((resource) => (
-                  <tr key={resource.id} className="hover:bg-gray-100">
+                  <tr key={resource.resourceId} className="hover:bg-gray-100">
                     <td className="px-6 py-4">
                       <div className="text-sm font-medium text-gray-900">{resource.title}</div>
                       <div className="text-xs text-gray-500 truncate max-w-[250px]">
@@ -271,7 +302,7 @@ const RecycleBinPage = () => {
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                       <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-gray-100 text-gray-800">
                         {getCategoryIcon(resource.category)}
-                        {resource.category}
+                        {resource.category.replace('_', ' ')}
                       </span>
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">

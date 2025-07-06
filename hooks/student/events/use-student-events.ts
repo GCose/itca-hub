@@ -142,7 +142,6 @@ export const useStudentEvents = (token: string) => {
             : event
         )
       );
-
       toast.success('Successfully registered for event!');
     } catch (error) {
       console.error('Error registering for event:', error);

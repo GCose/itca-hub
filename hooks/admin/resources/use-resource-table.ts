@@ -1,12 +1,13 @@
 import { useState, useMemo, useEffect, useCallback } from 'react';
 import { toast } from 'sonner';
-
-import useResourceAnalytics from './use-resource-analytics';
 import { useRouter } from 'next/router';
-import { Resource } from '@/types';
+import { Resource, UpdateResourcePayload } from '@/types';
+import { BASE_URL } from '@/utils/url';
+import useResourceAnalytics from './use-resource-analytics';
 
 const useResourceTable = (
   resources: Resource[],
+  token: string,
   onRefresh: () => void,
   onDeleteResource: (resourceId: string) => Promise<boolean>,
   onDeleteMultiple: (resourceIds: string[]) => Promise<boolean>
@@ -25,53 +26,34 @@ const useResourceTable = (
   const [isEditing, setIsEditing] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-
-  // Selection state
   const [selectedResources, setSelectedResources] = useState<Record<string, boolean>>({});
   const itemsPerPage = 10;
 
-  // Using the analytics hooks
-  const { trackResourceDownload } = useResourceAnalytics();
+  const { trackResourceDownload } = useResourceAnalytics({ token });
 
-  /**=======================
-   * Get unique file types
-   =======================*/
   const fileTypes = useMemo(() => {
     return [...new Set(resources.map((resource) => resource.type))].sort();
   }, [resources]);
 
-  /**=======================
-   * Get unique categories
-   =======================*/
   const categories = useMemo(() => {
     return [...new Set(resources.map((resource) => resource.category))].sort();
   }, [resources]);
 
-  /**===========================================
-   * Calculate how many resources are selected
-   ===========================================*/
   const selectedCount = useMemo(
     () => Object.values(selectedResources).filter(Boolean).length,
     [selectedResources]
   );
 
-  // Check if multiple resources are selected
   const hasMultipleSelected = useMemo(() => selectedCount > 1, [selectedCount]);
 
-  /**====================================
-   * Get array of selected resource IDs
-   ====================================*/
   const selectedResourceIds = useMemo(
     () =>
       Object.entries(selectedResources)
-        .filter((entry) => entry[1]) // Use entry[1] which is the boolean value
-        .map((entry) => entry[0]), // Use entry[0] which is the ID
+        .filter(([, isSelected]) => isSelected)
+        .map(([id]) => id),
     [selectedResources]
   );
 
-  /**===============================================================================
-   * Filter resources based on search, department, type, category, and visibility
-   ===============================================================================*/
   const filteredResources = useMemo(() => {
     return resources.filter((resource) => {
       const matchesSearch =
@@ -79,11 +61,8 @@ const useResourceTable = (
         resource.description.toLowerCase().includes(searchTerm.toLowerCase());
 
       const matchesDepartment = department === 'all' || resource.department === department;
-
       const matchesType = fileType === 'all' || resource.type === fileType;
-
       const matchesCategory = category === 'all' || resource.category === category;
-
       const matchesVisibility = visibility === 'all' || resource.visibility === visibility;
 
       return (
@@ -92,19 +71,14 @@ const useResourceTable = (
     });
   }, [resources, searchTerm, department, fileType, category, visibility]);
 
-  /**=========================
-   * Get current page items
-   =========================*/
   const currentItems = useMemo(() => {
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     return filteredResources.slice(indexOfFirstItem, indexOfLastItem);
   }, [filteredResources, currentPage, itemsPerPage]);
 
-  // Calculate total pages
   const totalPages = Math.ceil(filteredResources.length / itemsPerPage);
 
-  // Clear all selections - define this before the useEffect that uses it
   const clearSelection = useCallback(() => {
     setSelectedResources({});
   }, []);
@@ -118,7 +92,6 @@ const useResourceTable = (
    * Handle single row selection (toggle)
    =======================================*/
   const toggleSelection = useCallback((resource: Resource, event: React.MouseEvent) => {
-    // Check if Ctrl/Cmd key is pressed for multi-select
     const isMultiSelectKey = event.ctrlKey || event.metaKey;
 
     setSelectedResources((prev) => {
@@ -126,20 +99,18 @@ const useResourceTable = (
 
       // If multi-select key is not pressed, clear other selections
       if (!isMultiSelectKey) {
-        // If the resource is already the only one selected, toggle it off
-        if (prev[resource.id] && Object.values(prev).filter(Boolean).length === 1) {
-          newSelection[resource.id] = false;
+        if (prev[resource.resourceId] && Object.values(prev).filter(Boolean).length === 1) {
+          newSelection[resource.resourceId] = false;
           return newSelection;
         }
 
-        // Otherwise clear everything and select just this one
         Object.keys(newSelection).forEach((id) => {
           newSelection[id] = false;
         });
       }
 
       // Toggle the clicked resource
-      newSelection[resource.id] = !prev[resource.id];
+      newSelection[resource.resourceId] = !prev[resource.resourceId];
       return newSelection;
     });
   }, []);
@@ -149,13 +120,10 @@ const useResourceTable = (
    =======================================*/
   const selectAll = useCallback(() => {
     const newSelection = { ...selectedResources };
+    const allSelected = currentItems.every((item) => selectedResources[item.resourceId]);
 
-    // Check if all current items are already selected
-    const allSelected = currentItems.every((item) => selectedResources[item.id]);
-
-    // Toggle: select all if not all selected, otherwise deselect all
     currentItems.forEach((item) => {
-      newSelection[item.id] = !allSelected;
+      newSelection[item.resourceId] = !allSelected;
     });
 
     setSelectedResources(newSelection);
@@ -166,14 +134,13 @@ const useResourceTable = (
    ====================================================*/
   const handleDoubleClick = useCallback(
     (resource: Resource) => {
-      router.push(`/admin/resources/view/${encodeURIComponent(resource.fileName)}`);
+      // Clear any selections first
+      clearSelection();
+      router.push(`/admin/resources/view/${resource.resourceId}`);
     },
-    [router]
+    [router, clearSelection]
   );
 
-  /**=============
-   * Change page
-   =============*/
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
   const nextPage = () => setCurrentPage((prev) => Math.min(prev + 1, totalPages));
   const prevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
@@ -182,84 +149,95 @@ const useResourceTable = (
    * Download resource
    ====================*/
   const handleDownload = async (resource: Resource, e?: React.MouseEvent) => {
-    if (e) e.stopPropagation(); // Prevent row selection
+    if (e) e.stopPropagation();
 
     try {
-      // Track the download for analytics
-      await trackResourceDownload(resource.id);
+      // Track the download first
+      await trackResourceDownload(resource.resourceId, token);
 
-      // Use API to initiate the download
+      const fileName = resource.fileName;
+
+      // Try to get the proper download link from Jeetix
+      const jeetixResponse = await fetch(
+        `https://jeetix-file-service.onrender.com/api/storage/file/${encodeURIComponent(fileName)}`
+      );
+
+      if (jeetixResponse.ok) {
+        const jeetixData = await jeetixResponse.json();
+        if (jeetixData.status === 'success' && jeetixData.data.metadata?.mediaLink) {
+          // Use the mediaLink for direct download
+          const link = document.createElement('a');
+          link.href = jeetixData.data.metadata.mediaLink;
+          link.download = resource.title || fileName;
+          link.style.display = 'none';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+
+          toast.success('Download started', {
+            description: `${resource.title} is being downloaded.`,
+          });
+          return;
+        }
+      }
+
+      // Fallback to direct URL
       const link = document.createElement('a');
-      link.href = `/api/resources/download/${resource.id}`;
-      link.download = resource.fileName || resource.title || 'resource';
+      link.href = resource.fileUrl;
+      link.download = resource.title || fileName;
+      link.style.display = 'none';
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+
+      toast.success('Download started', {
+        description: `${resource.title} is being downloaded.`,
+      });
     } catch (error) {
       console.error('Error downloading resource:', error);
-      toast.error('Failed to download resource');
+      toast.error('Download failed', {
+        description: 'Please try again or contact support.',
+      });
     }
   };
 
-  /**==========================
-   * View resource analytics
-   ==========================*/
   const handleViewAnalytics = (resource: Resource, e?: React.MouseEvent) => {
-    if (e) e.stopPropagation(); // Prevent row selection
-
+    if (e) e.stopPropagation();
     setSelectedResource(resource);
     setShowAnalytics(true);
   };
 
-  /**===============
-   * Edit resource
-   ===============*/
   const handleEditResource = (resource: Resource, e?: React.MouseEvent) => {
-    if (e) e.stopPropagation(); // Prevent row selection
-
+    if (e) e.stopPropagation();
     setSelectedResource(resource);
     setShowEditModal(true);
   };
 
-  /**===========================
-   * Delete a single resource
-   ===========================*/
   const handleDeleteResource = async (resource: Resource, e?: React.MouseEvent) => {
-    if (e) e.stopPropagation(); // Prevent row selection
-
+    if (e) e.stopPropagation();
     setSelectedResource(resource);
     setShowDeleteModal(true);
   };
 
-  /**============================
-   * Delete multiple resources
-   ============================*/
   const handleDeleteSelected = () => {
     if (selectedCount > 0) {
       setShowDeleteModal(true);
     }
   };
 
-  /**===============================================
-   * Confirm delete (for both single and multiple)
-   ===============================================*/
   const confirmDelete = async () => {
     setIsDeleting(true);
 
     try {
       let success = false;
 
-      // Single resource deletion
       if (selectedResource && !hasMultipleSelected) {
-        success = await onDeleteResource(selectedResource.id);
-      }
-      // Multiple resource deletion
-      else if (hasMultipleSelected) {
+        success = await onDeleteResource(selectedResource.resourceId);
+      } else if (hasMultipleSelected) {
         success = await onDeleteMultiple(selectedResourceIds);
       }
 
       if (success) {
-        // Clear selection and modals
         clearSelection();
         setShowDeleteModal(false);
         setSelectedResource(null);
@@ -272,36 +250,39 @@ const useResourceTable = (
     }
   };
 
-  /**======================
-   * Save edited resource
-   ======================*/
   const handleSaveResource = async (updatedResource: Resource) => {
     setIsEditing(true);
     try {
-      // LOCALSTORAGE IMPLEMENTATION (TEMPORARY)
-
-      // Get existing metadata
-      const storedMetadata = localStorage.getItem('resourceMetadata');
-      const metadataMap = storedMetadata ? JSON.parse(storedMetadata) : {};
-
-      // Update the resource metadata
-      metadataMap[updatedResource.fileName] = {
-        fileName: updatedResource.fileName,
-        fileUrl: updatedResource.fileUrl,
+      const updatePayload: UpdateResourcePayload = {
         title: updatedResource.title,
         description: updatedResource.description,
-        department: updatedResource.department,
-        visibility: updatedResource.visibility,
         category: updatedResource.category,
+        visibility: updatedResource.visibility,
+        academicLevel: updatedResource.academicLevel,
+        department: updatedResource.department,
       };
 
-      // Save back to localStorage
-      localStorage.setItem('resourceMetadata', JSON.stringify(metadataMap));
+      const response = await fetch(`${BASE_URL}/resources/${updatedResource.resourceId}`, {
+        method: 'PATCH',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatePayload),
+      });
 
-      // Show success message
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || 'Failed to update resource');
+      }
+
+      const data = await response.json();
+
+      if (data.status !== 'success') {
+        throw new Error(data.message || 'Failed to update resource');
+      }
+
       toast.success('Resource updated successfully');
-
-      // Refresh resources
       onRefresh();
     } catch (error) {
       console.error('Error updating resource:', error);
@@ -313,11 +294,7 @@ const useResourceTable = (
     }
   };
 
-  /**==================================
-   * Generate pagination information
-   ==================================*/
   const getPaginationInfo = () => {
-    // Pagination with limit of buttons
     const maxButtons = 10;
     let startPage = Math.max(1, currentPage - Math.floor(maxButtons / 2));
     const endPage = Math.min(totalPages, startPage + maxButtons - 1);
@@ -329,9 +306,6 @@ const useResourceTable = (
     return { startPage, endPage };
   };
 
-  /**====================
-   * Clear all filters
-   ====================*/
   const clearFilters = () => {
     setSearchTerm('');
     setDepartment('all');

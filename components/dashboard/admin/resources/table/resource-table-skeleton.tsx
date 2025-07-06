@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 const ResourceTableSkeleton = () => {
   return (
@@ -39,28 +39,22 @@ const ResourceTableSkeleton = () => {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                {[
-                  "Resource",
-                  "Department",
-                  "Type",
-                  "Size",
-                  "Usage",
-                  "Status",
-                  "Actions",
-                ].map((header) => (
-                  <th
-                    key={header}
-                    scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
-                  >
-                    <div className="h-4 w-36 rounded bg-gray-200 animate-pulse"></div>
-                  </th>
-                ))}
+                {['Resource', 'Department', 'Type', 'Size', 'Usage', 'Status', 'Actions'].map(
+                  (header) => (
+                    <th
+                      scope="col"
+                      key={header}
+                      className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                    >
+                      <div className="h-4 w-36 rounded bg-gray-200 animate-pulse"></div>
+                    </th>
+                  )
+                )}
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200 bg-white">
+            <tbody className="bg-white">
               {[...Array(10)].map((_, index) => (
-                <tr key={index}>
+                <tr key={index} className="even:bg-gray-100/80">
                   <td className="whitespace-nowrap px-6 py-4">
                     <div className="flex items-center">
                       <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-200 animate-pulse"></div>

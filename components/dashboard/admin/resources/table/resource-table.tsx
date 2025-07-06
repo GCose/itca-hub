@@ -21,12 +21,14 @@ import ResourceAnalytics from '../modals/analytics-resource-modal';
 import ResourceEditModal from '../modals/edit-resource-modal';
 import DeleteResourceModal from '../modals/delete-resource-modal';
 import formatDepartment from '@/utils/admin/format-department';
-import { EmptyState, NetworkError, NoResults } from '@/components/error-message';
+import { handleResourceDownload } from '@/utils/download';
+import { EmptyState, NetworkError, NoResults } from '@/components/dashboard/error-message';
 
 interface ResourceTableProps {
   resources: Resource[];
   isLoading: boolean;
   isError?: boolean;
+  token: string;
   onDeleteResource: (resourceId: string) => Promise<boolean>;
   onDeleteMultiple: (resourceIds: string[]) => Promise<boolean>;
   onRefresh: () => void;
@@ -36,6 +38,7 @@ const ResourceTable = ({
   resources,
   isLoading,
   isError = false,
+  token,
   onDeleteResource,
   onDeleteMultiple,
   onRefresh,
@@ -53,7 +56,6 @@ const ResourceTable = ({
     setVisibility,
     currentItems,
     filteredResources,
-    handleDownload,
     handleViewAnalytics,
     handleEditResource,
     handleDeleteResource,
@@ -84,7 +86,7 @@ const ResourceTable = ({
     selectAll,
     clearSelection,
     handleDoubleClick,
-  } = useResourceTable(resources, onRefresh, onDeleteResource, onDeleteMultiple);
+  } = useResourceTable(resources, token, onRefresh, onDeleteResource, onDeleteMultiple);
 
   // Function to get the appropriate icon based on file type
   const getFileIcon = (type: string) => {
@@ -124,6 +126,22 @@ const ResourceTable = ({
       default:
         return null;
     }
+  };
+
+  const handleDownload = async (resource: Resource, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+
+    await handleResourceDownload({
+      id: resource.resourceId,
+      title: resource.title,
+      fileName: resource.fileName,
+      fileUrl: resource.fileUrl,
+    });
+  };
+
+  // Function to format category display name
+  const formatCategoryName = (category: string) => {
+    return category.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
   };
 
   // Generate pagination buttons
@@ -176,27 +194,31 @@ const ResourceTable = ({
       {/*==================== End of Filter Component ====================*/}
 
       {/*==================== Multiple Selection Action Bar ====================*/}
-      {hasMultipleSelected && (
-        <div className="bg-blue-50 border border-blue-100 mb-4 px-4 py-3 rounded-lg flex items-center justify-between">
+      {selectedCount > 0 && (
+        <div className="bg-amber-100 mb-4 px-4 py-3 rounded-lg flex items-center justify-between">
           <div className="flex items-center">
-            <span className="text-blue-800 font-medium">{selectedCount} resources selected</span>
+            <span className="text-blue-800 font-medium">
+              {selectedCount} resource{selectedCount > 1 ? 's' : ''} selected
+            </span>
           </div>
           <div className="flex items-center space-x-3">
             <button onClick={clearSelection} className="text-gray-600 hover:text-gray-800 text-sm">
               Clear Selection
             </button>
             <button onClick={selectAll} className="text-gray-600 hover:text-gray-800 text-sm">
-              {currentItems.every((item) => selectedResources[item.id])
+              {currentItems.every((item) => selectedResources[item.resourceId])
                 ? 'Deselect All'
                 : 'Select All'}
             </button>
-            <button
-              onClick={handleDeleteSelected}
-              className="inline-flex items-center rounded-lg bg-amber-50 text-amber-600 px-3 py-1.5 text-sm font-medium hover:bg-amber-100"
-            >
-              <Trash className="mr-1.5 h-4 w-4" />
-              Delete Selected
-            </button>
+            {selectedCount > 1 && (
+              <button
+                onClick={handleDeleteSelected}
+                className="inline-flex items-center rounded-lg bg-amber-50 text-amber-600 px-3 py-1.5 text-sm font-medium hover:bg-amber-100"
+              >
+                <Trash className="mr-1.5 h-4 w-4" />
+                Delete Selected
+              </button>
+            )}
           </div>
         </div>
       )}
@@ -287,14 +309,16 @@ const ResourceTable = ({
               {/*==================== End of Table Head ====================*/}
 
               {/*==================== Table Body ====================*/}
-              <tbody className="divide-y divide-gray-200 bg-white">
+              <tbody className="bg-white">
                 {currentItems.map((resource) => (
                   <tr
-                    key={resource.id}
+                    key={resource.resourceId}
                     onClick={(e) => toggleSelection(resource, e)}
                     onDoubleClick={() => handleDoubleClick(resource)}
                     className={`${
-                      selectedResources[resource.id] ? 'bg-amber-100' : 'even:bg-gray-100/80'
+                      selectedResources[resource.resourceId]
+                        ? 'bg-amber-100'
+                        : 'even:bg-gray-100/80'
                     } hover:bg-gray-200/60 border-none transition-colors cursor-pointer`}
                   >
                     {/*==================== Resource Column ====================*/}
@@ -354,7 +378,7 @@ const ResourceTable = ({
                       <span
                         className={`inline-flex items-center rounded-full px-1.5 gap-2 py-0.5 text-md font-medium text-slate-500`}
                       >
-                        {resource.category}
+                        {formatCategoryName(resource.category)}
                       </span>
                     </td>
                     {/*==================== End of Category Column ====================*/}
@@ -387,7 +411,7 @@ const ResourceTable = ({
                         </button>
 
                         {/*==================== Delete Button - Only visible when row is selected ====================*/}
-                        {selectedResources[resource.id] && (
+                        {selectedResources[resource.resourceId] && (
                           <button
                             onClick={(e) => handleDeleteResource(resource, e)}
                             className="rounded-full p-1.5 text-amber-500 hover:bg-amber-50"
@@ -474,7 +498,11 @@ const ResourceTable = ({
       {/*==================== Analytics Modal ====================*/}
       {showAnalytics && selectedResource && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/50 backdrop-blur-sm">
-          <ResourceAnalytics resource={selectedResource} onClose={() => setShowAnalytics(false)} />
+          <ResourceAnalytics
+            token={token}
+            resource={selectedResource}
+            onClose={() => setShowAnalytics(false)}
+          />
         </div>
       )}
       {/*==================== End of Analytics Modal ====================*/}

@@ -8,20 +8,31 @@ import { isLoggedIn } from '@/utils/auth';
 import { NextApiRequest } from 'next';
 import { useResources } from '@/hooks/admin/resources/use-resources';
 
-const AdminResourcesPage = () => {
-  const { resources, isLoading, isError, fetchResources, moveToRecycleBin, batchMoveToRecycleBin } =
-    useResources();
+interface AdminResourcesPageProps {
+  userData: UserAuth;
+}
 
+const AdminResourcesPage = ({ userData }: AdminResourcesPageProps) => {
+  const { resources, isLoading, isError, fetchResources, moveToRecycleBin, batchMoveToRecycleBin } =
+    useResources({ token: userData.token });
+
+  /**===============================================
+   * Fetches resources when the component mounts.
+   ===============================================*/
   useEffect(() => {
     // Only fetch non-deleted resources for the main page
     fetchResources(false);
   }, [fetchResources]);
 
-  // Handle deleting a single resource
+  /**=====================================================================================
+   * Handles the deletion of a single resource by moving it to the recycle bin.
+   * @param resourceId ID of the resource to delete
+   * @returns Promise that resolves to true if deletion was successful, false otherwise
+   =====================================================================================*/
   const handleDeleteResource = async (resourceId: string): Promise<boolean> => {
     try {
       // Find the resource to get its title
-      const resource = resources.find((r) => r.id === resourceId);
+      const resource = resources.find((r) => r.resourceId === resourceId);
       if (!resource) return false;
 
       // Call the move to recycle bin function
@@ -32,7 +43,11 @@ const AdminResourcesPage = () => {
     }
   };
 
-  // Handle deleting multiple resources
+  /**======================================================================================
+   * Handles the deletion of multiple resources by moving them to the recycle bin.
+   * @param resourceIds Array of resource IDs to delete
+   * @returns Promise that resolves to true if deletion was successful, false otherwise
+   ======================================================================================*/
   const handleDeleteMultiple = async (resourceIds: string[]): Promise<boolean> => {
     try {
       return await batchMoveToRecycleBin(resourceIds);
@@ -91,6 +106,7 @@ const AdminResourcesPage = () => {
         isError={isError}
         resources={resources}
         isLoading={isLoading}
+        token={userData.token}
         onDeleteResource={handleDeleteResource}
         onDeleteMultiple={handleDeleteMultiple}
         onRefresh={() => fetchResources(false)}

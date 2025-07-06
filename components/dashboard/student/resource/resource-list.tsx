@@ -1,12 +1,5 @@
-import {
-  FileText,
-  File,
-  Download,
-  BookOpen,
-  Video,
-  Image as ImageIcon,
-} from "lucide-react";
-import Link from "next/link";
+import { FileText, File, Download, BookOpen, Video, Image as ImageIcon } from 'lucide-react';
+import Link from 'next/link';
 
 interface Resource {
   id: number;
@@ -24,25 +17,25 @@ const ResourceList = ({ resources, isLoading = false }: ResourceListProps) => {
   // Function to get the appropriate icon based on file type
   const getFileIcon = (type: string) => {
     switch (type.toLowerCase()) {
-      case "pdf":
+      case 'pdf':
         return <FileText className="h-5 w-5 text-red-500" />;
-      case "doc":
-      case "docx":
+      case 'doc':
+      case 'docx':
         return <FileText className="h-5 w-5 text-blue-500" />;
-      case "ppt":
-      case "pptx":
+      case 'ppt':
+      case 'pptx':
         return <FileText className="h-5 w-5 text-orange-500" />;
-      case "xls":
-      case "xlsx":
+      case 'xls':
+      case 'xlsx':
         return <FileText className="h-5 w-5 text-green-500" />;
-      case "jpg":
-      case "jpeg":
-      case "png":
-      case "gif":
+      case 'jpg':
+      case 'jpeg':
+      case 'png':
+      case 'gif':
         return <ImageIcon className="h-5 w-5 text-purple-500" />;
-      case "mp4":
-      case "avi":
-      case "mov":
+      case 'mp4':
+      case 'avi':
+      case 'mov':
         return <Video className="h-5 w-5 text-blue-500" />;
       default:
         return <File className="h-5 w-5 text-gray-500" />;
@@ -72,12 +65,8 @@ const ResourceList = ({ resources, isLoading = false }: ResourceListProps) => {
     return (
       <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm text-center">
         <BookOpen className="mx-auto h-12 w-12 text-gray-400 mb-3" />
-        <h3 className="text-lg font-medium text-gray-900 mb-1">
-          No recent resources
-        </h3>
-        <p className="text-gray-500 mb-4">
-          You haven{"'"}t accessed any resources recently.
-        </p>
+        <h3 className="text-lg font-medium text-gray-900 mb-1">No recent resources</h3>
+        <p className="text-gray-500 mb-4">You haven{"'"}t accessed any resources recently.</p>
         <Link
           href="/student/resources"
           className="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none  focus:ring-blue-500 focus:ring-offset-2"

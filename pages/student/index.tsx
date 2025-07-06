@@ -138,13 +138,22 @@ const StudentDashboard = () => {
 
   return (
     <DashboardLayout title="Student Dashboard">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Student Dashboard</h1>
+      <div>
+        <h1 className="text-2xl font-bold text-gray-900 mb-2 flex items-center">
+          <span className="text-blue-700 mr-2">Student</span>
+          <span className="text-amber-500">Dashboard</span>
+          <span className="ml-3 relative">
+            <span className="absolute -top-1 -right-1 flex h-3 w-3">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
+            </span>
+          </span>
+        </h1>
         <p className="text-gray-600">Welcome back, John Doe</p>
       </div>
 
       {/*==================== Stats Cards ====================*/}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-10 mb-15">
         <StatsCard
           title="Courses Enrolled"
           value={dashboardData.coursesEnrolled}

@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Users, Download, Eye } from 'lucide-react';
+import { Users, Download, Eye, X } from 'lucide-react';
 import { Resource } from '@/types';
+import useResourceAnalytics from '@/hooks/admin/resources/use-resource-analytics';
 
 interface ResourceAnalyticsProps {
   resource: Resource;
+  token: string;
   onClose: () => void;
 }
 
@@ -17,66 +19,89 @@ interface AnalyticsData {
   downloadsByDay: { date: string; count: number }[];
 }
 
-const ResourceAnalytics = ({ resource, onClose }: ResourceAnalyticsProps) => {
+const ResourceAnalytics = ({ resource, token, onClose }: ResourceAnalyticsProps) => {
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'overview' | 'views' | 'downloads'>('overview');
+  const { getResourceAnalytics } = useResourceAnalytics({ token });
 
-  // This would normally fetch from API
+  /**=================================================
+   * Fetches analytics data for the given resource.
+   =================================================*/
   useEffect(() => {
     const fetchAnalytics = async () => {
       setIsLoading(true);
+      setError(null);
+
       try {
-        // Mock data
-        const mockData: AnalyticsData = {
-          resourceId: resource.id,
+        const data = await getResourceAnalytics(resource.resourceId, token);
+
+        // Transform API data to expected format
+        const transformedData: AnalyticsData = {
+          resourceId: resource.resourceId,
+          views: data.views || resource.viewCount,
+          downloads: data.downloads || resource.downloads,
+          uniqueViewers: data.uniqueViewers || Math.floor((data.views || resource.viewCount) * 0.7),
+          uniqueDownloaders:
+            data.uniqueDownloaders || Math.floor((data.downloads || resource.downloads) * 0.8),
+          viewsByDay: data.viewsByDay || [],
+          downloadsByDay: data.downloadsByDay || [],
+        };
+
+        setAnalytics(transformedData);
+      } catch (err) {
+        console.error('Failed to fetch analytics:', err);
+
+        // Fallback to resource data if API fails
+        const fallbackData: AnalyticsData = {
+          resourceId: resource.resourceId,
           views: resource.viewCount,
           downloads: resource.downloads,
           uniqueViewers: Math.floor(resource.viewCount * 0.7),
           uniqueDownloaders: Math.floor(resource.downloads * 0.8),
-          viewsByDay: [
-            { date: '2025-03-24', count: Math.floor(Math.random() * 20) },
-            { date: '2025-03-25', count: Math.floor(Math.random() * 20) },
-            { date: '2025-03-26', count: Math.floor(Math.random() * 20) },
-            { date: '2025-03-27', count: Math.floor(Math.random() * 20) },
-            { date: '2025-03-28', count: Math.floor(Math.random() * 20) },
-            { date: '2025-03-29', count: Math.floor(Math.random() * 20) },
-            { date: '2025-03-30', count: Math.floor(Math.random() * 20) },
-          ],
-          downloadsByDay: [
-            { date: '2025-03-24', count: Math.floor(Math.random() * 10) },
-            { date: '2025-03-25', count: Math.floor(Math.random() * 10) },
-            { date: '2025-03-26', count: Math.floor(Math.random() * 10) },
-            { date: '2025-03-27', count: Math.floor(Math.random() * 10) },
-            { date: '2025-03-28', count: Math.floor(Math.random() * 10) },
-            { date: '2025-03-29', count: Math.floor(Math.random() * 10) },
-            { date: '2025-03-30', count: Math.floor(Math.random() * 10) },
-          ],
+          viewsByDay: [],
+          downloadsByDay: [],
         };
 
-        setAnalytics(mockData);
-      } catch (error) {
-        console.error('Failed to fetch analytics:', error);
+        setAnalytics(fallbackData);
+        setError('Unable to load detailed analytics. Showing basic stats.');
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchAnalytics();
-  }, [resource.id, resource.viewCount, resource.downloads]);
+  }, [resource, token, getResourceAnalytics]);
 
   if (isLoading) {
     return (
-      <div className="p-6 flex justify-center items-center">
-        <div className="animate-spin h-8 w-8 border-4 border-blue-600 rounded-full border-t-transparent"></div>
+      <div className="bg-white rounded-xl shadow-lg p-6 max-w-3xl w-full relative">
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin h-8 w-8 border-4 border-blue-600 rounded-full border-t-transparent"></div>
+        </div>
       </div>
     );
   }
 
   if (!analytics) {
     return (
-      <div className="p-6">
-        <p className="text-center text-gray-500">Failed to load analytics data</p>
+      <div className="bg-white rounded-xl shadow-lg p-6 max-w-3xl w-full relative">
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+        >
+          <X className="w-5 h-5" />
+        </button>
+        <div className="flex flex-col items-center justify-center h-64">
+          <p className="text-center text-gray-500">Failed to load analytics data</p>
+          <button
+            onClick={onClose}
+            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          >
+            Close
+          </button>
+        </div>
       </div>
     );
   }
@@ -87,17 +112,16 @@ const ResourceAnalytics = ({ resource, onClose }: ResourceAnalyticsProps) => {
         onClick={onClose}
         className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
       >
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M6 18L18 6M6 6l12 12"
-          />
-        </svg>
+        <X className="w-5 h-5" />
       </button>
 
-      <h2 className="text-xl font-bold mb-6 text-gray-900">{resource.title} - Analytics</h2>
+      <h2 className="text-xl font-bold mb-6 text-gray-900 pr-8">{resource.title} - Analytics</h2>
+
+      {error && (
+        <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+          <p className="text-sm text-yellow-800">{error}</p>
+        </div>
+      )}
 
       <div className="flex border-b border-gray-200 mb-6">
         <button
@@ -182,10 +206,10 @@ const ResourceAnalytics = ({ resource, onClose }: ResourceAnalyticsProps) => {
               <div
                 className="bg-blue-600 h-full rounded-full flex items-center justify-center text-xs text-white font-medium"
                 style={{
-                  width: `${Math.min(100, (analytics.downloads / analytics.views) * 100 || 0)}%`,
+                  width: `${Math.min(100, (analytics.downloads / Math.max(analytics.views, 1)) * 100)}%`,
                 }}
               >
-                {Math.round((analytics.downloads / analytics.views) * 100 || 0)}%
+                {Math.round((analytics.downloads / Math.max(analytics.views, 1)) * 100)}%
               </div>
             </div>
             <p className="text-sm text-gray-500 mt-1">Download to view ratio (engagement rate)</p>
@@ -196,36 +220,66 @@ const ResourceAnalytics = ({ resource, onClose }: ResourceAnalyticsProps) => {
       {activeTab === 'views' && (
         <div>
           <h3 className="text-lg font-medium mb-4 text-gray-900">Daily Views</h3>
-          <div className="bg-blue-50 p-4 rounded-lg h-64 flex items-end space-x-2">
-            {analytics.viewsByDay.map((day, index) => (
-              <div key={index} className="flex flex-col items-center flex-1">
-                <div
-                  className="bg-blue-600 w-full rounded-t-sm"
-                  style={{ height: `${(day.count / 20) * 200}px` }}
-                ></div>
-                <p className="text-xs text-gray-500 mt-1">{day.date.split('-')[2]}</p>
-              </div>
-            ))}
-          </div>
-          <p className="text-sm text-gray-500 mt-3 text-center">Last 7 days of views</p>
+          {analytics.viewsByDay.length > 0 ? (
+            <div className="bg-blue-50 p-4 rounded-lg h-64 flex items-end space-x-2">
+              {analytics.viewsByDay.map((day, index) => {
+                const maxCount = Math.max(...analytics.viewsByDay.map((d) => d.count));
+                const height = maxCount > 0 ? (day.count / maxCount) * 200 : 0;
+                return (
+                  <div key={index} className="flex flex-col items-center flex-1">
+                    <div
+                      className="bg-blue-600 w-full rounded-t-sm min-h-[2px]"
+                      style={{ height: `${Math.max(height, 2)}px` }}
+                      title={`${day.count} views on ${day.date}`}
+                    ></div>
+                    <p className="text-xs text-gray-500 mt-1">{day.date.split('-')[2]}</p>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="bg-blue-50 p-4 rounded-lg h-64 flex items-center justify-center">
+              <p className="text-gray-500">No daily view data available</p>
+            </div>
+          )}
+          <p className="text-sm text-gray-500 mt-3 text-center">
+            {analytics.viewsByDay.length > 0
+              ? 'Last 7 days of views'
+              : 'View tracking data will appear here once available'}
+          </p>
         </div>
       )}
 
       {activeTab === 'downloads' && (
         <div>
           <h3 className="text-lg font-medium mb-4 text-gray-900">Daily Downloads</h3>
-          <div className="bg-green-50 p-4 rounded-lg h-64 flex items-end space-x-2">
-            {analytics.downloadsByDay.map((day, index) => (
-              <div key={index} className="flex flex-col items-center flex-1">
-                <div
-                  className="bg-green-600 w-full rounded-t-sm"
-                  style={{ height: `${(day.count / 10) * 200}px` }}
-                ></div>
-                <p className="text-xs text-gray-500 mt-1">{day.date.split('-')[2]}</p>
-              </div>
-            ))}
-          </div>
-          <p className="text-sm text-gray-500 mt-3 text-center">Last 7 days of downloads</p>
+          {analytics.downloadsByDay.length > 0 ? (
+            <div className="bg-green-50 p-4 rounded-lg h-64 flex items-end space-x-2">
+              {analytics.downloadsByDay.map((day, index) => {
+                const maxCount = Math.max(...analytics.downloadsByDay.map((d) => d.count));
+                const height = maxCount > 0 ? (day.count / maxCount) * 200 : 0;
+                return (
+                  <div key={index} className="flex flex-col items-center flex-1">
+                    <div
+                      className="bg-green-600 w-full rounded-t-sm min-h-[2px]"
+                      style={{ height: `${Math.max(height, 2)}px` }}
+                      title={`${day.count} downloads on ${day.date}`}
+                    ></div>
+                    <p className="text-xs text-gray-500 mt-1">{day.date.split('-')[2]}</p>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="bg-green-50 p-4 rounded-lg h-64 flex items-center justify-center">
+              <p className="text-gray-500">No daily download data available</p>
+            </div>
+          )}
+          <p className="text-sm text-gray-500 mt-3 text-center">
+            {analytics.downloadsByDay.length > 0
+              ? 'Last 7 days of downloads'
+              : 'Download tracking data will appear here once available'}
+          </p>
         </div>
       )}
     </div>

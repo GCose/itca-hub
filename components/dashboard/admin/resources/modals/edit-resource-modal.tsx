@@ -16,17 +16,23 @@ const ResourceEditModal = ({ resource, isOpen, onClose, onSave }: ResourceEditMo
   const [department, setDepartment] = useState(resource.department || '');
   const [visibility, setVisibility] = useState(resource.visibility);
   const [category, setCategory] = useState(resource.category);
+  const [academicLevel, setAcademicLevel] = useState(resource.academicLevel || 'all');
   const [isSaving, setIsSaving] = useState(false);
 
-  // Available categories
+  // Available categories (API format)
   const categories = [
-    'Lecture Notes',
-    'Assignments',
-    'Past Papers',
-    'Tutorials',
-    'Textbooks',
-    'Research Papers',
+    'lecture_note',
+    'assignment',
+    'past_papers',
+    'tutorial',
+    'textbook',
+    'research_papers',
   ];
+
+  // Function to format category display name
+  const formatCategoryName = (category: string) => {
+    return category.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
+  };
 
   // Handle updated resource save
   const handleSave = async () => {
@@ -44,6 +50,7 @@ const ResourceEditModal = ({ resource, isOpen, onClose, onSave }: ResourceEditMo
         department,
         visibility: visibility as 'all' | 'admin',
         category,
+        academicLevel: academicLevel as 'undergraduate' | 'postgraduate' | 'all',
       };
 
       await onSave(updatedResource);
@@ -167,8 +174,8 @@ const ResourceEditModal = ({ resource, isOpen, onClose, onSave }: ResourceEditMo
                       className="w-full rounded-lg border border-gray-200 p-2.5 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
                     >
                       <option value="">Select Department</option>
-                      <option value="computer-science">Computer Science</option>
-                      <option value="information-systems">Information Systems</option>
+                      <option value="computer_science">Computer Science</option>
+                      <option value="information_systems">Information Systems</option>
                       <option value="telecommunications">Telecommunications</option>
                     </select>
                   </div>
@@ -189,7 +196,7 @@ const ResourceEditModal = ({ resource, isOpen, onClose, onSave }: ResourceEditMo
                       className="w-full rounded-lg border border-gray-200 p-2.5 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
                       required
                     >
-                      <option value="all">All Users</option>{' '}
+                      <option value="all">All Users</option>
                       <option value="admin">Admin Only</option>
                     </select>
                   </div>
@@ -197,29 +204,56 @@ const ResourceEditModal = ({ resource, isOpen, onClose, onSave }: ResourceEditMo
                 </div>
                 {/*==================== End of Department and Visibility Container ====================*/}
 
-                {/*==================== Category (replaced Status) ====================*/}
-                <div className="mb-4">
-                  <label
-                    htmlFor="category"
-                    className="block text-sm font-medium text-gray-700 mb-1"
-                  >
-                    Category <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    id="category"
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value)}
-                    className="w-full rounded-lg border border-gray-200 p-2.5 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
-                    required
-                  >
-                    {categories.map((cat) => (
-                      <option key={cat} value={cat}>
-                        {cat}
-                      </option>
-                    ))}
-                  </select>
+                {/*==================== Category and Academic Level Container ====================*/}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                  {/*==================== Category ====================*/}
+                  <div>
+                    <label
+                      htmlFor="category"
+                      className="block text-sm font-medium text-gray-700 mb-1"
+                    >
+                      Category <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      id="category"
+                      value={category}
+                      onChange={(e) => setCategory(e.target.value)}
+                      className="w-full rounded-lg border border-gray-200 p-2.5 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+                      required
+                    >
+                      {categories.map((cat) => (
+                        <option key={cat} value={cat}>
+                          {formatCategoryName(cat)}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  {/*==================== End of Category ====================*/}
+
+                  {/*==================== Academic Level ====================*/}
+                  <div>
+                    <label
+                      htmlFor="academicLevel"
+                      className="block text-sm font-medium text-gray-700 mb-1"
+                    >
+                      Academic Level
+                    </label>
+                    <select
+                      id="academicLevel"
+                      value={academicLevel}
+                      onChange={(e) =>
+                        setAcademicLevel(e.target.value as 'all' | 'undergraduate' | 'postgraduate')
+                      }
+                      className="w-full rounded-lg border border-gray-200 p-2.5 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+                    >
+                      <option value="all">All Levels</option>
+                      <option value="undergraduate">Undergraduate</option>
+                      <option value="postgraduate">Postgraduate</option>
+                    </select>
+                  </div>
+                  {/*==================== End of Academic Level ====================*/}
                 </div>
-                {/*==================== End of Category ====================*/}
+                {/*==================== End of Category and Academic Level Container ====================*/}
               </div>
               {/*==================== End of Form Content ====================*/}
 
