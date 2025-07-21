@@ -1,24 +1,20 @@
 import { useState, useMemo, useEffect, useCallback } from 'react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/router';
-import { Resource, UpdateResourcePayload } from '@/types';
-import { BASE_URL } from '@/utils/url';
-import useResourceAnalytics from './use-resource-analytics';
+import { Resource } from '@/types';
+import { ResourceAdapter } from '@/utils/resource-adapter';
+import { apiClient } from '@/utils/api';
 
 const useResourceTable = (
   resources: Resource[],
   token: string,
+  userRole: 'admin' | 'user',
   onRefresh: () => void,
   onDeleteResource: (resourceId: string) => Promise<boolean>,
   onDeleteMultiple: (resourceIds: string[]) => Promise<boolean>
 ) => {
   const router = useRouter();
 
-  const [searchTerm, setSearchTerm] = useState('');
-  const [department, setDepartment] = useState('all');
-  const [fileType, setFileType] = useState('all');
-  const [category, setCategory] = useState('all');
-  const [visibility, setVisibility] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedResource, setSelectedResource] = useState<Resource | null>(null);
   const [showAnalytics, setShowAnalytics] = useState(false);
@@ -28,16 +24,6 @@ const useResourceTable = (
   const [isDeleting, setIsDeleting] = useState(false);
   const [selectedResources, setSelectedResources] = useState<Record<string, boolean>>({});
   const itemsPerPage = 10;
-
-  const { trackResourceDownload } = useResourceAnalytics({ token });
-
-  const fileTypes = useMemo(() => {
-    return [...new Set(resources.map((resource) => resource.type))].sort();
-  }, [resources]);
-
-  const categories = useMemo(() => {
-    return [...new Set(resources.map((resource) => resource.category))].sort();
-  }, [resources]);
 
   const selectedCount = useMemo(
     () => Object.values(selectedResources).filter(Boolean).length,
@@ -54,39 +40,22 @@ const useResourceTable = (
     [selectedResources]
   );
 
-  const filteredResources = useMemo(() => {
-    return resources.filter((resource) => {
-      const matchesSearch =
-        resource.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        resource.description.toLowerCase().includes(searchTerm.toLowerCase());
-
-      const matchesDepartment = department === 'all' || resource.department === department;
-      const matchesType = fileType === 'all' || resource.type === fileType;
-      const matchesCategory = category === 'all' || resource.category === category;
-      const matchesVisibility = visibility === 'all' || resource.visibility === visibility;
-
-      return (
-        matchesSearch && matchesDepartment && matchesType && matchesCategory && matchesVisibility
-      );
-    });
-  }, [resources, searchTerm, department, fileType, category, visibility]);
-
   const currentItems = useMemo(() => {
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    return filteredResources.slice(indexOfFirstItem, indexOfLastItem);
-  }, [filteredResources, currentPage, itemsPerPage]);
+    return resources.slice(indexOfFirstItem, indexOfLastItem);
+  }, [resources, currentPage, itemsPerPage]);
 
-  const totalPages = Math.ceil(filteredResources.length / itemsPerPage);
+  const totalPages = Math.ceil(resources.length / itemsPerPage);
 
   const clearSelection = useCallback(() => {
     setSelectedResources({});
   }, []);
 
-  // Reset selection when page changes or filters change
   useEffect(() => {
     clearSelection();
-  }, [currentPage, searchTerm, department, fileType, category, visibility, clearSelection]);
+    setCurrentPage(1);
+  }, [resources, clearSelection]);
 
   /**=======================================
    * Handle single row selection (toggle)
@@ -97,7 +66,6 @@ const useResourceTable = (
     setSelectedResources((prev) => {
       const newSelection = { ...prev };
 
-      // If multi-select key is not pressed, clear other selections
       if (!isMultiSelectKey) {
         if (prev[resource.resourceId] && Object.values(prev).filter(Boolean).length === 1) {
           newSelection[resource.resourceId] = false;
@@ -109,7 +77,6 @@ const useResourceTable = (
         });
       }
 
-      // Toggle the clicked resource
       newSelection[resource.resourceId] = !prev[resource.resourceId];
       return newSelection;
     });
@@ -134,72 +101,19 @@ const useResourceTable = (
    ====================================================*/
   const handleDoubleClick = useCallback(
     (resource: Resource) => {
-      // Clear any selections first
       clearSelection();
-      router.push(`/admin/resources/view/${resource.resourceId}`);
+      const viewPath =
+        userRole === 'admin'
+          ? `/admin/resources/view/${resource.resourceId}`
+          : `/student/resources/view/${resource.resourceId}`;
+      router.push(viewPath);
     },
-    [router, clearSelection]
+    [router, clearSelection, userRole]
   );
 
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
   const nextPage = () => setCurrentPage((prev) => Math.min(prev + 1, totalPages));
   const prevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
-
-  /**====================
-   * Download resource
-   ====================*/
-  const handleDownload = async (resource: Resource, e?: React.MouseEvent) => {
-    if (e) e.stopPropagation();
-
-    try {
-      // Track the download first
-      await trackResourceDownload(resource.resourceId, token);
-
-      const fileName = resource.fileName;
-
-      // Try to get the proper download link from Jeetix
-      const jeetixResponse = await fetch(
-        `https://jeetix-file-service.onrender.com/api/storage/file/${encodeURIComponent(fileName)}`
-      );
-
-      if (jeetixResponse.ok) {
-        const jeetixData = await jeetixResponse.json();
-        if (jeetixData.status === 'success' && jeetixData.data.metadata?.mediaLink) {
-          // Use the mediaLink for direct download
-          const link = document.createElement('a');
-          link.href = jeetixData.data.metadata.mediaLink;
-          link.download = resource.title || fileName;
-          link.style.display = 'none';
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-
-          toast.success('Download started', {
-            description: `${resource.title} is being downloaded.`,
-          });
-          return;
-        }
-      }
-
-      // Fallback to direct URL
-      const link = document.createElement('a');
-      link.href = resource.fileUrl;
-      link.download = resource.title || fileName;
-      link.style.display = 'none';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-
-      toast.success('Download started', {
-        description: `${resource.title} is being downloaded.`,
-      });
-    } catch (error) {
-      console.error('Error downloading resource:', error);
-      toast.error('Download failed', {
-        description: 'Please try again or contact support.',
-      });
-    }
-  };
 
   const handleViewAnalytics = (resource: Resource, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
@@ -250,36 +164,22 @@ const useResourceTable = (
     }
   };
 
+  /**=========================================
+   * Save resource changes using apiClient
+   =========================================*/
   const handleSaveResource = async (updatedResource: Resource) => {
     setIsEditing(true);
     try {
-      const updatePayload: UpdateResourcePayload = {
-        title: updatedResource.title,
-        description: updatedResource.description,
-        category: updatedResource.category,
-        visibility: updatedResource.visibility,
-        academicLevel: updatedResource.academicLevel,
-        department: updatedResource.department,
-      };
+      const updatePayload = ResourceAdapter.toUpdatePayload(updatedResource);
 
-      const response = await fetch(`${BASE_URL}/resources/${updatedResource.resourceId}`, {
-        method: 'PATCH',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updatePayload),
-      });
+      const response = await apiClient.updateResource(
+        updatedResource.resourceId,
+        updatePayload,
+        token
+      );
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || 'Failed to update resource');
-      }
-
-      const data = await response.json();
-
-      if (data.status !== 'success') {
-        throw new Error(data.message || 'Failed to update resource');
+      if (response.status !== 'success') {
+        throw new Error(response.message || 'Failed to update resource');
       }
 
       toast.success('Resource updated successfully');
@@ -306,25 +206,7 @@ const useResourceTable = (
     return { startPage, endPage };
   };
 
-  const clearFilters = () => {
-    setSearchTerm('');
-    setDepartment('all');
-    setFileType('all');
-    setCategory('all');
-    setVisibility('all');
-  };
-
   return {
-    searchTerm,
-    setSearchTerm,
-    department,
-    setDepartment,
-    fileType,
-    setFileType,
-    category,
-    setCategory,
-    visibility,
-    setVisibility,
     currentPage,
     setCurrentPage,
     selectedResource,
@@ -338,12 +220,8 @@ const useResourceTable = (
     isDeleting,
     isEditing,
     itemsPerPage,
-    fileTypes,
-    categories,
-    filteredResources,
     currentItems,
     totalPages,
-    handleDownload,
     handleViewAnalytics,
     handleEditResource,
     handleDeleteResource,
@@ -354,7 +232,6 @@ const useResourceTable = (
     paginate,
     nextPage,
     prevPage,
-    clearFilters,
     selectedResources,
     selectedCount,
     hasMultipleSelected,

@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @plugin "tailwindcss-animate";
 
@@ -10,7 +10,7 @@
 :root {
   /*=== Colors ===*/
   --color-body: #cacaca;
-  --hover-color: gold;
+  --hover-color: #f59e0b;
   --white-alpha-8: hsla(124, 100%, 7%, 0.078);
 }
 
@@ -154,6 +154,12 @@ body {
 
 .link-active {
   color: #f59e0b;
+}
+
+input[type='password']::-ms-reveal,
+input[type='password']::-ms-clear,
+input[type='password']::-webkit-credentials-auto-fill-button {
+  display: none !important;
 }
 
 @layer base {

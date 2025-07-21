@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { FileText, Download, ExternalLink, Loader } from 'lucide-react';
-import { downloadResource } from '@/utils/download';
-import { toast } from 'sonner';
+import useDownload from '@/hooks/use-download';
 
 interface GenericViewerProps {
   fileUrl: string;
@@ -17,24 +16,11 @@ const GenericViewer: React.FC<GenericViewerProps> = ({
   fileType = 'unknown',
   resourceId,
 }) => {
-  const [isDownloading, setIsDownloading] = useState(false);
+  const { downloadResource, isDownloading } = useDownload();
 
   const handleDownload = async () => {
-    setIsDownloading(true);
     const fileName = fileUrl.split('/').pop() || title;
-
-    try {
-      const success = await downloadResource(fileUrl, fileName, title);
-      if (success) {
-        toast.success('Download started', { description: `${title} is being downloaded.` });
-      } else {
-        toast.error('Download failed', { description: 'Please try again.' });
-      }
-    } catch {
-      toast.error('Download failed', { description: 'Please try again.' });
-    } finally {
-      setIsDownloading(false);
-    }
+    await downloadResource(fileUrl, fileName, title);
   };
 
   const handleOpenInNewTab = () => {

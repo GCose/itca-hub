@@ -53,7 +53,7 @@ const StudentEventsPage = ({ userData }: StudentEventsPageProps) => {
             <div className="mt-4 sm:mt-0">
               <button
                 onClick={handleRefresh}
-                className="inline-flex items-center rounded-lg bg-gray-100 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-blue-500 focus:ring-offset-2"
+                className="inline-flex items-center rounded-lg bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-blue-500 focus:ring-offset-2"
               >
                 <RefreshCw className="h-4 w-4 mr-2" />
                 Refresh

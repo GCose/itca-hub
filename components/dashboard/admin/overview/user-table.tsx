@@ -88,7 +88,7 @@ const UserTable = ({ limit, users = [], isLoading = false }: UserTableProps) => 
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 bg-white">
-              {[...Array(5)].map((_, index) => (
+              {[...Array(15)].map((_, index) => (
                 <tr key={index}>
                   <td className="whitespace-nowrap px-6 py-4">
                     <div className="flex items-center">

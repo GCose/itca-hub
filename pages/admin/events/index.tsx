@@ -140,8 +140,7 @@ const AdminEventsPage = ({ userData }: AdminEventsPageProps) => {
   useEffect(() => {
     fetchEvents();
   }, [fetchEvents]);
-
-  // Handle refresh
+  
   const handleRefresh = () => {
     refreshEvents();
     fetchEvents();

@@ -15,7 +15,7 @@ const DashboardLayout = ({ children, title = 'Dashboard' }: DashboardLayoutProps
   return (
     <>
       <Head>
-        <title>{`ITCA Hub | ${title}`}</title>
+        <title>ITCA Hub | ${title}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/images/logo.jpg" />
       </Head>
@@ -64,9 +64,9 @@ const DashboardLayout = ({ children, title = 'Dashboard' }: DashboardLayoutProps
 
           <main className="flex-1 overflow-y-auto w-full overflow-x-hidden px-4 py-12 min-[968px]:px-9 min-[968px]:pr-7 min-[968px]:py-9">
             <motion.div
-              transition={{ duration: 1 }}
+              transition={{ duration: 0.3 }}
               animate={{ opacity: 1, y: 0 }}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 10 }}
             >
               {children}
             </motion.div>
