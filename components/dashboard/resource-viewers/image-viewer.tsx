@@ -1,5 +1,5 @@
-import React from "react";
-import Image from "next/image";
+import React from 'react';
+import Image from 'next/image';
 
 interface ImageViewerProps {
   fileUrl: string;
@@ -8,7 +8,6 @@ interface ImageViewerProps {
 }
 
 const ImageViewer: React.FC<ImageViewerProps> = ({ fileUrl, title }) => {
-  // State to handle image loading
   const [isLoading, setIsLoading] = React.useState(true);
 
   return (
@@ -27,7 +26,7 @@ const ImageViewer: React.FC<ImageViewerProps> = ({ fileUrl, title }) => {
             alt={title}
             unoptimized
             src={fileUrl}
-            style={{ objectFit: "contain" }}
+            style={{ objectFit: 'contain' }}
             onLoad={() => setIsLoading(false)}
             onError={() => setIsLoading(false)}
           />

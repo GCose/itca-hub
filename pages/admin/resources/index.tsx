@@ -1,12 +1,16 @@
-import { useEffect } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { Upload, Trash2 } from 'lucide-react';
 import Link from 'next/link';
-import ResourceTable from '@/components/dashboard/admin/resources/table/resource-table';
 import DashboardLayout from '@/components/dashboard/layout/dashboard-layout';
 import { UserAuth } from '@/types';
 import { isLoggedIn } from '@/utils/auth';
 import { NextApiRequest } from 'next';
 import { useResources } from '@/hooks/admin/resources/use-resources';
+import DashboardPageHeader from '@/components/dashboard/layout/dashboard-page-header';
+import ResourceTable from '@/components/dashboard/table/resource-table';
+import ResourceFilters from '@/components/dashboard/table/resource-table-filters';
+import ResourceFilterSkeleton from '@/components/dashboard/table/skeleton/resource-filter-skeleton';
+import ResourceTableSkeleton from '@/components/dashboard/table/skeleton/resource-table-skeleton';
 
 interface AdminResourcesPageProps {
   userData: UserAuth;
@@ -15,6 +19,57 @@ interface AdminResourcesPageProps {
 const AdminResourcesPage = ({ userData }: AdminResourcesPageProps) => {
   const { resources, isLoading, isError, fetchResources, moveToRecycleBin, batchMoveToRecycleBin } =
     useResources({ token: userData.token });
+
+  /**===========================
+   * Filter state management.
+   ===========================*/
+  const [searchTerm, setSearchTerm] = useState('');
+  const [department, setDepartment] = useState('all');
+  const [fileType, setFileType] = useState('all');
+  const [category, setCategory] = useState('all');
+  const [visibility, setVisibility] = useState('all');
+
+  /**=========================================
+   * Generate filter options from resources.
+   =========================================*/
+  const fileTypes = useMemo(() => {
+    return [...new Set(resources.map((resource) => resource.type))].sort();
+  }, [resources]);
+
+  const categories = useMemo(() => {
+    return [...new Set(resources.map((resource) => resource.category))].sort();
+  }, [resources]);
+
+  /**===============================================
+   * Filter resources based on current filters.
+   ===============================================*/
+  const filteredResources = useMemo(() => {
+    return resources.filter((resource) => {
+      const matchesSearch =
+        resource.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        resource.description.toLowerCase().includes(searchTerm.toLowerCase());
+
+      const matchesDepartment = department === 'all' || resource.department === department;
+      const matchesType = fileType === 'all' || resource.type === fileType;
+      const matchesCategory = category === 'all' || resource.category === category;
+      const matchesVisibility = visibility === 'all' || resource.visibility === visibility;
+
+      return (
+        matchesSearch && matchesDepartment && matchesType && matchesCategory && matchesVisibility
+      );
+    });
+  }, [resources, searchTerm, department, fileType, category, visibility]);
+
+  /**=====================
+   * Clear all filters.
+   =====================*/
+  const clearFilters = () => {
+    setSearchTerm('');
+    setDepartment('all');
+    setFileType('all');
+    setCategory('all');
+    setVisibility('all');
+  };
 
   /**===============================================
    * Fetches resources when the component mounts.
@@ -62,56 +117,81 @@ const AdminResourcesPage = ({ userData }: AdminResourcesPageProps) => {
       <div className="mb-8">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
           {/*==================== Page Title Header ====================*/}
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-2 flex items-center">
-              <span className="text-blue-700 mr-2">Resource</span>
-              <span className="text-amber-500">Management</span>
-              <span className="ml-3 relative">
-                <span className="absolute -top-1 -right-1 flex h-3 w-3">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
-                </span>
-              </span>
-            </h1>
-            <p className="text-gray-600">Upload and manage educational resources and materials</p>
-          </div>
+          <DashboardPageHeader
+            title="Resource"
+            subtitle="Management"
+            description="Upload and manage educational resources and materials"
+            actions={
+              <div className="flex flex-col gap-4 w-full md:flex-row sm:mt-0 space-x-3">
+                {/*==================== Recycle Bin Button ====================*/}
+                <Link
+                  href="/admin/resources/recycle-bin"
+                  className="inline-flex items-center rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                >
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Recycle Bin
+                </Link>
+                {/*==================== End of Recycle Bin Button ====================*/}
+
+                {/*==================== Upload Resource Button ====================*/}
+                <Link
+                  href="/admin/resources/upload"
+                  className="group inline-flex items-center rounded-lg bg-gradient-to-r from-blue-700 to-blue-600 px-4 py-2 text-sm font-medium text-white hover:from-blue-800 hover:to-blue-700 focus:outline-none focus:ring-blue-500 focus:ring-offset-2 transition-all duration-300 shadow-md hover:shadow-lg"
+                >
+                  <Upload className="mr-2 h-4 w-4 transition-transform group-hover:translate-y-[-2px]" />
+                  Upload Resource
+                </Link>
+                {/*==================== End of Upload Resource Button ====================*/}
+              </div>
+            }
+          />
           {/*==================== End of Page Title Header ====================*/}
-
-          <div className="mt-4 sm:mt-0 flex space-x-3">
-            {/*==================== Recycle Bin Link ====================*/}
-            <Link
-              href="/admin/resources/recycle-bin"
-              className="inline-flex items-center rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-            >
-              <Trash2 className="mr-2 h-4 w-4" />
-              Recycle Bin
-            </Link>
-            {/*==================== End of Recycle Bin Link ====================*/}
-
-            {/*==================== Upload Resource Link ====================*/}
-            <Link
-              href="/admin/resources/upload"
-              className="group inline-flex items-center rounded-lg bg-gradient-to-r from-blue-700 to-blue-600 px-4 py-2 text-sm font-medium text-white hover:from-blue-800 hover:to-blue-700 focus:outline-none focus:ring-blue-500 focus:ring-offset-2 transition-all duration-300 shadow-md hover:shadow-lg"
-            >
-              <Upload className="mr-2 h-4 w-4 transition-transform group-hover:translate-y-[-2px]" />
-              Upload Resource
-            </Link>
-            {/*==================== End of Upload Resource Link ====================*/}
-          </div>
         </div>
       </div>
 
-      {/*==================== Resource Table ====================*/}
-      <ResourceTable
-        isError={isError}
-        resources={resources}
-        isLoading={isLoading}
-        token={userData.token}
-        onDeleteResource={handleDeleteResource}
-        onDeleteMultiple={handleDeleteMultiple}
-        onRefresh={() => fetchResources(false)}
-      />
-      {/*==================== End of Resource Table ====================*/}
+      {/*==================== Page Content ====================*/}
+      {isLoading ? (
+        <>
+          <ResourceFilterSkeleton />
+          <ResourceTableSkeleton />
+        </>
+      ) : (
+        <>
+          {/*==================== Resource Filters ====================*/}
+          <ResourceFilters
+            category={category}
+            fileType={fileType}
+            fileTypes={fileTypes}
+            department={department}
+            visibility={visibility}
+            searchTerm={searchTerm}
+            categories={categories}
+            setCategory={setCategory}
+            setFileType={setFileType}
+            clearFilters={clearFilters}
+            setDepartment={setDepartment}
+            setSearchTerm={setSearchTerm}
+            setVisibility={setVisibility}
+          />
+          {/*==================== End of Resource Filters ====================*/}
+
+          {/*==================== Resource Table ====================*/}
+          <ResourceTable
+            userRole="admin"
+            isError={isError}
+            isLoading={false}
+            token={userData.token}
+            searchTerm={searchTerm}
+            allResources={resources}
+            onClearFilters={clearFilters}
+            resources={filteredResources}
+            onDeleteResource={handleDeleteResource}
+            onDeleteMultiple={handleDeleteMultiple}
+            onRefresh={() => fetchResources(false)}
+          />
+          {/*==================== End of Resource Table ====================*/}
+        </>
+      )}
     </DashboardLayout>
   );
 };

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { FileVideo, Download } from 'lucide-react';
-import { downloadResource } from '@/utils/download';
-import { toast } from 'sonner';
+import useDownload from '@/hooks/use-download';
 
 interface VideoViewerProps {
   fileUrl: string;
@@ -12,7 +11,7 @@ interface VideoViewerProps {
 const VideoViewer: React.FC<VideoViewerProps> = ({ fileUrl, title }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [playbackError, setPlaybackError] = useState(false);
-  const [isDownloading, setIsDownloading] = useState(false);
+  const { downloadResource, isDownloading } = useDownload();
 
   const isMkvFile = fileUrl.toLowerCase().endsWith('.mkv');
   const videoType = isMkvFile
@@ -20,21 +19,8 @@ const VideoViewer: React.FC<VideoViewerProps> = ({ fileUrl, title }) => {
     : `video/${fileUrl.split('.').pop()?.toLowerCase()}`;
 
   const handleDownload = async () => {
-    setIsDownloading(true);
     const fileName = fileUrl.split('/').pop() || title;
-
-    try {
-      const success = await downloadResource(fileUrl, fileName, title);
-      if (success) {
-        toast.success('Download started', { description: `${title} is being downloaded.` });
-      } else {
-        toast.error('Download failed', { description: 'Please try again.' });
-      }
-    } catch {
-      toast.error('Download failed', { description: 'Please try again.' });
-    } finally {
-      setIsDownloading(false);
-    }
+    await downloadResource(fileUrl, fileName, title);
   };
 
   return (

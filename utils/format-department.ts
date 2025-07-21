@@ -1,3 +1,8 @@
+/**========================================================
+ * Function that returns the correct department format.
+ * @param departmentId
+ * @returns
+ ========================================================*/
 const formatDepartment = (departmentId: string | undefined): string => {
   if (!departmentId) return 'Uncategorized';
 

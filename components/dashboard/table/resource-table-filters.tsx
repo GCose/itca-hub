@@ -25,6 +25,9 @@ const ResourceFilters = ({
     return category.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
   };
 
+  // Determine if visibility filter should be shown (only if props are provided)
+  const showVisibilityFilter = visibility !== undefined && setVisibility !== undefined;
+
   return (
     <div className="mb-6 bg-white rounded-xl p-4">
       <div className="flex items-center justify-between mb-4">
@@ -67,7 +70,9 @@ const ResourceFilters = ({
       {/*==================== End of Search Box ====================*/}
 
       {/*==================== Filter Grid ====================*/}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 pt-2">
+      <div
+        className={`grid grid-cols-1 ${showVisibilityFilter ? 'md:grid-cols-4' : 'md:grid-cols-3'} gap-4 pt-2`}
+      >
         {/*==================== Department Filter ====================*/}
         <div>
           <label className="flex items-center text-sm text-gray-700 mb-2">
@@ -135,23 +140,25 @@ const ResourceFilters = ({
         </div>
         {/*==================== End of Category Filter ====================*/}
 
-        {/*==================== Visibility Filter ====================*/}
-        <div>
-          <label className="flex items-center text-sm text-gray-700 mb-2">
-            <div className="bg-orange-100/70 p-1 rounded-full mr-2">
-              <Eye className="h-5 w-5 text-orange-600" />
-            </div>
-            Visibility
-          </label>
-          <select
-            value={visibility}
-            onChange={(e) => setVisibility(e.target.value)}
-            className="w-full rounded-lg bg-gray-100/70 py-2.5 pl-3 pr-8 text-sm text-gray-500 focus:bg-slate-100 focus:outline-none transition-colors"
-          >
-            <option value="all">All Users</option>
-            <option value="admin">Admin Only</option>
-          </select>
-        </div>
+        {/*==================== Visibility Filter (Admin Only) ====================*/}
+        {showVisibilityFilter && (
+          <div>
+            <label className="flex items-center text-sm text-gray-700 mb-2">
+              <div className="bg-orange-100/70 p-1 rounded-full mr-2">
+                <Eye className="h-5 w-5 text-orange-600" />
+              </div>
+              Visibility
+            </label>
+            <select
+              value={visibility}
+              onChange={(e) => setVisibility!(e.target.value)}
+              className="w-full rounded-lg bg-gray-100/70 py-2.5 pl-3 pr-8 text-sm text-gray-500 focus:bg-slate-100 focus:outline-none transition-colors"
+            >
+              <option value="all">All Users</option>
+              <option value="admin">Admin Only</option>
+            </select>
+          </div>
+        )}
         {/*==================== End of Visibility Filter ====================*/}
       </div>
       {/*==================== End of Filter Grid ====================*/}

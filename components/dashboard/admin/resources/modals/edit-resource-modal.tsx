@@ -16,7 +16,7 @@ const ResourceEditModal = ({ resource, isOpen, onClose, onSave }: ResourceEditMo
   const [department, setDepartment] = useState(resource.department || '');
   const [visibility, setVisibility] = useState(resource.visibility);
   const [category, setCategory] = useState(resource.category);
-  const [academicLevel, setAcademicLevel] = useState(resource.academicLevel || 'all');
+  const [academicLevel] = useState(resource.academicLevel || 'all');
   const [isSaving, setIsSaving] = useState(false);
 
   // Available categories (API format)
@@ -229,29 +229,6 @@ const ResourceEditModal = ({ resource, isOpen, onClose, onSave }: ResourceEditMo
                     </select>
                   </div>
                   {/*==================== End of Category ====================*/}
-
-                  {/*==================== Academic Level ====================*/}
-                  <div>
-                    <label
-                      htmlFor="academicLevel"
-                      className="block text-sm font-medium text-gray-700 mb-1"
-                    >
-                      Academic Level
-                    </label>
-                    <select
-                      id="academicLevel"
-                      value={academicLevel}
-                      onChange={(e) =>
-                        setAcademicLevel(e.target.value as 'all' | 'undergraduate' | 'postgraduate')
-                      }
-                      className="w-full rounded-lg border border-gray-200 p-2.5 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
-                    >
-                      <option value="all">All Levels</option>
-                      <option value="undergraduate">Undergraduate</option>
-                      <option value="postgraduate">Postgraduate</option>
-                    </select>
-                  </div>
-                  {/*==================== End of Academic Level ====================*/}
                 </div>
                 {/*==================== End of Category and Academic Level Container ====================*/}
               </div>

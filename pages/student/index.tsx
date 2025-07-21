@@ -3,12 +3,11 @@ import StatsCard from '@/components/dashboard/student/stats-card';
 import { BookOpen, Calendar, FileText, Award } from 'lucide-react';
 import DashboardLayout from '@/components/dashboard/layout/dashboard-layout';
 import UpcomingEvents from '@/components/dashboard/student/upcoming-events';
-import ResourceList from '@/components/dashboard/student/resource/resource-list';
 import { NextApiRequest } from 'next';
 import { isLoggedIn } from '@/utils/auth';
 import { UserAuth } from '@/types';
+import ResourceList from '@/components/dashboard/student/resource-list';
 
-// Types for student dashboard data
 interface StudentDashboardData {
   coursesEnrolled: number;
   eventsRegistered: number;

@@ -13,7 +13,8 @@ import TextViewer from '@/components/dashboard/resource-viewers/text-viewer';
 import VideoViewer from '@/components/dashboard/resource-viewers/video-viewer';
 import useResourceAnalytics from '@/hooks/admin/resources/use-resource-analytics';
 import useResourceViewer from '@/hooks/admin/resources/use-resource-viewer';
-import formatDepartment from '@/utils/admin/format-department';
+import useDownload from '@/hooks/use-download';
+import formatDepartment from '@/utils/format-department';
 
 interface ResourceViewPageProps {
   userData: UserAuth;
@@ -29,18 +30,21 @@ const ResourceViewPage = ({ userData }: ResourceViewPageProps) => {
   });
 
   const { trackResourceDownload } = useResourceAnalytics({ token: userData.token });
+  const { downloadResource, isDownloading } = useDownload();
+
+  /**=======================================================================
+   * Formats category name by replacing underscores and capitalizing words
+   =======================================================================*/
+  const formatCategoryName = (category: string) => {
+    return category.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
+  };
 
   const handleDownload = async () => {
     if (!resource) return;
 
     try {
       await trackResourceDownload(resource.resourceId, userData.token);
-      const link = document.createElement('a');
-      link.href = resource.fileUrl;
-      link.download = resource.fileName || resource.title || 'resource';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      await downloadResource(resource.fileUrl, resource.fileName, resource.title);
     } catch (error) {
       console.error('Error downloading resource:', error);
     }
@@ -108,13 +112,12 @@ const ResourceViewPage = ({ userData }: ResourceViewPageProps) => {
     <DashboardLayout title={resource?.title || 'Resource Viewer'}>
       <div className="mb-8">
         <div className="flex items-center">
-          <Link
-            target="_parent"
-            href="/admin/resources"
+          <button
+            onClick={() => router.back()}
             className="mr-3 inline-flex items-center rounded-lg bg-white p-2 text-sm text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-gray-500 focus:ring-offset-2 transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />
-          </Link>
+          </button>
           <div>
             <h1 className="text-2xl font-bold text-gray-900 mb-2 flex items-center">
               <span className="text-blue-700 mr-2">Resource</span>
@@ -169,17 +172,27 @@ const ResourceViewPage = ({ userData }: ResourceViewPageProps) => {
 
                 <button
                   onClick={handleDownload}
-                  className="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-blue-500 focus:ring-offset-2"
+                  disabled={isDownloading}
+                  className="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
                 >
-                  <Download className="mr-2 h-4 w-4" />
-                  Download
+                  {isDownloading ? (
+                    <>
+                      <Loader className="mr-2 h-4 w-4 animate-spin" />
+                      Downloading...
+                    </>
+                  ) : (
+                    <>
+                      <Download className="mr-2 h-4 w-4" />
+                      Download
+                    </>
+                  )}
                 </button>
               </div>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
                 <div>
                   <p className="text-xs text-gray-500">CATEGORY</p>
-                  <p className="text-sm font-medium">{resource.category}</p>
+                  <p className="text-sm font-medium">{formatCategoryName(resource.category)}</p>
                 </div>
                 <div>
                   <p className="text-xs text-gray-500">DEPARTMENT</p>

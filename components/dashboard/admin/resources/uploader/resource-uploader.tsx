@@ -21,6 +21,7 @@ const ResourceUploader = ({ token, onUploadComplete, onError }: ResourceUploader
     description,
     category,
     isUploading,
+    uploadState,
     fileInputRef,
     categories,
     handleFileChange,
@@ -36,8 +37,7 @@ const ResourceUploader = ({ token, onUploadComplete, onError }: ResourceUploader
   } = useResourceUploader({ token, onUploadComplete, onError });
 
   /**==================================================================================
-   * Get the appropriate file icon based on the file type (mime type).
-   * @returns JSX.Element - Returns the appropriate file icon based on the file type.
+   * Get the appropriate file icon based on the file type (mime type)
    ==================================================================================*/
   const getFileIcon = () => {
     if (!file) return <Upload className="h-6 w-6 text-gray-400" />;
@@ -62,15 +62,48 @@ const ResourceUploader = ({ token, onUploadComplete, onError }: ResourceUploader
   };
 
   /**===========================================================================================
-   * Formats the category name by replacing underscores with spaces and capitalizing each word.
-   * @param category - The category string to format.
-   * @returns Formatted category name with spaces and capitalized words.
+   * Formats the category name by replacing underscores with spaces and capitalizing each word
    ===========================================================================================*/
   const formatCategoryName = (category: string) => {
     return category.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
   };
 
-  // Check if form is valid
+  /**=======================================================================
+   * Returns appropriate button content based on current upload state
+   =======================================================================*/
+  const getButtonContent = () => {
+    switch (uploadState) {
+      case 'validating':
+        return (
+          <>
+            <Loader className="mr-2 h-4 w-4 animate-spin" />
+            Validating...
+          </>
+        );
+      case 'uploading':
+        return (
+          <>
+            <Loader className="mr-2 h-4 w-4 animate-spin" />
+            Uploading...
+          </>
+        );
+      case 'creating':
+        return (
+          <>
+            <Loader className="mr-2 h-4 w-4 animate-spin" />
+            Creating...
+          </>
+        );
+      default:
+        return (
+          <>
+            <Upload className="mr-2 h-4 w-4" />
+            Upload Resource
+          </>
+        );
+    }
+  };
+
   const isFormValid = file && title.trim() && description.trim() && category && department;
 
   return (
@@ -217,17 +250,7 @@ const ResourceUploader = ({ token, onUploadComplete, onError }: ResourceUploader
             disabled={isUploading || !isFormValid}
             className="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 text-md font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-offset-2 disabled:opacity-50"
           >
-            {isUploading ? (
-              <>
-                <Loader className="mr-2 h-4 w-4 animate-spin" />
-                Uploading...
-              </>
-            ) : (
-              <>
-                <Upload className="mr-2 h-4 w-4" />
-                Upload Resource
-              </>
-            )}
+            {getButtonContent()}
           </button>
         </div>
         {/*==================== End of Submit Button ====================*/}

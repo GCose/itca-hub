@@ -8,13 +8,13 @@ import {
   Users,
   Calendar,
   FileText,
-  Settings,
   HelpCircle,
   LogOut,
   User,
   BarChart2,
   X,
   LayoutDashboardIcon,
+  User2Icon,
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -61,9 +61,9 @@ const Sidebar = ({ open, setOpen }: SidebarProps) => {
       icon: <BarChart2 className="h-5 w-5" />,
     },
     {
-      name: 'Settings',
-      href: '/admin/settings',
-      icon: <Settings className="h-5 w-5" />,
+      name: 'Profile',
+      href: '/admin/profile',
+      icon: <User2Icon className="h-5 w-5" />,
     },
   ];
 

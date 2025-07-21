@@ -1,16 +1,6 @@
 import { useState, useCallback } from 'react';
-import {BASE_URL} from "@/utils/url"
-
-interface CreateEventData {
-  title: string;
-  description: string;
-  date: string;
-  time: string;
-  location: string;
-  capacity: number;
-  registrationRequired: boolean;
-  imageUrl?: string;
-}
+import { BASE_URL } from '@/utils/url';
+import { CreateEventData } from '@/types';
 
 export const useEvents = (token: string) => {
   const [isLoading, setIsLoading] = useState(false);
