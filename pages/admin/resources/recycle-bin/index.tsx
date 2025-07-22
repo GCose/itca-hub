@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { RefreshCw, ArrowLeft } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import DashboardLayout from '@/components/dashboard/layout/dashboard-layout';
 import { UserAuth } from '@/types';
@@ -88,16 +88,6 @@ const RecycleBinPage = ({ userData }: RecycleBinPageProps) => {
               permanently removed.
             </p>
           </div>
-        </div>
-
-        <div className="flex justify-end mt-4">
-          <button
-            onClick={() => fetchResources(true)}
-            className="inline-flex items-center rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-          >
-            <RefreshCw className="mr-2 h-4 w-4" />
-            Refresh
-          </button>
         </div>
       </div>
 
