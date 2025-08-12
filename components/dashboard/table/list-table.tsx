@@ -263,6 +263,7 @@ const ListTable = ({
             {/*==================== Pagination Controls ====================*/}
             <div className="flex items-center space-x-2">
               <button
+                title="button"
                 onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
                 disabled={currentPage === 1}
                 className="p-2 text-gray-400 hover:bg-gray-100 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
@@ -312,6 +313,7 @@ const ListTable = ({
               {/*==================== End of Page Numbers ====================*/}
 
               <button
+                title="button"
                 onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
                 disabled={currentPage === totalPages}
                 className="p-2 text-gray-400 hover:bg-gray-100 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"

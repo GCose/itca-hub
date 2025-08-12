@@ -140,7 +140,7 @@ const AdminEventsPage = ({ userData }: AdminEventsPageProps) => {
   useEffect(() => {
     fetchEvents();
   }, [fetchEvents]);
-  
+
   const handleRefresh = () => {
     refreshEvents();
     fetchEvents();
@@ -225,7 +225,7 @@ const AdminEventsPage = ({ userData }: AdminEventsPageProps) => {
   };
 
   return (
-    <DashboardLayout title="Event Management">
+    <DashboardLayout token={userData.token} title="Event Management">
       {/*==================== Page content ====================*/}
       <div className="relative z-10">
         {/*==================== Header Content ====================*/}

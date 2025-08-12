@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
   MoreHorizontal,
@@ -13,31 +13,45 @@ import {
 interface UserData {
   id: string;
   name: string;
-  email: string;
+  schoolEmail: string;
   role: string;
   status: 'active' | 'inactive' | 'pending';
   joinedDate: string;
+  createdAt: string;
+  firstName: string;
+  lastName: string;
 }
 
 interface UserTableProps {
-  limit?: number;
   users?: UserData[];
   isLoading?: boolean;
+  total?: number;
+  page: number;
+  setPage: Function;
+  limit: number;
+  setLimit: Function;
+  totalPages: number;
 }
 
-const UserTable = ({ limit, users = [], isLoading = false }: UserTableProps) => {
+const UserTable = ({
+  limit,
+  users,
+  isLoading = false,
+  total = users?.length,
+  page,
+  setPage,
+  totalPages,
+}: UserTableProps) => {
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = limit || 15;
 
   {
     /*==================== Calculate Pagination ====================*/
   }
-  const totalItems = users.length;
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
-  const currentUsers = users.slice(startIndex, endIndex);
+
+  const currentUsers = users || [];
+
+  const startIndex = (page - 1) * limit;
+  const endIndex = Math.min(startIndex + limit, total!);
   {
     /*==================== End of Calculate Pagination ====================*/
   }
@@ -123,7 +137,7 @@ const UserTable = ({ limit, users = [], isLoading = false }: UserTableProps) => 
   {
     /*==================== Empty State ====================*/
   }
-  if (users.length === 0) {
+  if (users?.length === 0) {
     return (
       <div className="rounded-2xl bg-white p-8 text-center">
         <User className="mx-auto h-12 w-12 text-gray-400" />
@@ -157,7 +171,7 @@ const UserTable = ({ limit, users = [], isLoading = false }: UserTableProps) => 
           </thead>
 
           <tbody className="bg-white">
-            {currentUsers.map((user) => (
+            {currentUsers?.map((user) => (
               <tr key={user.id} className="hover:bg-gray-200/60 even:bg-gray-100/80">
                 <td className="whitespace-nowrap px-6 py-4">
                   <div className="flex items-center">
@@ -165,14 +179,18 @@ const UserTable = ({ limit, users = [], isLoading = false }: UserTableProps) => 
                       <User className="h-5 w-5" />
                     </div>
                     <div className="ml-4">
-                      <div className="text-sm font-medium text-gray-900">{user.name}</div>
-                      <div className="text-sm text-gray-500">{user.email}</div>
+                      <div className="text-sm font-medium text-gray-900">
+                        {user.name || user.firstName + ' ' + user.lastName}
+                      </div>
+                      <div className="text-sm text-gray-500">{user.schoolEmail}</div>
                     </div>
                   </div>
                 </td>
-                <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">{user.role}</td>
                 <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                  {new Date(user.joinedDate).toLocaleDateString()}
+                  {user.role.toLowerCase() === 'user' ? 'Student' : 'Admin'}
+                </td>
+                <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                  {new Date(user.joinedDate || user.createdAt).toLocaleDateString()}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
                   <div className="relative inline-block text-left user-menu">
@@ -217,22 +235,23 @@ const UserTable = ({ limit, users = [], isLoading = false }: UserTableProps) => 
       </div>
 
       {/*==================== Pagination ====================*/}
-      {!limit && totalPages > 1 && (
+      {totalPages > 1 && (
         <div className="border-t border-gray-200 px-4 py-3 sm:px-6">
           <div className="flex items-center justify-between">
             {/*==================== Results Info ====================*/}
             <p className="text-sm text-gray-700">
               Showing <span className="font-medium">{startIndex + 1}</span> to{' '}
               <span className="font-medium">{endIndex}</span> of{' '}
-              <span className="font-medium">{totalItems}</span> results
+              <span className="font-medium">{total}</span> results
             </p>
             {/*==================== End of Results Info ====================*/}
 
             {/*==================== Pagination Controls ====================*/}
             <div className="flex items-center space-x-2">
               <button
-                onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
-                disabled={currentPage === 1}
+                title="button"
+                onClick={() => setPage((prev: number) => Math.max(1, prev - 1))}
+                disabled={page === 1}
                 className="p-2 text-gray-400 hover:bg-gray-100 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <ChevronLeft className="h-5 w-5" />
@@ -242,18 +261,18 @@ const UserTable = ({ limit, users = [], isLoading = false }: UserTableProps) => 
               <div className="flex space-x-1">
                 {[...Array(totalPages)].map((_, index) => {
                   const pageNumber = index + 1;
-                  const isCurrentPage = pageNumber === currentPage;
+                  const isCurrentPage = pageNumber === page;
 
                   // Show first page, last page, current page and neighbors
                   if (
                     pageNumber === 1 ||
                     pageNumber === totalPages ||
-                    (pageNumber >= currentPage - 1 && pageNumber <= currentPage + 1)
+                    (pageNumber >= page - 1 && pageNumber <= page + 1)
                   ) {
                     return (
                       <button
                         key={pageNumber}
-                        onClick={() => setCurrentPage(pageNumber)}
+                        onClick={() => setPage(pageNumber)}
                         className={`px-3 py-1 text-sm font-medium rounded-md ${
                           isCurrentPage
                             ? 'bg-blue-600 text-white'
@@ -266,7 +285,7 @@ const UserTable = ({ limit, users = [], isLoading = false }: UserTableProps) => 
                   }
 
                   // Show dots
-                  if (pageNumber === currentPage - 2 || pageNumber === currentPage + 2) {
+                  if (pageNumber === page - 2 || pageNumber === page + 2) {
                     return (
                       <span key={pageNumber} className="px-3 py-1 text-gray-700">
                         ...
@@ -280,8 +299,9 @@ const UserTable = ({ limit, users = [], isLoading = false }: UserTableProps) => 
               {/*==================== End of Page Numbers ====================*/}
 
               <button
-                onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
-                disabled={currentPage === totalPages}
+                title="button"
+                onClick={() => setPage((prev: number) => Math.min(totalPages, prev + 1))}
+                disabled={page === totalPages}
                 className="p-2 text-gray-400 hover:bg-gray-100 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <ChevronRight className="h-5 w-5" />

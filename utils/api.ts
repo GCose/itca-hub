@@ -53,8 +53,9 @@ class ApiClient {
     if (!response.ok) {
       throw new Error(`Failed to fetch resources: ${response.statusText}`);
     }
+    const responseJSON = response.json();
 
-    return response.json();
+    return responseJSON;
   }
 
   /**============================================================

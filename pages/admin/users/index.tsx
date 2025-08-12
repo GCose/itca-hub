@@ -1,16 +1,78 @@
-import { useState } from 'react';
-import { Search, Plus } from 'lucide-react';
-import Link from 'next/link';
+import { useCallback, useEffect, useState } from 'react';
+import { Search } from 'lucide-react';
 import DashboardLayout from '@/components/dashboard/layout/dashboard-layout';
 import UserTable from '@/components/dashboard/admin/overview/user-table';
 import { NextApiRequest } from 'next';
 import { isLoggedIn } from '@/utils/auth';
 import { UserAuth } from '@/types';
+import axios from 'axios';
+import { BASE_URL } from '@/utils/url';
+import useDebounce from '@/utils/debounce';
 
-const AdminUsersPage = () => {
+interface IAdminUsersPage {
+  userData: UserAuth;
+}
+
+const AdminUsersPage = ({ userData }: IAdminUsersPage) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [role, setRole] = useState('all');
   const [status, setStatus] = useState('all');
+  const [users, setUsers] = useState([]);
+  const [totalUsers, setTotalUsers] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const [limit, setLimit] = useState(15);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+
+  const debouncedSearchQuery = useDebounce(searchTerm, 500);
+
+  console.log(userData.token);
+
+  const fetchUsers = useCallback(
+    async (page: number, limit: number) => {
+      setIsLoading(true);
+
+      try {
+        const { data } = await axios.get(`${BASE_URL}/users`, {
+          params: {
+            page: Number(page),
+            limit: Number(limit),
+            ...(debouncedSearchQuery.trim() && { search: debouncedSearchQuery.trim() }),
+          },
+          headers: {
+            Authorization: `Bearer ${userData.token}`,
+          },
+        });
+
+        setUsers(data.data);
+        setTotalUsers(data.total);
+        setTotalPages(data.pagination.totalPages);
+      } catch {
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [userData.token, debouncedSearchQuery]
+  );
+
+  useEffect(() => {
+    fetchUsers(page, limit);
+  }, [fetchUsers, page, limit]);
+
+  // Reset to page 1 when search query changes
+  useEffect(() => {
+    if (page !== 1) {
+      setPage(1);
+    }
+  }, [debouncedSearchQuery, page]);
+
+  useEffect(() => {
+    console.log('Search term changed:', searchTerm);
+  }, [searchTerm]);
+
+  useEffect(() => {
+    console.log('Debounced search changed:', debouncedSearchQuery);
+  }, [debouncedSearchQuery]);
 
   return (
     <DashboardLayout title="User Management">
@@ -28,16 +90,6 @@ const AdminUsersPage = () => {
               </span>
             </h1>
             <p className="text-gray-600">Manage user accounts, roles, and permissions</p>
-          </div>
-
-          <div className="mt-4 sm:mt-0">
-            <Link
-              href="/admin/users/new"
-              className="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none  focus:ring-blue-500 focus:ring-offset-2"
-            >
-              <Plus className="mr-2 h-4 w-4" />
-              Add New User
-            </Link>
           </div>
         </div>
       </div>
@@ -90,7 +142,16 @@ const AdminUsersPage = () => {
 
       <div className="grid grid-cols-1 gap-6">
         <div className="overflow-hidden rounded-lg bg-white">
-          <UserTable users={[]} />
+          <UserTable
+            limit={limit}
+            setLimit={setLimit}
+            page={page}
+            setPage={setPage}
+            total={totalUsers}
+            users={users}
+            isLoading={isLoading}
+            totalPages={totalPages}
+          />
         </div>
       </div>
     </DashboardLayout>

@@ -63,7 +63,7 @@ const RecycleBinPage = ({ userData }: RecycleBinPageProps) => {
   };
 
   return (
-    <DashboardLayout title="Recycle Bin">
+    <DashboardLayout token={userData.token} title="Recycle Bin">
       <div className="mb-8">
         <div className="flex items-center">
           <Link

@@ -1,5 +1,5 @@
 import { Resource } from '@/types';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { toast } from 'sonner';
 import { apiClient, type ResourcesParams } from '@/utils/api';
 import { ResourceAdapter } from '@/utils/resource-adapter';
@@ -25,6 +25,12 @@ export const useResources = ({ token }: UseResourcesProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isError, setIsError] = useState(false);
+  const [limit, setLimit] = useState(10);
+  const [page, setPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [total, setTotal] = useState(0);
+
+  console.log('Page: ', page);
 
   /**=====================================================
    * Fetches file metadata from the Jeetix file service
@@ -50,14 +56,24 @@ export const useResources = ({ token }: UseResourcesProps) => {
    * Fetches resources from the ITCA API and maps them to the frontend Resource format
    ===================================================================================*/
   const fetchResources = useCallback(
-    async (includeDeleted = false, searchParams: Omit<ResourcesParams, 'includeDeleted'> = {}) => {
+    async ({
+      includeDeleted = false,
+      searchParams = {},
+      page = 0,
+      limit = 10,
+    }: {
+      includeDeleted?: boolean;
+      searchParams?: Omit<ResourcesParams, 'includeDeleted'>;
+      page: number;
+      limit: number;
+    }) => {
       setIsLoading(true);
       setIsError(false);
 
       try {
         const params: ResourcesParams = {
-          page: 0,
-          limit: 100,
+          page: Number(page),
+          limit,
           includeDeleted,
           ...searchParams,
         };
@@ -67,11 +83,17 @@ export const useResources = ({ token }: UseResourcesProps) => {
           getJeetixFileData(),
         ]);
 
+        console.log('Itca Response: ', itcaResponse);
+
         if (itcaResponse.status !== 'success') {
           throw new Error(itcaResponse.message || 'Failed to fetch resources');
         }
 
         const apiResources = itcaResponse.data.resources;
+
+        setTotalPages(itcaResponse.data.pagination.totalPages);
+        setTotal(itcaResponse.data.pagination.total);
+
         const mappedResources = apiResources.map((resource) =>
           ResourceAdapter.fromApiResource(resource, jeetixFileData)
         );
@@ -94,6 +116,10 @@ export const useResources = ({ token }: UseResourcesProps) => {
     },
     [token]
   );
+
+  useEffect(() => {
+    fetchResources({ limit, page });
+  }, [fetchResources, limit, page]);
 
   /**====================================================
    * Moves a resource to the recycle bin (soft delete)
@@ -314,5 +340,11 @@ export const useResources = ({ token }: UseResourcesProps) => {
     permanentlyDeleteResource,
     batchPermanentlyDeleteResource,
     handleDeleteSuccess,
+    setPage,
+    setLimit,
+    totalPages,
+    total,
+    page,
+    limit,
   };
 };

@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { Upload, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import DashboardLayout from '@/components/dashboard/layout/dashboard-layout';
@@ -17,8 +17,21 @@ interface AdminResourcesPageProps {
 }
 
 const AdminResourcesPage = ({ userData }: AdminResourcesPageProps) => {
-  const { resources, isLoading, isError, fetchResources, moveToRecycleBin, batchMoveToRecycleBin } =
-    useResources({ token: userData.token });
+  const {
+    resources,
+    isLoading,
+    isError,
+    fetchResources,
+    moveToRecycleBin,
+    batchMoveToRecycleBin,
+    totalPages,
+    total,
+    setPage,
+    page,
+    limit,
+  } = useResources({ token: userData.token });
+
+  console.log(page);
 
   /**===========================
    * Filter state management.
@@ -70,14 +83,6 @@ const AdminResourcesPage = ({ userData }: AdminResourcesPageProps) => {
     setCategory('all');
     setVisibility('all');
   };
-
-  /**===============================================
-   * Fetches resources when the component mounts.
-   ===============================================*/
-  useEffect(() => {
-    // Only fetch non-deleted resources for the main page
-    fetchResources(false);
-  }, [fetchResources]);
 
   /**=====================================================================================
    * Handles the deletion of a single resource by moving it to the recycle bin.
@@ -187,7 +192,12 @@ const AdminResourcesPage = ({ userData }: AdminResourcesPageProps) => {
             resources={filteredResources}
             onDeleteResource={handleDeleteResource}
             onDeleteMultiple={handleDeleteMultiple}
-            onRefresh={() => fetchResources(false)}
+            onRefresh={() => fetchResources({ limit: 10, page: 0 })}
+            total={total}
+            totalPages={totalPages}
+            page={page}
+            setPage={setPage}
+            limit={limit}
           />
           {/*==================== End of Resource Table ====================*/}
         </>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { FC, useState } from 'react';
 import { NextApiRequest } from 'next';
 import {
   Search,
@@ -27,7 +27,11 @@ interface FAQItem {
   answer: string;
 }
 
-const StudentHelpPage = () => {
+interface IHelpPage {
+  userData: UserAuth;
+}
+
+const StudentHelpPage: FC<IHelpPage> = ({ userData }) => {
   const [expandedFAQ, setExpandedFAQ] = useState<number | null>(null);
 
   const faqItems: FAQItem[] = [
@@ -68,7 +72,7 @@ const StudentHelpPage = () => {
   };
 
   return (
-    <DashboardLayout title="Help & Support">
+    <DashboardLayout token={userData.token} title="Help & Support">
       {/*==================== Page Header ====================*/}
       <DashboardPageHeader
         title="Help &"

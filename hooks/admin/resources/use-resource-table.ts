@@ -11,11 +11,14 @@ const useResourceTable = (
   userRole: 'admin' | 'user',
   onRefresh: () => void,
   onDeleteResource: (resourceId: string) => Promise<boolean>,
-  onDeleteMultiple: (resourceIds: string[]) => Promise<boolean>
+  onDeleteMultiple: (resourceIds: string[]) => Promise<boolean>,
+  currentPage: number,
+  setCurrentPage: Function,
+  totalPages: number,
+  limit: number
 ) => {
   const router = useRouter();
 
-  const [currentPage, setCurrentPage] = useState(1);
   const [selectedResource, setSelectedResource] = useState<Resource | null>(null);
   const [showAnalytics, setShowAnalytics] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -23,7 +26,6 @@ const useResourceTable = (
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [selectedResources, setSelectedResources] = useState<Record<string, boolean>>({});
-  const itemsPerPage = 10;
 
   const selectedCount = useMemo(
     () => Object.values(selectedResources).filter(Boolean).length,
@@ -40,22 +42,13 @@ const useResourceTable = (
     [selectedResources]
   );
 
-  const currentItems = useMemo(() => {
-    const indexOfLastItem = currentPage * itemsPerPage;
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    return resources.slice(indexOfFirstItem, indexOfLastItem);
-  }, [resources, currentPage, itemsPerPage]);
-
-  const totalPages = Math.ceil(resources.length / itemsPerPage);
-
   const clearSelection = useCallback(() => {
     setSelectedResources({});
   }, []);
 
   useEffect(() => {
     clearSelection();
-    setCurrentPage(1);
-  }, [resources, clearSelection]);
+  }, [clearSelection]);
 
   /**=======================================
    * Handle single row selection (toggle)
@@ -87,14 +80,14 @@ const useResourceTable = (
    =======================================*/
   const selectAll = useCallback(() => {
     const newSelection = { ...selectedResources };
-    const allSelected = currentItems.every((item) => selectedResources[item.resourceId]);
+    const allSelected = resources.every((item) => selectedResources[item.resourceId]);
 
-    currentItems.forEach((item) => {
+    resources.forEach((item) => {
       newSelection[item.resourceId] = !allSelected;
     });
 
     setSelectedResources(newSelection);
-  }, [currentItems, selectedResources]);
+  }, [resources, selectedResources]);
 
   /**====================================================
    * Handle double-click to navigate to resource viewer
@@ -112,8 +105,8 @@ const useResourceTable = (
   );
 
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
-  const nextPage = () => setCurrentPage((prev) => Math.min(prev + 1, totalPages));
-  const prevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
+  const nextPage = () => setCurrentPage((prev: number) => Math.min(prev + 1, totalPages));
+  const prevPage = () => setCurrentPage((prev: number) => Math.min(prev - 1, 1));
 
   const handleViewAnalytics = (resource: Resource, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
@@ -197,6 +190,7 @@ const useResourceTable = (
   const getPaginationInfo = () => {
     const maxButtons = 10;
     let startPage = Math.max(1, currentPage - Math.floor(maxButtons / 2));
+    console.log(startPage + '');
     const endPage = Math.min(totalPages, startPage + maxButtons - 1);
 
     if (endPage - startPage + 1 < maxButtons) {
@@ -219,8 +213,7 @@ const useResourceTable = (
     setShowDeleteModal,
     isDeleting,
     isEditing,
-    itemsPerPage,
-    currentItems,
+    limit,
     totalPages,
     handleViewAnalytics,
     handleEditResource,

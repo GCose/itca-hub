@@ -68,7 +68,7 @@ const ResourceList = ({ resources, isLoading = false }: ResourceListProps) => {
         <h3 className="text-lg font-medium text-gray-900 mb-1">No recent resources</h3>
         <p className="text-gray-500 mb-4">You haven{"'"}t accessed any resources recently.</p>
         <Link
-          href="/student/resources"
+          href="/student"
           className="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none  focus:ring-blue-500 focus:ring-offset-2"
         >
           Browse resources
@@ -106,10 +106,7 @@ const ResourceList = ({ resources, isLoading = false }: ResourceListProps) => {
         ))}
       </div>
       <div className="bg-gray-50 px-4 py-3 text-center border-t border-gray-100">
-        <Link
-          href="/student/resources"
-          className="text-sm font-medium text-blue-600 hover:text-blue-800"
-        >
+        <Link href="/student" className="text-sm font-medium text-blue-600 hover:text-blue-800">
           View all resources
         </Link>
       </div>

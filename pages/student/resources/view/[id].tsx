@@ -109,10 +109,11 @@ const StudentResourceViewPage = ({ userData }: StudentResourceViewPageProps) => 
   };
 
   return (
-    <DashboardLayout title={resource?.title || 'Resource Viewer'}>
+    <DashboardLayout token={userData.token} title={resource?.title || 'Resource Viewer'}>
       <div className="mb-8">
         <div className="flex items-center">
           <button
+            title="Hello"
             onClick={() => router.back()}
             className="mr-3 inline-flex items-center rounded-lg bg-white p-2 text-sm text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-gray-500 focus:ring-offset-2 transition-colors"
           >
@@ -147,7 +148,7 @@ const StudentResourceViewPage = ({ userData }: StudentResourceViewPageProps) => 
             <h3 className="text-lg font-medium text-gray-900 mb-1">Resource Not Found</h3>
             <p className="text-gray-500 mb-4">{error}</p>
             <Link
-              href="/student/resources"
+              href="/student"
               className="inline-flex items-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
             >
               <ArrowLeft className="mr-2 h-4 w-4" />

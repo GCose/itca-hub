@@ -47,10 +47,14 @@ interface ResourceTableProps {
   onRestoreMultiple?: (resourceIds: string[]) => Promise<boolean>;
   onRefresh: () => void;
   onClearFilters: () => void;
+  total: number;
+  totalPages: number;
+  limit: number;
+  page: number;
+  setPage: Function;
 }
 
 const ResourceTable = ({
-  resources,
   allResources,
   isLoading,
   isError = false,
@@ -64,8 +68,17 @@ const ResourceTable = ({
   onRestoreMultiple,
   onRefresh,
   onClearFilters,
+  total,
+  totalPages,
+  page,
+  setPage,
+  limit,
 }: ResourceTableProps) => {
   const [bookmarks, setBookmarks] = useState<Record<string, boolean>>({});
+
+  console.log('PAGE IN  table', page);
+  console.log('Resources length IN  table', allResources.length);
+  console.log('Resources IN  table', allResources);
 
   /**===============================================
    * Load bookmarks from localStorage on mount
@@ -116,7 +129,6 @@ const ResourceTable = ({
   };
 
   const {
-    currentItems,
     handleViewAnalytics,
     handleEditResource,
     handleDeleteResource: handleDeleteClick,
@@ -131,7 +143,6 @@ const ResourceTable = ({
     setShowDeleteModal,
     isDeleting,
     selectedResource,
-    totalPages,
     currentPage,
     getPaginationInfo,
     paginate,
@@ -145,12 +156,16 @@ const ResourceTable = ({
     clearSelection,
     handleDoubleClick,
   } = useResourceTable(
-    resources,
+    allResources,
     token,
     userRole,
     onRefresh,
     onDeleteResource || (async () => false),
-    onDeleteMultiple || (async () => false)
+    onDeleteMultiple || (async () => false),
+    page,
+    setPage,
+    totalPages,
+    limit
   );
 
   const { downloadResource, isDownloading } = useDownload();
@@ -241,7 +256,7 @@ const ResourceTable = ({
     const buttons = [];
     const { startPage, endPage } = getPaginationInfo();
 
-    for (let i = startPage; i <= endPage; i++) {
+    for (let i = startPage - 1; i < endPage; i++) {
       buttons.push(
         <button
           key={i}
@@ -252,7 +267,7 @@ const ResourceTable = ({
               : 'text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-offset-0'
           }`}
         >
-          {i}
+          {i + 1}
         </button>
       );
     }
@@ -287,13 +302,13 @@ const ResourceTable = ({
         />
       )}
 
-      {!isError && allResources.length > 0 && resources.length === 0 && (
+      {!isError && allResources.length > 0 && allResources.length === 0 && (
         <NoResults filterTerm={searchTerm} onClearFilters={onClearFilters} />
       )}
       {/*==================== End of Error States ====================*/}
 
       {/*==================== Results Table ====================*/}
-      {!isError && resources.length > 0 && (
+      {!isError && allResources.length > 0 && (
         <div className="rounded-2xl bg-white">
           <div className="px-5 py-4 border-b border-gray-200 flex flex-col sm:flex-row sm:items-center sm:justify-between">
             <h3 className="text-lg font-medium text-gray-900">
@@ -315,7 +330,7 @@ const ResourceTable = ({
                     onClick={selectAll}
                     className="inline-flex items-center rounded-lg bg-blue-100 text-blue-700 px-3 py-1.5 text-sm font-medium hover:bg-blue-200"
                   >
-                    {currentItems.every((item) => selectedResources[item.resourceId])
+                    {allResources.every((item) => selectedResources[item.resourceId])
                       ? 'Deselect All'
                       : 'Select All'}
                   </button>
@@ -349,7 +364,7 @@ const ResourceTable = ({
                 </div>
               ) : (
                 <p className="text-sm text-gray-500">
-                  Showing {currentItems.length} of {resources.length} resources
+                  Showing {allResources.length} of {allResources.length} resources
                 </p>
               )}
               <button
@@ -416,7 +431,7 @@ const ResourceTable = ({
 
               {/*==================== Table Body ====================*/}
               <tbody className="bg-white">
-                {currentItems.map((resource) => (
+                {allResources.map((resource) => (
                   <tr
                     key={resource.resourceId}
                     onClick={
@@ -603,7 +618,7 @@ const ResourceTable = ({
           </div>
 
           {/*==================== Pagination Controls ====================*/}
-          {resources.length > 0 && (
+          {allResources.length > 0 && (
             <div className="border-gray-200 px-4 py-3 sm:px-6">
               <div className="flex flex-1 justify-between sm:hidden">
                 <button
@@ -624,11 +639,9 @@ const ResourceTable = ({
               <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
                 <div>
                   <p className="text-sm text-gray-500">
-                    Showing <span className="font-medium">{(currentPage - 1) * 10 + 1}</span> to{' '}
-                    <span className="font-medium">
-                      {Math.min(currentPage * 10, resources.length)}
-                    </span>{' '}
-                    of <span className="font-medium">{resources.length}</span> results
+                    Showing <span className="font-medium">{currentPage + 1}</span> to{' '}
+                    <span className="font-medium">{allResources.length}</span> of{' '}
+                    <span className="font-medium">{total}</span> results
                   </p>
                 </div>
 
@@ -639,7 +652,7 @@ const ResourceTable = ({
                   >
                     <button
                       onClick={prevPage}
-                      disabled={currentPage === 1}
+                      disabled={currentPage === 0}
                       className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50"
                     >
                       <span className="sr-only">Previous</span>

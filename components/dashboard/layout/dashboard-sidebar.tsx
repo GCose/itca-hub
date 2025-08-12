@@ -4,14 +4,12 @@ import { useRouter } from 'next/router';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Home,
   Users,
   Calendar,
   FileText,
   HelpCircle,
   LogOut,
   User,
-  BarChart2,
   X,
   LayoutDashboardIcon,
   User2Icon,
@@ -56,11 +54,6 @@ const Sidebar = ({ open, setOpen }: SidebarProps) => {
       icon: <FileText className="h-5 w-5" />,
     },
     {
-      name: 'Analytics',
-      href: '/admin/analytics',
-      icon: <BarChart2 className="h-5 w-5" />,
-    },
-    {
       name: 'Profile',
       href: '/admin/profile',
       icon: <User2Icon className="h-5 w-5" />,
@@ -68,16 +61,15 @@ const Sidebar = ({ open, setOpen }: SidebarProps) => {
   ];
 
   const studentNavItems: NavItem[] = [
-    { name: 'Dashboard', href: '/student', icon: <Home className="h-5 w-5" /> },
+    {
+      name: 'Resources',
+      href: '/student',
+      icon: <FileText className="h-5 w-5" />,
+    },
     {
       name: 'Events',
       href: '/student/events',
       icon: <Calendar className="h-5 w-5" />,
-    },
-    {
-      name: 'Resources',
-      href: '/student/resources',
-      icon: <FileText className="h-5 w-5" />,
     },
     {
       name: 'Profile',

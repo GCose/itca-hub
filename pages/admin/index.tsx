@@ -30,6 +30,9 @@ const AdminDashboard: FC<UserProps> = ({ userData }) => {
   });
   const [recentRegistrations, setRecentRegistrations] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [limit, setLimit] = useState(15);
+  const [page, setPage] = useState(1);
+  const [totalPages] = useState(2);
 
   const fetchDashboardData = useCallback(async () => {
     setIsLoading(true);
@@ -66,7 +69,7 @@ const AdminDashboard: FC<UserProps> = ({ userData }) => {
   }, [fetchDashboardData]);
 
   return (
-    <DashboardLayout title="Admin Dashboard">
+    <DashboardLayout token={userData.token} title="Admin Dashboard">
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-gray-900 mb-2 flex items-center">
           <span className="text-blue-700 mr-2">Dashboard</span>
@@ -118,7 +121,15 @@ const AdminDashboard: FC<UserProps> = ({ userData }) => {
         {/*==================== Recent User Activity ====================*/}
         <div className="lg:col-span-2">
           <h2 className="text-lg font-semibold mb-4">Recent Registrations</h2>
-          <UserTable users={recentRegistrations} isLoading={isLoading} />
+          <UserTable
+            limit={limit}
+            page={page}
+            setLimit={setLimit}
+            setPage={setPage}
+            users={recentRegistrations}
+            isLoading={isLoading}
+            totalPages={totalPages}
+          />
         </div>
         {/*==================== End of Recent User Activity ====================*/}
       </div>

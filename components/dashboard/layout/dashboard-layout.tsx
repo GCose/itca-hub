@@ -7,9 +7,10 @@ import Header from './dashboard-header';
 interface DashboardLayoutProps {
   children: ReactNode;
   title?: string;
+  token?: string;
 }
 
-const DashboardLayout = ({ children, title = 'Dashboard' }: DashboardLayoutProps) => {
+const DashboardLayout = ({ children, title = 'Dashboard', token }: DashboardLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
@@ -60,7 +61,7 @@ const DashboardLayout = ({ children, title = 'Dashboard' }: DashboardLayoutProps
 
         {/*==================== Main Content ====================*/}
         <div className="flex flex-1 flex-col overflow-hidden">
-          <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+          <Header token={token} sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
           <main className="flex-1 overflow-y-auto w-full overflow-x-hidden px-4 py-12 min-[968px]:px-9 min-[968px]:pr-7 min-[968px]:py-9">
             <motion.div

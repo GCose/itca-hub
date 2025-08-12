@@ -129,11 +129,11 @@ const StudentBookmarksPage = ({ userData }: StudentBookmarksPageProps) => {
   ];
 
   return (
-    <DashboardLayout title="Bookmarks">
+    <DashboardLayout token={userData.token} title="Bookmarks">
       <div className="mb-8">
         <div className="flex items-center">
           <Link
-            href="/student/resources"
+            href="/student"
             className="mr-3 inline-flex items-center rounded-lg bg-white p-2 text-sm text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-gray-500 focus:ring-offset-2 transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />

@@ -109,10 +109,11 @@ const ResourceViewPage = ({ userData }: ResourceViewPageProps) => {
   };
 
   return (
-    <DashboardLayout title={resource?.title || 'Resource Viewer'}>
+    <DashboardLayout token={userData.token} title={resource?.title || 'Resource Viewer'}>
       <div className="mb-8">
         <div className="flex items-center">
           <button
+            title="button"
             onClick={() => router.back()}
             className="mr-3 inline-flex items-center rounded-lg bg-white p-2 text-sm text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-gray-500 focus:ring-offset-2 transition-colors"
           >

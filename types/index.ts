@@ -23,7 +23,7 @@ export interface CustomError extends Error {
 export interface UserAuth {
   firstName: string | undefined;
   lastName: string | undefined;
-  email: string | undefined;
+  schoolEmail: string | undefined;
   profilePictureUrl: string | undefined;
   userId: unknown;
   token: string;

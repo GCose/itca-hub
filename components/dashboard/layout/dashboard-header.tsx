@@ -1,16 +1,35 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { Bell, Menu, User, MessageSquare, LogOut, Settings } from 'lucide-react';
+import { Menu, User, LogOut, Settings } from 'lucide-react';
 import Link from 'next/link';
+import axios from 'axios';
+import { BASE_URL } from '@/utils/url';
+import { UserAuth } from '@/types';
+import Image from 'next/image';
 
 interface HeaderProps {
   sidebarOpen: boolean;
   setSidebarOpen: (open: boolean) => void;
+  token?: string;
 }
 
-const Header = ({ sidebarOpen, setSidebarOpen }: HeaderProps) => {
+const Header = ({ sidebarOpen, token, setSidebarOpen }: HeaderProps) => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const [userData, setUserData] = useState<UserAuth | null>(null);
+
+  const fetchUserProfile = useCallback(async () => {
+    try {
+      const { data } = await axios.get(`${BASE_URL}/users/profile`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      console.log(data.data);
+
+      setUserData(data.data);
+    } catch {}
+  }, [token]);
 
   // Close dropdowns when clicking outside
   useEffect(() => {
@@ -19,14 +38,19 @@ const Header = ({ sidebarOpen, setSidebarOpen }: HeaderProps) => {
       if (!target.closest('.profile-menu') && !target.closest('.profile-trigger')) {
         setIsProfileOpen(false);
       }
-      if (!target.closest('.notification-menu') && !target.closest('.notification-trigger')) {
-        setIsNotificationOpen(false);
-      }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  useEffect(() => {
+    fetchUserProfile();
+  }, [fetchUserProfile]);
+
+  const fullName = userData?.firstName + ' ' + userData?.lastName;
+  const email = userData?.schoolEmail;
+  const profilePictureUrl = userData?.profilePictureUrl;
 
   return (
     <header className="sticky z-20 flex h-16 items-center justify-between bg-white rounded-br-4xl rounded-bl-4xl px-4 transition-shadow duration-200 min-[968px]:px-6">
@@ -57,8 +81,8 @@ const Header = ({ sidebarOpen, setSidebarOpen }: HeaderProps) => {
       {/*==================== Right: Notifications and user menu ====================*/}
       <div className="flex items-center space-x-4">
         {/*==================== Notifications ====================*/}
-        <div className="relative">
-          <button
+        {/* <div className="relative"> */}
+        {/* <button
             className="notification-trigger rounded-full p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-700 focus:outline-none"
             onClick={() => setIsNotificationOpen(!isNotificationOpen)}
           >
@@ -66,10 +90,10 @@ const Header = ({ sidebarOpen, setSidebarOpen }: HeaderProps) => {
             <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white">
               3
             </span>
-          </button>
+          </button> */}
 
-          {/*==================== Notification Dropdown ====================*/}
-          {isNotificationOpen && (
+        {/*==================== Notification Dropdown ====================*/}
+        {/* {isNotificationOpen && (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -115,66 +139,68 @@ const Header = ({ sidebarOpen, setSidebarOpen }: HeaderProps) => {
                 </a>
               </div>
             </motion.div>
-          )}
-          {/*==================== End of Notification Dropdown ====================*/}
-        </div>
+          )} */}
+        {/*==================== End of Notification Dropdown ====================*/}
+        {/* </div> */}
         {/*==================== End of Notifications ====================*/}
 
         {/*==================== User Menu ====================*/}
-        <div className="relative max-[990px]:px-0 pr-3">
-          <button
-            className="profile-trigger flex items-center space-x-2 rounded-full focus:outline-none"
-            onClick={() => setIsProfileOpen(!isProfileOpen)}
-          >
-            <div className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-full bg-blue-100 text-blue-700">
-              <User className="h-5 w-5" />
-            </div>
-            <span className="hidden text-sm font-medium text-gray-700 min-[968px]:block">
-              John Doe
-            </span>
-          </button>
-
-          {/*==================== User Dropdown ====================*/}
-          {isProfileOpen && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 10 }}
-              transition={{ duration: 0.2 }}
-              className="profile-menu absolute right-0 top-full mt-2 w-56 rounded-lg border border-gray-200 bg-white py-2 shadow-lg"
+        {userData && (
+          <div className="relative max-[990px]:px-0 pr-3">
+            <button
+              className="profile-trigger flex items-center space-x-2 rounded-full focus:outline-none"
+              onClick={() => setIsProfileOpen(!isProfileOpen)}
             >
-              <div className="border-b border-gray-100 px-4 py-2">
-                <p className="text-sm font-medium text-gray-900">John Doe</p>
-                <p className="text-xs text-gray-500">john.doe@utg.edu.gm</p>
+              <div className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-full bg-blue-100 text-blue-700">
+                <Image width={50} height={50} alt="profile-image" src={profilePictureUrl!} />
               </div>
-              <div className="py-1">
-                <Link
-                  href="/profile"
-                  className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                >
-                  <User className="mr-3 h-4 w-4 text-gray-500" />
-                  Profile
-                </Link>
-                <Link
-                  href="/settings"
-                  className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                >
-                  <Settings className="mr-3 h-4 w-4 text-gray-500" />
-                  Settings
-                </Link>
-              </div>
-              <div className="border-t border-gray-100 py-1">
-                <Link
-                  href="/auth"
-                  className="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
-                >
-                  <LogOut className="mr-3 h-4 w-4 text-red-500" />
-                  Sign out
-                </Link>
-              </div>
-            </motion.div>
-          )}
-        </div>
+              <span className="hidden text-sm font-medium text-gray-700 min-[968px]:block">
+                {fullName}
+              </span>
+            </button>
+
+            {/*==================== User Dropdown ====================*/}
+            {isProfileOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+                transition={{ duration: 0.2 }}
+                className="profile-menu absolute right-0 top-full mt-2 w-56 rounded-lg border border-gray-200 bg-white py-2 shadow-lg"
+              >
+                <div className="border-b border-gray-100 px-4 py-2">
+                  <p className="text-sm font-medium text-gray-900">{fullName}</p>
+                  <p className="text-xs text-gray-500">{email}</p>
+                </div>
+                <div className="py-1">
+                  <Link
+                    href="/profile"
+                    className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    <User className="mr-3 h-4 w-4 text-gray-500" />
+                    Profile
+                  </Link>
+                  <Link
+                    href="/settings"
+                    className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    <Settings className="mr-3 h-4 w-4 text-gray-500" />
+                    Settings
+                  </Link>
+                </div>
+                <div className="border-t border-gray-100 py-1">
+                  <Link
+                    href="/auth"
+                    className="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                  >
+                    <LogOut className="mr-3 h-4 w-4 text-red-500" />
+                    Sign out
+                  </Link>
+                </div>
+              </motion.div>
+            )}
+          </div>
+        )}
       </div>
     </header>
   );
