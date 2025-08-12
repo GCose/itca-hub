@@ -25,8 +25,6 @@ const Header = ({ sidebarOpen, token, setSidebarOpen }: HeaderProps) => {
         },
       });
 
-      console.log(data.data);
-
       setUserData(data.data);
     } catch {}
   }, [token]);
