@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { Menu, User, LogOut, Settings } from 'lucide-react';
+import { Menu, User, LogOut, HelpCircle } from 'lucide-react';
 import Link from 'next/link';
 import axios from 'axios';
 import { BASE_URL } from '@/utils/url';
@@ -179,11 +179,11 @@ const Header = ({ sidebarOpen, token, setSidebarOpen }: HeaderProps) => {
                     Profile
                   </Link>
                   <Link
-                    href="/settings"
+                    href="/help"
                     className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >
-                    <Settings className="mr-3 h-4 w-4 text-gray-500" />
-                    Settings
+                    <HelpCircle className="mr-3 h-4 w-4 text-gray-500" />
+                    Help
                   </Link>
                 </div>
                 <div className="border-t border-gray-100 py-1">

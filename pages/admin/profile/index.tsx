@@ -1,18 +1,29 @@
 import { useState, useRef } from 'react';
 import { NextApiRequest } from 'next';
-import { User, Shield, Calendar, Camera, Lock, Edit3, Save, X, Eye, EyeOff } from 'lucide-react';
+import {
+  User,
+  Shield,
+  Calendar,
+  Camera,
+  Lock,
+  Edit3,
+  Save,
+  X,
+  Eye,
+  EyeOff,
+  Crown,
+} from 'lucide-react';
 import DashboardLayout from '@/components/dashboard/layout/dashboard-layout';
 import DashboardPageHeader from '@/components/dashboard/layout/dashboard-page-header';
 import { UserAuth } from '@/types';
 import { isLoggedIn } from '@/utils/auth';
-import { useStudentProfile } from '@/hooks/student/profile/use-student-profile';
-import UserProfileSkeleton from '@/components/dashboard/student/skeleton/user-profile';
+import { useAdminProfile } from '@/hooks/admin/profile/use-admin-profile';
 
-interface StudentProfilePageProps {
+interface AdminProfilePageProps {
   userData: UserAuth;
 }
 
-const StudentProfilePage = ({ userData }: StudentProfilePageProps) => {
+const AdminProfilePage = ({ userData }: AdminProfilePageProps) => {
   const {
     profile,
     isLoading,
@@ -23,7 +34,7 @@ const StudentProfilePage = ({ userData }: StudentProfilePageProps) => {
     isUpdatingProfile,
     isChangingPassword,
     isUploadingImage,
-  } = useStudentProfile({ token: userData.token });
+  } = useAdminProfile({ token: userData.token });
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isEditingProfile, setIsEditingProfile] = useState(false);
@@ -46,9 +57,7 @@ const StudentProfilePage = ({ userData }: StudentProfilePageProps) => {
     confirmPassword: '',
   });
 
-  /**=====================================
-   * Handle profile edit mode activation
-   =====================================*/
+  /*==================== Handle Profile Edit ====================*/
   const handleProfileEdit = () => {
     setIsEditingProfile(true);
     setProfileForm({
@@ -57,49 +66,65 @@ const StudentProfilePage = ({ userData }: StudentProfilePageProps) => {
       profilePictureUrl: profile?.profilePictureUrl || '',
     });
   };
+  /*==================== End of Handle Profile Edit ====================*/
 
-  /**======================
-   * Handle profile save
-   ======================*/
+  /*==================== Handle Profile Save ====================*/
   const handleProfileSave = async () => {
     try {
       await updateProfile(profileForm);
       setIsEditingProfile(false);
     } catch (error) {
-      console.error('Error updating profile:', error);
+      console.error('Error saving profile:', error);
     }
   };
+  /*==================== End of Handle Profile Save ====================*/
 
-  /**=========================
-   * Handle password change
-   =========================*/
-  const handlePasswordChange = async () => {
+  /*==================== Handle Profile Cancel ====================*/
+  const handleProfileCancel = () => {
+    setIsEditingProfile(false);
+    setProfileForm({
+      firstName: '',
+      lastName: '',
+      profilePictureUrl: '',
+    });
+  };
+  /*==================== End of Handle Profile Cancel ====================*/
+
+  /*==================== Handle Password Save ====================*/
+  const handlePasswordSave = async () => {
     if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+      alert('New passwords do not match');
       return;
     }
 
     try {
-      await changePassword({
-        currentPassword: passwordForm.currentPassword,
-        newPassword: passwordForm.newPassword,
-        confirmPassword: passwordForm.confirmPassword,
-      });
+      await changePassword(passwordForm);
+      setIsChangingPasswordMode(false);
       setPasswordForm({
         currentPassword: '',
         newPassword: '',
         confirmPassword: '',
       });
-      setIsChangingPasswordMode(false);
     } catch (error) {
       console.error('Error changing password:', error);
     }
   };
+  /*==================== End of Handle Password Save ====================*/
 
-  /**===============================================
-   * Handle file selection for profile image
-   ===============================================*/
-  const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
+  /*==================== Handle Password Cancel ====================*/
+  const handlePasswordCancel = () => {
+    setIsChangingPasswordMode(false);
+    setPasswordForm({
+      currentPassword: '',
+      newPassword: '',
+      confirmPassword: '',
+    });
+  };
+  /*==================== End of Handle Password Cancel ====================*/
+
+  /*==================== Handle Profile Picture Upload ====================*/
+  const handleProfilePictureUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (!file) return;
 
     try {
@@ -108,25 +133,22 @@ const StudentProfilePage = ({ userData }: StudentProfilePageProps) => {
       console.error('Error uploading image:', error);
     }
 
-    // Reset file input
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
   };
+  /*==================== End of Handle Profile Picture Upload ====================*/
 
-  /**=============================
-   * Toggle password visibility
-   =============================*/
+  /*==================== Toggle Password Visibility ====================*/
   const togglePasswordVisibility = (field: 'current' | 'new' | 'confirm') => {
     setShowPasswords((prev) => ({
       ...prev,
       [field]: !prev[field],
     }));
   };
+  /*==================== End of Toggle Password Visibility ====================*/
 
-  /**======================
-   * Format date helper
-   ======================*/
+  /*==================== Format Date Helpers ====================*/
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -135,9 +157,6 @@ const StudentProfilePage = ({ userData }: StudentProfilePageProps) => {
     });
   };
 
-  /**===========================
-   * Format last login helper
-   ===========================*/
   const formatLastLogin = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -147,18 +166,39 @@ const StudentProfilePage = ({ userData }: StudentProfilePageProps) => {
       minute: '2-digit',
     });
   };
+  /*==================== End of Format Date Helpers ====================*/
 
+  /*==================== Loading State ====================*/
   if (isLoading) {
     return (
-      <DashboardLayout token={userData.token} title="My Profile">
-        <UserProfileSkeleton />
+      <DashboardLayout token={userData.token} title="Admin Profile">
+        <div className="animate-pulse space-y-6">
+          <div className="bg-gray-100 h-8 w-32 rounded"></div>
+          <div className="bg-gray-100 h-5 w-64 rounded"></div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2">
+              <div className="bg-white rounded-2xl p-6">
+                <div className="bg-gray-100 h-6 w-40 rounded mb-6"></div>
+                <div className="flex items-center space-x-4 mb-6">
+                  <div className="w-16 h-16 rounded-full bg-gray-100"></div>
+                  <div className="space-y-2">
+                    <div className="bg-gray-100 h-5 w-32 rounded"></div>
+                    <div className="bg-gray-100 h-4 w-24 rounded"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </DashboardLayout>
     );
   }
+  /*==================== End of Loading State ====================*/
 
+  /*==================== Error State ====================*/
   if (error) {
     return (
-      <DashboardLayout token={userData.token} title="My Profile">
+      <DashboardLayout token={userData.token} title="Admin Profile">
         <div className="bg-white rounded-2xl p-8 text-center">
           <div className="text-red-500 mb-4">Failed to load profile</div>
           <p className="text-gray-500">{error}</p>
@@ -166,14 +206,15 @@ const StudentProfilePage = ({ userData }: StudentProfilePageProps) => {
       </DashboardLayout>
     );
   }
+  /*==================== End of Error State ====================*/
 
   return (
-    <DashboardLayout token={userData.token} title="My Profile">
+    <DashboardLayout token={userData.token} title="Admin Profile">
       {/*==================== Page Header ====================*/}
       <DashboardPageHeader
-        title="My"
+        title="Admin"
         subtitle="Profile"
-        description="Manage your account settings and personal information"
+        description="Manage your administrator account settings and personal information"
       />
       {/*==================== End of Page Header ====================*/}
 
@@ -183,13 +224,13 @@ const StudentProfilePage = ({ userData }: StudentProfilePageProps) => {
           <div className="bg-white rounded-2xl p-6 mb-6">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-lg font-semibold text-gray-900 flex items-center">
-                <User className="h-5 w-5 text-blue-600 mr-2" />
-                Profile Information
+                <Crown className="h-5 w-5 text-amber-600 mr-2" />
+                Administrator Profile
               </h2>
               {!isEditingProfile && (
                 <button
                   onClick={handleProfileEdit}
-                  className="inline-flex items-center rounded-lg bg-blue-600 px-3 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
+                  className="inline-flex items-center rounded-lg bg-amber-600 px-3 py-2 text-sm font-medium text-white hover:bg-amber-700 transition-colors"
                 >
                   <Edit3 className="h-4 w-4 mr-2" />
                   Edit Profile
@@ -206,19 +247,26 @@ const StudentProfilePage = ({ userData }: StudentProfilePageProps) => {
                       <img
                         src={profile.profilePictureUrl}
                         alt="Profile"
-                        className="w-16 h-16 rounded-full object-cover border-4 border-blue-100"
+                        className="w-16 h-16 rounded-full object-cover"
                       />
                     ) : (
-                      <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center border-4 border-blue-200">
-                        <User className="w-8 h-8 text-blue-600" />
+                      <div className="w-16 h-16 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center">
+                        <User className="h-8 w-8 text-white" />
                       </div>
                     )}
+                    <button
+                      onClick={() => fileInputRef.current?.click()}
+                      className="absolute -bottom-1 -right-1 bg-amber-600 hover:bg-amber-700 text-white rounded-full p-1.5 transition-colors"
+                      disabled={isUploadingImage}
+                    >
+                      <Camera className="h-3 w-3" />
+                    </button>
                   </div>
                   <div>
                     <h3 className="text-xl font-semibold text-gray-900">
                       {profile?.firstName} {profile?.lastName}
                     </h3>
-                    <p className="text-gray-500">{profile?.schoolEmail}</p>
+                    <p className="text-gray-600">{profile?.schoolEmail}</p>
                     <div className="flex items-center mt-1">
                       {profile?.isEmailVerified ? (
                         <span className="inline-flex items-center rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-800">
@@ -254,14 +302,14 @@ const StudentProfilePage = ({ userData }: StudentProfilePageProps) => {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-500 mb-1">Role</label>
-                    <p className="text-gray-900 font-medium capitalize">
-                      {profile?.role.toLowerCase()}
-                    </p>
+                    <span className="inline-flex items-center rounded-full bg-amber-100 px-3 py-1 text-sm font-medium text-amber-800">
+                      <Crown className="w-4 h-4 mr-1" />
+                      Administrator
+                    </span>
                   </div>
                 </div>
               </div>
             ) : (
-              /*==================== End of Display Mode ====================*/
               /*==================== Edit Mode ====================*/
               <div className="space-y-6">
                 <div className="flex items-center space-x-4">
@@ -270,109 +318,83 @@ const StudentProfilePage = ({ userData }: StudentProfilePageProps) => {
                       <img
                         src={profileForm.profilePictureUrl || profile?.profilePictureUrl}
                         alt="Profile"
-                        className="w-16 h-16 rounded-full object-cover border-4 border-blue-100"
+                        className="w-16 h-16 rounded-full object-cover"
                       />
                     ) : (
-                      <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center border-4 border-blue-200">
-                        <User className="w-8 h-8 text-blue-600" />
+                      <div className="w-16 h-16 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center">
+                        <User className="h-8 w-8 text-white" />
                       </div>
                     )}
                     <button
                       onClick={() => fileInputRef.current?.click()}
+                      className="absolute -bottom-1 -right-1 bg-amber-600 hover:bg-amber-700 text-white rounded-full p-1.5 transition-colors"
                       disabled={isUploadingImage}
-                      className="absolute -bottom-1 -right-1 w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center text-white hover:bg-blue-700 transition-colors disabled:opacity-50"
                     >
-                      {isUploadingImage ? (
-                        <div className="w-3 h-3 border border-white border-t-transparent rounded-full animate-spin"></div>
-                      ) : (
-                        <Camera className="w-3 h-3" />
-                      )}
+                      <Camera className="h-3 w-3" />
                     </button>
-                    <input
-                      title="Input"
-                      ref={fileInputRef}
-                      type="file"
-                      accept="image/*"
-                      onChange={handleFileSelect}
-                      className="hidden"
-                    />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-medium text-gray-900 mb-1">Profile Picture</h3>
-                    <p className="text-sm text-gray-500">
-                      Click the camera icon to upload a new photo
-                    </p>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label
-                      htmlFor="firstName"
-                      className="block text-sm font-medium text-gray-700 mb-1"
-                    >
-                      First Name <span className="text-red-500">*</span>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      First Name
                     </label>
                     <input
-                      id="firstName"
                       type="text"
                       value={profileForm.firstName}
                       onChange={(e) =>
                         setProfileForm({ ...profileForm, firstName: e.target.value })
                       }
-                      className="w-full rounded-lg border border-gray-200 p-2.5 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+                      className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-amber-500 focus:outline-none focus:ring-amber-500"
                     />
                   </div>
                   <div>
-                    <label
-                      htmlFor="lastName"
-                      className="block text-sm font-medium text-gray-700 mb-1"
-                    >
-                      Last Name <span className="text-red-500">*</span>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Last Name
                     </label>
                     <input
-                      id="lastName"
                       type="text"
                       value={profileForm.lastName}
                       onChange={(e) => setProfileForm({ ...profileForm, lastName: e.target.value })}
-                      className="w-full rounded-lg border border-gray-200 p-2.5 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+                      className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-amber-500 focus:outline-none focus:ring-amber-500"
                     />
                   </div>
                 </div>
 
-                <div className="flex justify-end space-x-3">
-                  <button
-                    onClick={() => setIsEditingProfile(false)}
-                    className="inline-flex items-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-                  >
-                    <X className="h-4 w-4 mr-2" />
-                    Cancel
-                  </button>
+                <div className="flex space-x-3">
                   <button
                     onClick={handleProfileSave}
                     disabled={isUpdatingProfile}
-                    className="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+                    className="inline-flex items-center rounded-lg bg-amber-600 px-4 py-2 text-sm font-medium text-white hover:bg-amber-700 disabled:opacity-50 transition-colors"
                   >
                     <Save className="h-4 w-4 mr-2" />
                     {isUpdatingProfile ? 'Saving...' : 'Save Changes'}
                   </button>
+                  <button
+                    onClick={handleProfileCancel}
+                    className="inline-flex items-center rounded-lg bg-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-300 transition-colors"
+                  >
+                    <X className="h-4 w-4 mr-2" />
+                    Cancel
+                  </button>
                 </div>
               </div>
-              /*==================== End of Edit Mode ====================*/
             )}
+            {/*==================== End of Edit Mode ====================*/}
           </div>
 
-          {/*==================== Password Change Card ====================*/}
+          {/*==================== Password & Security Card ====================*/}
           <div className="bg-white rounded-2xl p-6">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-lg font-semibold text-gray-900 flex items-center">
-                <Lock className="h-5 w-5 text-blue-600 mr-2" />
-                Password & Security
+                <Lock className="h-5 w-5 text-amber-600 mr-2" />
+                Security Settings
               </h2>
               {!isChangingPasswordMode && (
                 <button
                   onClick={() => setIsChangingPasswordMode(true)}
-                  className="inline-flex items-center rounded-lg bg-blue-600 px-3 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
+                  className="inline-flex items-center rounded-lg bg-amber-600 px-3 py-2 text-sm font-medium text-white hover:bg-amber-700 transition-colors"
                 >
                   <Lock className="h-4 w-4 mr-2" />
                   Change Password
@@ -381,12 +403,10 @@ const StudentProfilePage = ({ userData }: StudentProfilePageProps) => {
             </div>
 
             {!isChangingPasswordMode ? (
-              <div>
-                <p className="text-sm text-gray-600 mb-4">
-                  Keep your account secure by using a strong password.
-                </p>
+              <div className="text-gray-600">
+                <p className="mt-2 mb-4">Keep your account secure by using a strong password.</p>
                 <div className="bg-blue-50 rounded-lg p-4">
-                  <p className="text-sm text-blue-800">
+                  <p className="text-sm text-amber-800">
                     <strong>Password Requirements:</strong> At least 6 characters with uppercase,
                     lowercase, number, and special character.
                   </p>
@@ -395,141 +415,117 @@ const StudentProfilePage = ({ userData }: StudentProfilePageProps) => {
             ) : (
               <div className="space-y-4">
                 <div>
-                  <label
-                    htmlFor="currentPassword"
-                    className="block text-sm font-medium text-gray-700 mb-1"
-                  >
-                    Current Password <span className="text-red-500">*</span>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Current Password
                   </label>
                   <div className="relative">
                     <input
-                      id="currentPassword"
                       type={showPasswords.current ? 'text' : 'password'}
                       value={passwordForm.currentPassword}
                       onChange={(e) =>
                         setPasswordForm({ ...passwordForm, currentPassword: e.target.value })
                       }
-                      className="w-full rounded-lg border border-gray-200 p-2.5 pr-10 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+                      className="w-full rounded-lg border border-gray-300 px-3 py-2 pr-10 text-sm focus:border-amber-500 focus:outline-none focus:ring-amber-500"
                     />
                     <button
                       type="button"
                       onClick={() => togglePasswordVisibility('current')}
-                      className="absolute inset-y-0 right-0 flex items-center pr-3"
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
                     >
                       {showPasswords.current ? (
-                        <EyeOff className="h-4 w-4 text-gray-400" />
+                        <EyeOff className="h-4 w-4" />
                       ) : (
-                        <Eye className="h-4 w-4 text-gray-400" />
+                        <Eye className="h-4 w-4" />
                       )}
                     </button>
                   </div>
                 </div>
 
                 <div>
-                  <label
-                    htmlFor="newPassword"
-                    className="block text-sm font-medium text-gray-700 mb-1"
-                  >
-                    New Password <span className="text-red-500">*</span>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    New Password
                   </label>
                   <div className="relative">
                     <input
-                      id="newPassword"
                       type={showPasswords.new ? 'text' : 'password'}
                       value={passwordForm.newPassword}
                       onChange={(e) =>
                         setPasswordForm({ ...passwordForm, newPassword: e.target.value })
                       }
-                      className="w-full rounded-lg border border-gray-200 p-2.5 pr-10 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+                      className="w-full rounded-lg border border-gray-300 px-3 py-2 pr-10 text-sm focus:border-amber-500 focus:outline-none focus:ring-amber-500"
                     />
                     <button
                       type="button"
                       onClick={() => togglePasswordVisibility('new')}
-                      className="absolute inset-y-0 right-0 flex items-center pr-3"
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
                     >
                       {showPasswords.new ? (
-                        <EyeOff className="h-4 w-4 text-gray-400" />
+                        <EyeOff className="h-4 w-4" />
                       ) : (
-                        <Eye className="h-4 w-4 text-gray-400" />
+                        <Eye className="h-4 w-4" />
                       )}
                     </button>
                   </div>
                 </div>
 
                 <div>
-                  <label
-                    htmlFor="confirmPassword"
-                    className="block text-sm font-medium text-gray-700 mb-1"
-                  >
-                    Confirm New Password <span className="text-red-500">*</span>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Confirm New Password
                   </label>
                   <div className="relative">
                     <input
-                      id="confirmPassword"
                       type={showPasswords.confirm ? 'text' : 'password'}
                       value={passwordForm.confirmPassword}
                       onChange={(e) =>
                         setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })
                       }
-                      className="w-full rounded-lg border border-gray-200 p-2.5 pr-10 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+                      className="w-full rounded-lg border border-gray-300 px-3 py-2 pr-10 text-sm focus:border-amber-500 focus:outline-none focus:ring-amber-500"
                     />
                     <button
                       type="button"
                       onClick={() => togglePasswordVisibility('confirm')}
-                      className="absolute inset-y-0 right-0 flex items-center pr-3"
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
                     >
                       {showPasswords.confirm ? (
-                        <EyeOff className="h-4 w-4 text-gray-400" />
+                        <EyeOff className="h-4 w-4" />
                       ) : (
-                        <Eye className="h-4 w-4 text-gray-400" />
+                        <Eye className="h-4 w-4" />
                       )}
                     </button>
                   </div>
                 </div>
 
-                <div className="flex justify-end space-x-3 pt-4">
+                <div className="flex space-x-3">
                   <button
-                    onClick={() => {
-                      setIsChangingPasswordMode(false);
-                      setPasswordForm({
-                        currentPassword: '',
-                        newPassword: '',
-                        confirmPassword: '',
-                      });
-                      setShowPasswords({ current: false, new: false, confirm: false });
-                    }}
-                    className="inline-flex items-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                    onClick={handlePasswordSave}
+                    disabled={isChangingPassword}
+                    className="inline-flex items-center rounded-lg bg-amber-600 px-4 py-2 text-sm font-medium text-white hover:bg-amber-700 disabled:opacity-50 transition-colors"
+                  >
+                    <Save className="h-4 w-4 mr-2" />
+                    {isChangingPassword ? 'Changing...' : 'Change Password'}
+                  </button>
+                  <button
+                    onClick={handlePasswordCancel}
+                    className="inline-flex items-center rounded-lg bg-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-300 transition-colors"
                   >
                     <X className="h-4 w-4 mr-2" />
                     Cancel
-                  </button>
-                  <button
-                    onClick={handlePasswordChange}
-                    disabled={
-                      isChangingPassword ||
-                      !passwordForm.currentPassword ||
-                      !passwordForm.newPassword ||
-                      passwordForm.newPassword !== passwordForm.confirmPassword
-                    }
-                    className="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
-                  >
-                    <Lock className="h-4 w-4 mr-2" />
-                    {isChangingPassword ? 'Changing...' : 'Change Password'}
                   </button>
                 </div>
               </div>
             )}
           </div>
+          {/*==================== End of Password & Security Card ====================*/}
         </div>
         {/*==================== End of Profile Information Card ====================*/}
 
         {/*==================== Account Summary Card ====================*/}
         <div className="space-y-6">
           <div className="bg-white rounded-2xl p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-              <Calendar className="h-5 w-5 text-blue-600 mr-2" />
+            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+              <Calendar className="h-5 w-5 text-amber-600 mr-2" />
               Account Summary
-            </h2>
+            </h3>
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-500 mb-1">Member Since</label>
@@ -564,11 +560,21 @@ const StudentProfilePage = ({ userData }: StudentProfilePageProps) => {
         </div>
         {/*==================== End of Account Summary Card ====================*/}
       </div>
+
+      {/*==================== Hidden File Input ====================*/}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        onChange={handleProfilePictureUpload}
+        className="hidden"
+      />
+      {/*==================== End of Hidden File Input ====================*/}
     </DashboardLayout>
   );
 };
 
-export default StudentProfilePage;
+export default AdminProfilePage;
 
 export const getServerSideProps = async ({ req }: { req: NextApiRequest }) => {
   const userData = isLoggedIn(req);
@@ -584,10 +590,10 @@ export const getServerSideProps = async ({ req }: { req: NextApiRequest }) => {
 
   const userAuth = userData as UserAuth;
 
-  if (userAuth.role === 'admin') {
+  if (userAuth.role === 'user') {
     return {
       redirect: {
-        destination: '/admin',
+        destination: '/student',
         permanent: false,
       },
     };

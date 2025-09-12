@@ -76,10 +76,6 @@ const ResourceTable = ({
 }: ResourceTableProps) => {
   const [bookmarks, setBookmarks] = useState<Record<string, boolean>>({});
 
-  console.log('PAGE IN  table', page);
-  console.log('Resources length IN  table', allResources.length);
-  console.log('Resources IN  table', allResources);
-
   /**===============================================
    * Load bookmarks from localStorage on mount
    ===============================================*/

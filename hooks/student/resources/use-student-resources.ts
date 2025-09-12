@@ -1,5 +1,5 @@
 import { Resource } from '@/types';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { toast } from 'sonner';
 import { apiClient, type ResourcesParams } from '@/utils/api';
 import { ResourceAdapter } from '@/utils/resource-adapter';
@@ -24,10 +24,12 @@ export const useStudentResources = ({ token }: UseStudentResourcesProps) => {
   const [resources, setResources] = useState<Resource[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
+  const [limit] = useState(10);
+  const [page, setPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [total, setTotal] = useState(0);
 
-  /**=====================================================
-   * Fetches file metadata from the Jeetix file service
-   =====================================================*/
+  /*==================== Fetch Jeetix File Data ====================*/
   const getJeetixFileData = async (): Promise<Record<string, JeetixFileItem>> => {
     try {
       const fileList = await apiClient.getJeetixFileList('itca-resources');
@@ -44,22 +46,26 @@ export const useStudentResources = ({ token }: UseStudentResourcesProps) => {
       return {};
     }
   };
+  /*==================== End of Fetch Jeetix File Data ====================*/
 
-  /**======================================================================
-   * Fetches student resources (only visibility="all") from the ITCA API
-   ======================================================================*/
+  /*==================== Fetch Resources ====================*/
   const fetchResources = useCallback(
-    async (searchParams: Omit<ResourcesParams, 'includeDeleted'> = {}) => {
+    async ({
+      page: pageParam = 0,
+      limit: limitParam = 10,
+    }: {
+      page?: number;
+      limit?: number;
+    } = {}) => {
       setIsLoading(true);
       setIsError(false);
 
       try {
         const params: ResourcesParams = {
-          page: 0,
-          limit: 100,
+          page: Number(pageParam),
+          limit: limitParam,
           includeDeleted: false,
           visibility: 'all',
-          ...searchParams,
         };
 
         const [itcaResponse, jeetixFileData] = await Promise.all([
@@ -72,11 +78,14 @@ export const useStudentResources = ({ token }: UseStudentResourcesProps) => {
         }
 
         const apiResources = itcaResponse.data.resources;
+
+        setTotalPages(itcaResponse.data.pagination.totalPages);
+        setTotal(itcaResponse.data.pagination.total);
+
         const mappedResources = apiResources.map((resource) =>
           ResourceAdapter.fromApiResource(resource, jeetixFileData)
         );
 
-        // Client-side filtering to ensure only public resources
         const publicResources = mappedResources.filter(
           (resource) => resource.visibility === 'all' && !resource.isDeleted
         );
@@ -95,11 +104,21 @@ export const useStudentResources = ({ token }: UseStudentResourcesProps) => {
     },
     [token]
   );
+  /*==================== End of Fetch Resources ====================*/
+
+  useEffect(() => {
+    fetchResources({ limit, page });
+  }, [fetchResources, limit, page]);
 
   return {
     resources,
     isLoading,
     isError,
     fetchResources,
+    totalPages,
+    total,
+    setPage,
+    page,
+    limit,
   };
 };
