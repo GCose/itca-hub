@@ -78,9 +78,24 @@ export const useAdminProfile = ({ token }: UseAdminProfileProps) => {
 
   /*==================== Update Profile ====================*/
   const updateProfile = useCallback(
-    async (updateData: ProfileUpdateData) => {
+    async (payload: ProfileUpdateData) => {
       try {
         setIsUpdatingProfile(true);
+
+        // Input validation
+        if (payload.firstName && (payload.firstName.length < 2 || payload.firstName.length > 50)) {
+          throw new Error('First name must be between 2-50 characters');
+        }
+        if (payload.lastName && (payload.lastName.length < 2 || payload.lastName.length > 50)) {
+          throw new Error('Last name must be between 2-50 characters');
+        }
+
+        // Clean payload - only send non-empty fields
+        const cleanPayload: ProfileUpdateData = {};
+        if (payload.firstName?.trim()) cleanPayload.firstName = payload.firstName.trim();
+        if (payload.lastName?.trim()) cleanPayload.lastName = payload.lastName.trim();
+        if (payload.profilePictureUrl?.trim())
+          cleanPayload.profilePictureUrl = payload.profilePictureUrl.trim();
 
         const response = await fetch(`${BASE_URL}/users/profile`, {
           method: 'PUT',
@@ -88,18 +103,20 @@ export const useAdminProfile = ({ token }: UseAdminProfileProps) => {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(updateData),
+          body: JSON.stringify(cleanPayload),
         });
-
-        if (!response.ok) {
-          throw new Error(`Failed to update profile: ${response.statusText}`);
-        }
 
         const data = await response.json();
 
+        if (!response.ok) {
+          throw new Error(data.message || `Failed to update profile: ${response.statusText}`);
+        }
+
         if (data.status === 'success') {
           setProfile(data.data);
-          toast.success('Profile updated successfully');
+          toast.success('Profile updated successfully', {
+            description: 'Your profile information has been updated.',
+          });
         } else {
           throw new Error(data.message || 'Failed to update profile');
         }
@@ -119,9 +136,29 @@ export const useAdminProfile = ({ token }: UseAdminProfileProps) => {
 
   /*==================== Change Password ====================*/
   const changePassword = useCallback(
-    async (passwordData: PasswordChangeData) => {
+    async (payload: PasswordChangeData) => {
       try {
         setIsChangingPassword(true);
+
+        // Password validation
+        if (payload.newPassword.length < 6 || payload.newPassword.length > 128) {
+          throw new Error('Password must be between 6-128 characters');
+        }
+
+        const hasUppercase = /[A-Z]/.test(payload.newPassword);
+        const hasLowercase = /[a-z]/.test(payload.newPassword);
+        const hasNumber = /\d/.test(payload.newPassword);
+        const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(payload.newPassword);
+
+        if (!hasUppercase || !hasLowercase || !hasNumber || !hasSpecial) {
+          throw new Error(
+            'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character'
+          );
+        }
+
+        if (payload.newPassword !== payload.confirmPassword) {
+          throw new Error('New password and confirmation password do not match');
+        }
 
         const response = await fetch(`${BASE_URL}/users/change-password`, {
           method: 'POST',
@@ -129,17 +166,23 @@ export const useAdminProfile = ({ token }: UseAdminProfileProps) => {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(passwordData),
+          body: JSON.stringify({
+            currentPassword: payload.currentPassword,
+            newPassword: payload.newPassword,
+            confirmPassword: payload.confirmPassword,
+          }),
         });
-
-        if (!response.ok) {
-          throw new Error(`Failed to change password: ${response.statusText}`);
-        }
 
         const data = await response.json();
 
+        if (!response.ok) {
+          throw new Error(data.message || `Failed to change password: ${response.statusText}`);
+        }
+
         if (data.status === 'success') {
-          toast.success('Password changed successfully');
+          toast.success('Password changed successfully', {
+            description: 'Your password has been updated.',
+          });
         } else {
           throw new Error(data.message || 'Failed to change password');
         }
@@ -162,6 +205,17 @@ export const useAdminProfile = ({ token }: UseAdminProfileProps) => {
     async (file: File) => {
       try {
         setIsUploadingImage(true);
+
+        // File validation
+        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+        if (!allowedTypes.includes(file.type)) {
+          throw new Error('Please upload a valid image file (JPEG, JPG, PNG, or GIF)');
+        }
+
+        const maxSize = 5 * 1024 * 1024; // 5MB
+        if (file.size > maxSize) {
+          throw new Error('File size must be less than 5MB');
+        }
 
         // Upload to Jeetix file service
         const formData = new FormData();

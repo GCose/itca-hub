@@ -18,6 +18,7 @@ import DashboardPageHeader from '@/components/dashboard/layout/dashboard-page-he
 import { UserAuth } from '@/types';
 import { isLoggedIn } from '@/utils/auth';
 import { useAdminProfile } from '@/hooks/admin/profile/use-admin-profile';
+import UserProfileSkeleton from '@/components/dashboard/student/skeleton/user-profile';
 
 interface AdminProfilePageProps {
   userData: UserAuth;
@@ -172,24 +173,7 @@ const AdminProfilePage = ({ userData }: AdminProfilePageProps) => {
   if (isLoading) {
     return (
       <DashboardLayout token={userData.token} title="Admin Profile">
-        <div className="animate-pulse space-y-6">
-          <div className="bg-gray-100 h-8 w-32 rounded"></div>
-          <div className="bg-gray-100 h-5 w-64 rounded"></div>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2">
-              <div className="bg-white rounded-2xl p-6">
-                <div className="bg-gray-100 h-6 w-40 rounded mb-6"></div>
-                <div className="flex items-center space-x-4 mb-6">
-                  <div className="w-16 h-16 rounded-full bg-gray-100"></div>
-                  <div className="space-y-2">
-                    <div className="bg-gray-100 h-5 w-32 rounded"></div>
-                    <div className="bg-gray-100 h-4 w-24 rounded"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <UserProfileSkeleton />
       </DashboardLayout>
     );
   }
