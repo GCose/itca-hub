@@ -30,8 +30,6 @@ export const useResources = ({ token }: UseResourcesProps) => {
   const [totalPages, setTotalPages] = useState(0);
   const [total, setTotal] = useState(0);
 
-  console.log('Page: ', page);
-
   /**=====================================================
    * Fetches file metadata from the Jeetix file service
    =====================================================*/
@@ -82,8 +80,6 @@ export const useResources = ({ token }: UseResourcesProps) => {
           apiClient.getResources(params, token),
           getJeetixFileData(),
         ]);
-
-        console.log('Itca Response: ', itcaResponse);
 
         if (itcaResponse.status !== 'success') {
           throw new Error(itcaResponse.message || 'Failed to fetch resources');

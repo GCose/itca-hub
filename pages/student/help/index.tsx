@@ -15,7 +15,6 @@ import {
   GraduationCap,
   Settings,
   Eye,
-  Calendar,
 } from 'lucide-react';
 import DashboardLayout from '@/components/dashboard/layout/dashboard-layout';
 import DashboardPageHeader from '@/components/dashboard/layout/dashboard-page-header';
@@ -215,16 +214,6 @@ const StudentHelpPage: FC<IHelpPage> = ({ userData }) => {
                   <p className="text-md text-gray-600">
                     Preview documents before downloading to ensure they contain the information you
                     need.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start space-x-3">
-                <Calendar className="h-5 w-5 text-blue-600 mt-1 flex-shrink-0" />
-                <div>
-                  <h3 className="font-medium text-gray-900 mb-1">Activity Tracking</h3>
-                  <p className="text-md text-gray-600">
-                    View your download history and track your academic resource usage over time.
                   </p>
                 </div>
               </div>

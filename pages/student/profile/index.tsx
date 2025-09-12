@@ -262,6 +262,7 @@ const StudentProfilePage = ({ userData }: StudentProfilePageProps) => {
               </div>
             ) : (
               /*==================== End of Display Mode ====================*/
+
               /*==================== Edit Mode ====================*/
               <div className="space-y-6">
                 <div className="flex items-center space-x-4">

@@ -31,8 +31,6 @@ const AdminResourcesPage = ({ userData }: AdminResourcesPageProps) => {
     limit,
   } = useResources({ token: userData.token });
 
-  console.log(page);
-
   /**===========================
    * Filter state management.
    ===========================*/
@@ -182,10 +180,15 @@ const AdminResourcesPage = ({ userData }: AdminResourcesPageProps) => {
 
           {/*==================== Resource Table ====================*/}
           <ResourceTable
+            page={page}
+            total={total}
+            limit={limit}
             userRole="admin"
             isError={isError}
             isLoading={false}
+            setPage={setPage}
             token={userData.token}
+            totalPages={totalPages}
             searchTerm={searchTerm}
             allResources={resources}
             onClearFilters={clearFilters}
@@ -193,11 +196,6 @@ const AdminResourcesPage = ({ userData }: AdminResourcesPageProps) => {
             onDeleteResource={handleDeleteResource}
             onDeleteMultiple={handleDeleteMultiple}
             onRefresh={() => fetchResources({ limit: 10, page: 0 })}
-            total={total}
-            totalPages={totalPages}
-            page={page}
-            setPage={setPage}
-            limit={limit}
           />
           {/*==================== End of Resource Table ====================*/}
         </>
