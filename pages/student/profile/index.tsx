@@ -238,22 +238,22 @@ const StudentProfilePage = ({ userData }: StudentProfilePageProps) => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-500 mb-1">
-                      First Name
+                      FIRST NAME
                     </label>
                     <p className="text-gray-900 font-medium">{profile?.firstName}</p>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-500 mb-1">
-                      Last Name
+                      LAST NAME
                     </label>
                     <p className="text-gray-900 font-medium">{profile?.lastName}</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-500 mb-1">Email</label>
+                    <label className="block text-sm font-medium text-gray-500 mb-1">EMAIL</label>
                     <p className="text-gray-900 font-medium">{profile?.schoolEmail}</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-500 mb-1">Role</label>
+                    <label className="block text-sm font-medium text-gray-500 mb-1">ROLE</label>
                     <p className="text-gray-900 font-medium capitalize">
                       {profile?.role.toLowerCase()}
                     </p>
