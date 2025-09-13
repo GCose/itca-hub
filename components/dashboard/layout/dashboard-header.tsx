@@ -1,9 +1,7 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Menu, User, LogOut, HelpCircle } from 'lucide-react';
 import Link from 'next/link';
-import axios from 'axios';
-import { BASE_URL } from '@/utils/url';
 import { UserAuth } from '@/types';
 import Image from 'next/image';
 
@@ -11,23 +9,11 @@ interface HeaderProps {
   sidebarOpen: boolean;
   setSidebarOpen: (open: boolean) => void;
   token?: string;
+  userData?: UserAuth;
 }
 
-const Header = ({ sidebarOpen, token, setSidebarOpen }: HeaderProps) => {
+const Header = ({ sidebarOpen, setSidebarOpen, userData }: HeaderProps) => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const [userData, setUserData] = useState<UserAuth | null>(null);
-
-  const fetchUserProfile = useCallback(async () => {
-    try {
-      const { data } = await axios.get(`${BASE_URL}/users/profile`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      setUserData(data.data);
-    } catch {}
-  }, [token]);
 
   // Close dropdowns when clicking outside
   useEffect(() => {
@@ -41,10 +27,6 @@ const Header = ({ sidebarOpen, token, setSidebarOpen }: HeaderProps) => {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
-
-  useEffect(() => {
-    fetchUserProfile();
-  }, [fetchUserProfile]);
 
   const fullName = userData?.firstName + ' ' + userData?.lastName;
   const email = userData?.schoolEmail;
@@ -150,7 +132,13 @@ const Header = ({ sidebarOpen, token, setSidebarOpen }: HeaderProps) => {
               onClick={() => setIsProfileOpen(!isProfileOpen)}
             >
               <div className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-full bg-blue-100 text-blue-700">
-                <Image width={50} height={50} alt="profile-image" src={profilePictureUrl!} />
+                {profilePictureUrl ? (
+                  <Image width={50} height={50} alt="profile-image" src={profilePictureUrl} />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center bg-amber-500 text-white text-sm font-medium">
+                    {userData.firstName?.[0]?.toUpperCase() || 'U'}
+                  </div>
+                )}
               </div>
               <span className="hidden text-sm font-medium text-gray-700 min-[968px]:block">
                 {fullName}

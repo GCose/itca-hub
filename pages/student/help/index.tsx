@@ -71,7 +71,7 @@ const StudentHelpPage: FC<IHelpPage> = ({ userData }) => {
   };
 
   return (
-    <DashboardLayout token={userData.token} title="Help & Support">
+    <DashboardLayout title="Help & Support" userData={userData}>
       {/*==================== Page Header ====================*/}
       <DashboardPageHeader
         title="Help &"

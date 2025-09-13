@@ -67,49 +67,49 @@ const StudentResourceViewPage = ({ userData }: StudentResourceViewPageProps) => 
         return (
           <ImageViewer
             title={resource.title}
-            resourceId={resource.resourceId}
             fileUrl={resource.fileUrl}
+            resourceId={resource.resourceId}
           />
         );
       case 'video':
         return (
           <VideoViewer
             title={resource.title}
-            resourceId={resource.resourceId}
             fileUrl={resource.fileUrl}
+            resourceId={resource.resourceId}
           />
         );
       case 'audio':
         return (
           <AudioViewer
             title={resource.title}
-            resourceId={resource.resourceId}
             fileUrl={resource.fileUrl}
+            resourceId={resource.resourceId}
           />
         );
       case 'text':
         return (
           <TextViewer
             title={resource.title}
-            resourceId={resource.resourceId}
             fileUrl={resource.fileUrl}
+            resourceId={resource.resourceId}
           />
         );
       default:
         return (
           <GenericViewer
-            fileUrl={resource.fileUrl}
             title={resource.title}
-            fileType={resource.type}
-            resourceId={resource.resourceId}
             token={userData.token}
+            fileType={resource.type}
+            fileUrl={resource.fileUrl}
+            resourceId={resource.resourceId}
           />
         );
     }
   };
 
   return (
-    <DashboardLayout token={userData.token} title={resource?.title || 'Resource Viewer'}>
+    <DashboardLayout title={resource?.title || 'Resource Viewer'} userData={userData}>
       <div className="mb-8">
         <div className="flex items-center">
           <button

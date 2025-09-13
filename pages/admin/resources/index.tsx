@@ -116,7 +116,7 @@ const AdminResourcesPage = ({ userData }: AdminResourcesPageProps) => {
   };
 
   return (
-    <DashboardLayout title="Resource Management">
+    <DashboardLayout title="Resource Management" userData={userData}>
       <div className="mb-8">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
           {/*==================== Page Title Header ====================*/}

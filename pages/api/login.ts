@@ -18,6 +18,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const cookieData = {
         token: data.data.accessToken,
         role: data.data.user.role,
+        firstName: data.data.user.firstName,
+        lastName: data.data.user.lastName,
+        schoolEmail: data.data.user.schoolEmail,
+        profilePictureUrl: data.data.user.profilePictureUrl,
+        userId: data.data.user._id || data.data.user.userId,
       };
 
       const tokenCookie = serialize('itca_hub', JSON.stringify(cookieData), {

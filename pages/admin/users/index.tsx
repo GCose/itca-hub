@@ -26,8 +26,6 @@ const AdminUsersPage = ({ userData }: IAdminUsersPage) => {
 
   const debouncedSearchQuery = useDebounce(searchTerm, 500);
 
-  console.log(userData.token);
-
   const fetchUsers = useCallback(
     async (page: number, limit: number) => {
       setIsLoading(true);
@@ -66,16 +64,8 @@ const AdminUsersPage = ({ userData }: IAdminUsersPage) => {
     }
   }, [debouncedSearchQuery, page]);
 
-  useEffect(() => {
-    console.log('Search term changed:', searchTerm);
-  }, [searchTerm]);
-
-  useEffect(() => {
-    console.log('Debounced search changed:', debouncedSearchQuery);
-  }, [debouncedSearchQuery]);
-
   return (
-    <DashboardLayout title="User Management">
+    <DashboardLayout title="User Management" userData={userData}>
       <div className="mb-8">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
           <div>

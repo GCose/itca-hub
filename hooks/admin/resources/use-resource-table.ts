@@ -190,7 +190,7 @@ const useResourceTable = (
   const getPaginationInfo = () => {
     const maxButtons = 10;
     let startPage = Math.max(1, currentPage - Math.floor(maxButtons / 2));
-    console.log(startPage + '');
+    
     const endPage = Math.min(totalPages, startPage + maxButtons - 1);
 
     if (endPage - startPage + 1 < maxButtons) {

@@ -225,7 +225,7 @@ const AdminEventsPage = ({ userData }: AdminEventsPageProps) => {
   };
 
   return (
-    <DashboardLayout token={userData.token} title="Event Management">
+    <DashboardLayout title="Event Management" userData={userData}>
       {/*==================== Page content ====================*/}
       <div className="relative z-10">
         {/*==================== Header Content ====================*/}
@@ -410,7 +410,6 @@ const AdminEventsPage = ({ userData }: AdminEventsPageProps) => {
 
 export default AdminEventsPage;
 
-// Add getServerSideProps (copy from dashboard)
 export const getServerSideProps = async ({ req }: { req: NextApiRequest }) => {
   const userData = isLoggedIn(req);
 
