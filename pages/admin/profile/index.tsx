@@ -150,7 +150,7 @@ const AdminProfilePage = ({ userData }: AdminProfilePageProps) => {
 
   if (isLoading) {
     return (
-      <DashboardLayout title="Admin Profile" userData={userData}>
+      <DashboardLayout title="Admin Profile" token={userData.token}>
         <UserProfileSkeleton />
       </DashboardLayout>
     );
@@ -158,7 +158,7 @@ const AdminProfilePage = ({ userData }: AdminProfilePageProps) => {
 
   if (error) {
     return (
-      <DashboardLayout title="Admin Profile" userData={userData}>
+      <DashboardLayout title="Admin Profile" token={userData.token}>
         <div className="bg-white rounded-2xl p-8 text-center">
           <div className="text-red-500 mb-4">Failed to load profile</div>
           <p className="text-gray-500">{error}</p>
@@ -168,7 +168,7 @@ const AdminProfilePage = ({ userData }: AdminProfilePageProps) => {
   }
 
   return (
-    <DashboardLayout title="Admin Profile" userData={userData}>
+    <DashboardLayout title="Admin Profile" token={userData.token}>
       {/*==================== Page Header ====================*/}
       <DashboardPageHeader
         title="My"

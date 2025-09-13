@@ -129,7 +129,7 @@ const StudentBookmarksPage = ({ userData }: StudentBookmarksPageProps) => {
   ];
 
   return (
-    <DashboardLayout title="Bookmarks" userData={userData}>
+    <DashboardLayout title="Bookmarks" token={userData.token}>
       <div className="mb-8">
         <div className="flex items-center">
           <Link

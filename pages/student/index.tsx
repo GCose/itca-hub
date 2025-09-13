@@ -57,7 +57,7 @@ const StudentResourcesPage = ({ userData }: StudentResourcesPageProps) => {
   };
 
   return (
-    <DashboardLayout title="Resource Library" userData={userData}>
+    <DashboardLayout title="Resource Library" token={userData.token}>
       <div className="mb-8">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
           {/*==================== Page Header ====================*/}

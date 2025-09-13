@@ -63,7 +63,7 @@ const RecycleBinPage = ({ userData }: RecycleBinPageProps) => {
   };
 
   return (
-    <DashboardLayout title="Recycle Bin" userData={userData}>
+    <DashboardLayout title="Recycle Bin" token={userData.token}>
       <div className="mb-8">
         <div className="flex items-center">
           <Link
@@ -97,9 +97,9 @@ const RecycleBinPage = ({ userData }: RecycleBinPageProps) => {
         userRole="admin"
         mode="recycleBin"
         isError={isError}
+        userData={userData}
         isLoading={isLoading}
         onClearFilters={() => {}}
-        userData={userData}
         resources={deletedResources}
         allResources={deletedResources}
         onRestoreResource={handleRestore}

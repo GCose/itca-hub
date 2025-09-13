@@ -65,7 +65,7 @@ const AdminUsersPage = ({ userData }: IAdminUsersPage) => {
   }, [debouncedSearchQuery, page]);
 
   return (
-    <DashboardLayout title="User Management" userData={userData}>
+    <DashboardLayout title="User Management" token={userData.token}>
       <div className="mb-8">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
           <div>

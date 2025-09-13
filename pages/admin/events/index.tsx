@@ -225,7 +225,7 @@ const AdminEventsPage = ({ userData }: AdminEventsPageProps) => {
   };
 
   return (
-    <DashboardLayout title="Event Management" userData={userData}>
+    <DashboardLayout title="Event Management" token={userData.token}>
       {/*==================== Page content ====================*/}
       <div className="relative z-10">
         {/*==================== Header Content ====================*/}

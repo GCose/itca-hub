@@ -28,7 +28,7 @@ const StudentEventsPage = ({ userData }: StudentEventsPageProps) => {
   } = useStudentEvents(userData.token);
 
   return (
-    <DashboardLayout title="Events" userData={userData}>
+    <DashboardLayout title="Events" token={userData.token}>
       {/*==================== Main Content ====================*/}
       <div className="relative z-10">
         {/*==================== Header Content ====================*/}

@@ -69,7 +69,7 @@ const AdminDashboard: FC<UserProps> = ({ userData }) => {
   }, [fetchDashboardData]);
 
   return (
-    <DashboardLayout title="Admin Dashboard" userData={userData}>
+    <DashboardLayout title="Admin Dashboard" token={userData.token}>
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-gray-900 mb-2 flex items-center">
           <span className="text-blue-700 mr-2">Dashboard</span>

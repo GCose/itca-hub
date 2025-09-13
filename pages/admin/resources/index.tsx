@@ -116,7 +116,7 @@ const AdminResourcesPage = ({ userData }: AdminResourcesPageProps) => {
   };
 
   return (
-    <DashboardLayout title="Resource Management" userData={userData}>
+    <DashboardLayout title="Resource Management" token={userData.token}>
       <div className="mb-8">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
           {/*==================== Page Title Header ====================*/}
