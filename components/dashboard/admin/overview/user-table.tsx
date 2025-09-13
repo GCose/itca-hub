@@ -44,25 +44,15 @@ const UserTable = ({
 }: UserTableProps) => {
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
 
-  {
-    /*==================== Calculate Pagination ====================*/
-  }
-
   const currentUsers = users || [];
 
   const startIndex = (page - 1) * limit;
   const endIndex = Math.min(startIndex + limit, total!);
-  {
-    /*==================== End of Calculate Pagination ====================*/
-  }
 
   const toggleUserMenu = (userId: string) => {
     setSelectedUser(selectedUser === userId ? null : userId);
   };
 
-  {
-    /*==================== Handle Outside Click ====================*/
-  }
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (selectedUser && !(event.target as HTMLElement).closest('.user-menu')) {
@@ -73,13 +63,7 @@ const UserTable = ({
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [selectedUser]);
-  {
-    /*==================== End of Handle Outside Click ====================*/
-  }
 
-  {
-    /*==================== Loading State ====================*/
-  }
   if (isLoading) {
     return (
       <div className="rounded-2xl bg-white">
@@ -102,8 +86,8 @@ const UserTable = ({
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 bg-white">
-              {[...Array(15)].map((_, index) => (
-                <tr key={index}>
+              {[...Array(10)].map((_, index) => (
+                <tr key={index} className="even:bg-gray-100/80 border-none">
                   <td className="whitespace-nowrap px-6 py-4">
                     <div className="flex items-center">
                       <div className="h-8 w-8 rounded-full bg-gray-200 animate-pulse"></div>
@@ -271,7 +255,7 @@ const UserTable = ({
                   ) {
                     return (
                       <button
-                        key={pageNumber}
+                        key={`page-${pageNumber}`}
                         onClick={() => setPage(pageNumber)}
                         className={`px-3 py-1 text-sm font-medium rounded-md ${
                           isCurrentPage
@@ -287,7 +271,7 @@ const UserTable = ({
                   // Show dots
                   if (pageNumber === page - 2 || pageNumber === page + 2) {
                     return (
-                      <span key={pageNumber} className="px-3 py-1 text-gray-700">
+                      <span key={`dots-${pageNumber}`} className="px-3 py-1 text-gray-700">
                         ...
                       </span>
                     );

@@ -285,7 +285,7 @@ const ListTable = ({
                   ) {
                     return (
                       <button
-                        key={pageNumber}
+                        key={`list-page-${pageNumber}`}
                         onClick={() => setCurrentPage(pageNumber)}
                         className={`px-3 py-1 text-sm font-medium rounded-md ${
                           isCurrentPage
@@ -301,7 +301,7 @@ const ListTable = ({
                   // Show dots
                   if (pageNumber === currentPage - 2 || pageNumber === currentPage + 2) {
                     return (
-                      <span key={pageNumber} className="px-3 py-1 text-gray-700">
+                      <span key={`list-dots-${pageNumber}`} className="px-3 py-1 text-gray-700">
                         ...
                       </span>
                     );

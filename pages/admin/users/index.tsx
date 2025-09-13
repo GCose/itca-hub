@@ -57,12 +57,10 @@ const AdminUsersPage = ({ userData }: IAdminUsersPage) => {
     fetchUsers(page, limit);
   }, [fetchUsers, page, limit]);
 
-  // Reset to page 1 when search query changes
+  // Reset to page 1 ONLY when search query changes
   useEffect(() => {
-    if (page !== 1) {
-      setPage(1);
-    }
-  }, [debouncedSearchQuery, page]);
+    setPage(1);
+  }, [debouncedSearchQuery]);
 
   return (
     <DashboardLayout title="User Management" token={userData.token}>
@@ -95,7 +93,7 @@ const AdminUsersPage = ({ userData }: IAdminUsersPage) => {
               value={searchTerm}
               placeholder="Search users by name or email..."
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full rounded-lg border bg-white pl-10 pr-4 py-2.5 text-sm text-gray-700 focus:border-blue-500 focus:outline-none  focus:ring-blue-500"
+              className="w-full rounded-lg border-none bg-white pl-10 pr-4 py-2.5 text-sm text-gray-700 focus:bg-gray-200/60 focus:outline-none"
             />
           </div>
         </div>
@@ -106,7 +104,7 @@ const AdminUsersPage = ({ userData }: IAdminUsersPage) => {
               value={role}
               title="select"
               onChange={(e) => setRole(e.target.value)}
-              className="w-full rounded-lg border bg-white py-2.5 pl-3 pr-8 text-sm text-gray-700 focus:border-blue-500 focus:outline-none  focus:ring-blue-500"
+              className="w-full rounded-lg border-none bg-white py-2.5 pl-3 pr-8 text-sm text-gray-700 focus:border-blue-500 focus:outline-none  focus:ring-blue-500"
             >
               <option value="all">All Roles</option>
               <option value="admin">Admin</option>
@@ -119,7 +117,7 @@ const AdminUsersPage = ({ userData }: IAdminUsersPage) => {
               title="select"
               value={status}
               onChange={(e) => setStatus(e.target.value)}
-              className="w-full rounded-lg border bg-white py-2.5 pl-3 pr-8 text-sm text-gray-700 focus:border-blue-500 focus:outline-none  focus:ring-blue-500"
+              className="w-full rounded-lg border-none bg-white py-2.5 pl-3 pr-8 text-sm text-gray-700 focus:border-blue-500 focus:outline-none  focus:ring-blue-500"
             >
               <option value="all">All Status</option>
               <option value="active">Active</option>
@@ -133,12 +131,12 @@ const AdminUsersPage = ({ userData }: IAdminUsersPage) => {
       <div className="grid grid-cols-1 gap-6">
         <div className="overflow-hidden rounded-lg bg-white">
           <UserTable
-            limit={limit}
-            setLimit={setLimit}
             page={page}
+            limit={limit}
+            users={users}
             setPage={setPage}
             total={totalUsers}
-            users={users}
+            setLimit={setLimit}
             isLoading={isLoading}
             totalPages={totalPages}
           />

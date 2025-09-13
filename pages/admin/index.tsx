@@ -9,7 +9,6 @@ import { UserAuth } from '@/types';
 import axios from 'axios';
 import { BASE_URL } from '@/utils/url';
 
-// Types for dashboard data
 interface DashboardStats {
   totalUsers: number;
   totalEvents: number;
@@ -30,43 +29,50 @@ const AdminDashboard: FC<UserProps> = ({ userData }) => {
   });
   const [recentRegistrations, setRecentRegistrations] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [limit, setLimit] = useState(15);
+  const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(1);
-  const [totalPages] = useState(2);
+  const [totalPages, setTotalPages] = useState(0);
+  const [total, setTotal] = useState(0);
 
-  const fetchDashboardData = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const headers = {
-        Authorization: `Bearer ${userData.token}`,
-      };
+  const fetchDashboardData = useCallback(
+    async (page: number, limit: number) => {
+      setIsLoading(true);
+      try {
+        const headers = {
+          Authorization: `Bearer ${userData.token}`,
+        };
 
-      const [stats, recentRegistrations] = await Promise.all([
-        axios.get(`${BASE_URL}/admin/stats`, {
-          headers,
-        }),
-        axios.get(`${BASE_URL}/admin/recent-registrations`, {
-          headers,
-        }),
-      ]);
+        const [stats, recentRegistrations] = await Promise.all([
+          axios.get(`${BASE_URL}/admin/stats`, {
+            headers,
+          }),
+          axios.get(`${BASE_URL}/users/recent`, {
+            params: { page, limit },
+            headers,
+          }),
+        ]);
 
-      setStats({
-        totalUsers: stats.data.data.totalUsers,
-        totalEvents: stats.data.data.activeEvents,
-        totalResources: stats.data.data.resources,
-        activeUsers: stats.data.data.activeUsers,
-      });
-      setRecentRegistrations(recentRegistrations.data.data);
-    } catch (error) {
-      console.error('Error fetching dashboard data:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [userData.token]);
+        setStats({
+          totalUsers: stats.data.data.totalUsers,
+          totalEvents: stats.data.data.activeEvents,
+          totalResources: stats.data.data.resources,
+          activeUsers: stats.data.data.activeUsers,
+        });
+        setRecentRegistrations(recentRegistrations.data.data);
+        setTotal(recentRegistrations.data.total);
+        setTotalPages(recentRegistrations.data.pagination.totalPages);
+      } catch (error) {
+        console.error('Error fetching dashboard data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [userData.token]
+  );
 
   useEffect(() => {
-    fetchDashboardData();
-  }, [fetchDashboardData]);
+    fetchDashboardData(page, limit);
+  }, [fetchDashboardData, page, limit]);
 
   return (
     <DashboardLayout title="Admin Dashboard" token={userData.token}>
@@ -122,13 +128,14 @@ const AdminDashboard: FC<UserProps> = ({ userData }) => {
         <div className="lg:col-span-2">
           <h2 className="text-lg font-semibold mb-4">Recent Registrations</h2>
           <UserTable
-            limit={limit}
             page={page}
-            setLimit={setLimit}
+            limit={limit}
+            total={total}
             setPage={setPage}
-            users={recentRegistrations}
+            setLimit={setLimit}
             isLoading={isLoading}
             totalPages={totalPages}
+            users={recentRegistrations}
           />
         </div>
         {/*==================== End of Recent User Activity ====================*/}
