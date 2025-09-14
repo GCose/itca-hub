@@ -28,9 +28,9 @@ import ResourceTableSkeleton from './skeleton/resource-table-skeleton';
 import formatDepartment from '@/utils/format-department';
 import { EmptyState, NetworkError, NoResults } from '@/components/dashboard/error-message';
 import { toast } from 'sonner';
-import ResourceAnalytics from '../admin/resources/modals/analytics-resource-modal';
-import DeleteResourceModal from '../admin/resources/modals/delete-resource-modal';
-import ResourceEditModal from '../admin/resources/modals/edit-resource-modal';
+import ResourceEditModal from '../modals/resources/edit-resource-modal';
+import ResourceAnalytics from '../modals/resources/analytics-resource-modal';
+import DeleteResourceModal from '../modals/resources/delete-resource-modal';
 
 interface ResourceTableProps {
   resources: Resource[];

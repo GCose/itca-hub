@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, FC } from 'react';
 import { Calendar, Users, FileText, PieChart } from 'lucide-react';
 import DashboardLayout from '@/components/dashboard/layout/dashboard-layout';
 import StatsCard from '@/components/dashboard/admin/overview/stats-card';
-import UserTable from '@/components/dashboard/admin/overview/user-table';
+import UserTable from '@/components/dashboard/table/user-table';
 import { isLoggedIn } from '@/utils/auth';
 import { NextApiRequest } from 'next';
 import { UserAuth } from '@/types';

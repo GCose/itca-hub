@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Search } from 'lucide-react';
 import DashboardLayout from '@/components/dashboard/layout/dashboard-layout';
-import UserTable from '@/components/dashboard/admin/overview/user-table';
+import UserTable from '@/components/dashboard/table/user-table';
 import { NextApiRequest } from 'next';
 import { isLoggedIn } from '@/utils/auth';
 import { UserAuth } from '@/types';
