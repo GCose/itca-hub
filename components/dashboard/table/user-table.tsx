@@ -59,7 +59,7 @@ const UserTable = ({
         showRefreshButton={true}
         onRefresh={onUserUpdated}
         uploadButtonText="Back to Dashboard"
-        description="No registered users found. Might be due to wrong filtering or no users exist at all."
+        description="No users found. Might be due to wrong filtering or no users exist at all."
       />
     );
   }

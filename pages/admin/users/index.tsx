@@ -36,6 +36,12 @@ const AdminUsersPage = ({ userData }: AdminUsersPageProps) => {
             page: Number(page),
             limit: Number(limit),
             ...(debouncedSearchQuery.trim() && { search: debouncedSearchQuery.trim() }),
+            ...(role !== 'all' && {
+              role: role === 'student' ? 'user' : role,
+            }),
+            ...(status !== 'all' && {
+              isEmailVerified: status === 'verified' ? true : false,
+            }),
           },
           headers: {
             Authorization: `Bearer ${userData.token}`,
@@ -59,8 +65,15 @@ const AdminUsersPage = ({ userData }: AdminUsersPageProps) => {
         setIsLoading(false);
       }
     },
-    [userData.token, debouncedSearchQuery]
+    [userData.token, debouncedSearchQuery, role, status]
   );
+
+  const resetFilters = () => {
+    setSearchTerm('');
+    setRole('all');
+    setStatus('all');
+    setPage(1);
+  };
 
   useEffect(() => {
     fetchUsers(page, limit);
@@ -68,7 +81,7 @@ const AdminUsersPage = ({ userData }: AdminUsersPageProps) => {
 
   useEffect(() => {
     setPage(1);
-  }, [debouncedSearchQuery]);
+  }, [debouncedSearchQuery, role, status]);
 
   return (
     <DashboardLayout title="User Management" token={userData.token}>
@@ -99,7 +112,7 @@ const AdminUsersPage = ({ userData }: AdminUsersPageProps) => {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-3 gap-4">
           <div>
             <select
               value={role}
@@ -110,9 +123,9 @@ const AdminUsersPage = ({ userData }: AdminUsersPageProps) => {
               <option value="all">All Roles</option>
               <option value="admin">Admin</option>
               <option value="student">Student</option>
-              <option value="staff">Staff</option>
             </select>
           </div>
+
           <div>
             <select
               title="select"
@@ -121,13 +134,22 @@ const AdminUsersPage = ({ userData }: AdminUsersPageProps) => {
               className="w-full rounded-lg border-none bg-white py-2.5 pl-3 pr-8 text-sm text-gray-700 focus:border-blue-500 focus:outline-none  focus:ring-blue-500"
             >
               <option value="all">All Status</option>
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-              <option value="pending">Pending</option>
+              <option value="verified">Verified</option>
+              <option value="unverified">Unverified</option>
             </select>
+          </div>
+
+          <div>
+            <button
+              onClick={resetFilters}
+              className="rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200"
+            >
+              Reset Filters
+            </button>
           </div>
         </div>
       </div>
+
       {/*==================== End of Filters ====================*/}
 
       {/*==================== Users Table ====================*/}
