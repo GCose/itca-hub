@@ -1,8 +1,8 @@
-import { AlertTriangle, X, Loader, Crown, Mail, UserX } from 'lucide-react';
+import { AlertTriangle, X, Loader, Crown, UserX } from 'lucide-react';
 import { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-type ActionType = 'delete' | 'changeRole' | 'toggleEmail' | 'deactivate' | 'reactivate';
+type ActionType = 'delete' | 'changeRole' | 'toggleActivation';
 
 interface UserActionsModalProps {
   isOpen: boolean;
@@ -68,35 +68,15 @@ const UserActionsModal = ({
           confirmClass:
             'bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600',
         };
-      case 'toggleEmail':
-        return {
-          icon: <Mail className="h-5 w-5 text-amber-600" />,
-          iconBg: 'bg-amber-100',
-          title: 'Toggle Email Verification',
-          description: `Are you sure you want to toggle ${userName}'s email verification status?`,
-          confirmText: isLoading ? 'Updating...' : 'Update Status',
-          confirmClass:
-            'bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-700 hover:to-amber-600',
-        };
-      case 'deactivate':
+      case 'toggleActivation':
         return {
           icon: <UserX className="h-5 w-5 text-orange-600" />,
           iconBg: 'bg-orange-100',
-          title: 'Deactivate User',
-          description: `Are you sure you want to deactivate ${userName}? They will not be able to access their account.`,
-          confirmText: isLoading ? 'Deactivating...' : 'Deactivate User',
+          title: 'Toggle User Activation',
+          description: `Are you sure you want to toggle ${userName}'s activation status?`,
+          confirmText: isLoading ? 'Updating...' : 'Update Status',
           confirmClass:
             'bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-700 hover:to-orange-600',
-        };
-      case 'reactivate':
-        return {
-          icon: <UserX className="h-5 w-5 text-green-600" />,
-          iconBg: 'bg-green-100',
-          title: 'Reactivate User',
-          description: `Are you sure you want to reactivate ${userName}? They will regain access to their account.`,
-          confirmText: isLoading ? 'Reactivating...' : 'Reactivate User',
-          confirmClass:
-            'bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600',
         };
       default:
         return {

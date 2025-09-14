@@ -8,6 +8,7 @@ import { NextApiRequest } from 'next';
 import { UserAuth } from '@/types';
 import axios from 'axios';
 import { BASE_URL } from '@/utils/url';
+import { toast } from 'sonner';
 
 interface DashboardStats {
   totalUsers: number;
@@ -29,6 +30,7 @@ const AdminDashboard: FC<UserProps> = ({ userData }) => {
   });
   const [recentRegistrations, setRecentRegistrations] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
@@ -37,6 +39,8 @@ const AdminDashboard: FC<UserProps> = ({ userData }) => {
   const fetchDashboardData = useCallback(
     async (page: number, limit: number) => {
       setIsLoading(true);
+      setIsError(false);
+
       try {
         const headers = {
           Authorization: `Bearer ${userData.token}`,
@@ -62,7 +66,15 @@ const AdminDashboard: FC<UserProps> = ({ userData }) => {
         setTotal(recentRegistrations.data.total);
         setTotalPages(recentRegistrations.data.pagination.totalPages);
       } catch (error) {
-        console.error('Error fetching dashboard data:', error);
+        setIsError(true);
+        const errorMessage = axios.isAxiosError(error)
+          ? error.response?.data?.message || error.message
+          : 'An error occurred';
+
+        toast.error('Failed to load data', {
+          description: errorMessage,
+          duration: 5000,
+        });
       } finally {
         setIsLoading(false);
       }
@@ -131,6 +143,7 @@ const AdminDashboard: FC<UserProps> = ({ userData }) => {
             page={page}
             limit={limit}
             total={total}
+            isError={isError}
             setPage={setPage}
             setLimit={setLimit}
             isLoading={isLoading}

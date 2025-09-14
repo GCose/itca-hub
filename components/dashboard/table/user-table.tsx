@@ -4,22 +4,22 @@ import {
   User,
   ChevronLeft,
   ChevronRight,
-  Mail,
-  MailCheck,
   UserX,
+  UserCheck,
   Crown,
   GraduationCap,
+  Users,
 } from 'lucide-react';
 import useUserActions from '@/hooks/admin/users/use-user-actions';
 import UserActionsModal from '../modals/user/user-actions-modal';
+import { NetworkError, EmptyState } from '@/components/dashboard/error-message';
 
 interface UserData {
-  id?: string;
   _id?: string;
   name: string;
   schoolEmail: string;
   role: string;
-  status: 'active' | 'inactive' | 'pending';
+  isActive?: boolean;
   joinedDate: string;
   createdAt: string;
   firstName: string;
@@ -30,6 +30,7 @@ interface UserData {
 interface UserTableProps {
   users?: UserData[];
   isLoading?: boolean;
+  isError?: boolean;
   total?: number;
   page: number;
   setPage: Function;
@@ -44,6 +45,7 @@ const UserTable = ({
   limit,
   users,
   isLoading = false,
+  isError = false,
   total = users?.length,
   page,
   setPage,
@@ -53,8 +55,7 @@ const UserTable = ({
 }: UserTableProps) => {
   const {
     deleteUser,
-    toggleEmailVerification,
-    deactivateUser,
+    toggleUserActivation,
     updateUserRole,
     modalState,
     closeModal,
@@ -64,6 +65,10 @@ const UserTable = ({
   const currentUsers = users || [];
   const startIndex = (page - 1) * limit;
   const endIndex = Math.min(startIndex + limit, total!);
+
+  if (isError) {
+    return <NetworkError title="Unable To Fetch Users" onRetry={onUserUpdated} />;
+  }
 
   if (isLoading) {
     return (
@@ -122,10 +127,16 @@ const UserTable = ({
 
   if (users?.length === 0) {
     return (
-      <div className="rounded-2xl bg-white p-8 text-center">
-        <User className="mx-auto h-12 w-12 text-gray-400" />
-        <p className="mt-2 text-gray-500">No users found</p>
-      </div>
+      <EmptyState
+        itemName="user"
+        uploadUrl="/admin"
+        uploadIcon={Users}
+        title="No users found"
+        showRefreshButton={true}
+        onRefresh={onUserUpdated}
+        uploadButtonText="Back to Dashboard"
+        description="No registered users match your current search criteria. Try adjusting your filters or refresh the page."
+      />
     );
   }
 
@@ -154,10 +165,9 @@ const UserTable = ({
             <tbody className="bg-white">
               {currentUsers?.map((user) => {
                 const userName = user.name || `${user.firstName} ${user.lastName}`;
-                const userId = user._id || user.id;
 
                 return (
-                  <tr key={userId} className="hover:bg-gray-200/60 even:bg-gray-100/80">
+                  <tr key={user._id} className="hover:bg-gray-200/60 even:bg-gray-100/80">
                     <td className="whitespace-nowrap px-6 py-4">
                       <div className="flex items-center">
                         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-blue-700">
@@ -177,9 +187,9 @@ const UserTable = ({
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
                       <div className="flex items-center space-x-1 justify-end">
-                        {/* Toggle User Role */}
+                        {/*==================== Toggle User Role ====================*/}
                         <button
-                          onClick={() => updateUserRole(userId!, userName, user.role)}
+                          onClick={() => updateUserRole(user._id!, userName, user.role)}
                           className="rounded-full p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500"
                           title={
                             user.role.toLowerCase() === 'admin' ? 'Make Student' : 'Make Admin'
@@ -191,41 +201,31 @@ const UserTable = ({
                             <Crown className="h-5 w-5" />
                           )}
                         </button>
+                        {/*==================== End of Toggle User Role ====================*/}
 
-                        {/* Toggle Email Verification */}
+                        {/*==================== Toggle User Activation ====================*/}
                         <button
-                          onClick={() => toggleEmailVerification(userId!, userName)}
+                          onClick={() => toggleUserActivation(user._id!, userName)}
                           className="rounded-full p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500"
-                          title={
-                            user.isEmailVerified
-                              ? 'Mark Email as Unverified'
-                              : 'Mark Email as Verified'
-                          }
+                          title={user.isActive ? 'Deactivate User' : 'Activate User'}
                         >
-                          {user.isEmailVerified ? (
-                            <Mail className="h-5 w-5" />
+                          {user.isActive ? (
+                            <UserX className="h-5 w-5" />
                           ) : (
-                            <MailCheck className="h-5 w-5" />
+                            <UserCheck className="h-5 w-5" />
                           )}
                         </button>
+                        {/*==================== End of Toggle User Activation ====================*/}
 
-                        {/* Deactivate User */}
+                        {/*==================== Delete User ====================*/}
                         <button
-                          onClick={() => deactivateUser(userId!, userName)}
-                          className="rounded-full p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500"
-                          title="Deactivate User"
-                        >
-                          <UserX className="h-5 w-5" />
-                        </button>
-
-                        {/* Delete User */}
-                        <button
-                          onClick={() => deleteUser(userId!, userName)}
+                          onClick={() => deleteUser(user._id!, userName)}
                           className="rounded-full p-1 text-red-400 hover:bg-gray-100 hover:text-red-500"
                           title="Delete User"
                         >
                           <Trash className="h-5 w-5" />
                         </button>
+                        {/*==================== End of Delete User ====================*/}
                       </div>
                     </td>
                   </tr>
@@ -315,16 +315,17 @@ const UserTable = ({
         {/*==================== End of Pagination ====================*/}
       </div>
 
-      {/* User Actions Modal */}
+      {/*==================== User Actions Modal ====================*/}
       <UserActionsModal
-        isOpen={modalState.isOpen}
-        isLoading={modalState.isLoading}
-        actionType={modalState.actionType}
-        userName={modalState.userName}
-        userRole={modalState.userRole}
         onClose={closeModal}
         onConfirm={executeAction}
+        isOpen={modalState.isOpen}
+        userName={modalState.userName}
+        userRole={modalState.userRole}
+        isLoading={modalState.isLoading}
+        actionType={modalState.actionType}
       />
+      {/*==================== End of User Actions Modal ====================*/}
     </>
   );
 };

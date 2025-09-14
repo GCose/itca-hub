@@ -100,11 +100,10 @@ export const useResources = ({ token }: UseResourcesProps) => {
 
         setResources(filteredResources);
         setIsError(false);
-      } catch (err) {
-        console.error('Error fetching resources:', err);
+      } catch (error) {
         setIsError(true);
         toast.error('Failed to load resources', {
-          description: err instanceof Error ? err.message : 'An unknown error occurred',
+          description: error instanceof Error ? error.message : 'An unknown error occurred',
         });
       } finally {
         setIsLoading(false);

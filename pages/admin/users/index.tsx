@@ -8,6 +8,7 @@ import { UserAuth } from '@/types';
 import axios from 'axios';
 import { BASE_URL } from '@/utils/url';
 import useDebounce from '@/utils/debounce';
+import { toast } from 'sonner';
 
 interface IAdminUsersPage {
   userData: UserAuth;
@@ -20,6 +21,7 @@ const AdminUsersPage = ({ userData }: IAdminUsersPage) => {
   const [users, setUsers] = useState([]);
   const [totalUsers, setTotalUsers] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
   const [limit, setLimit] = useState(15);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
@@ -29,6 +31,7 @@ const AdminUsersPage = ({ userData }: IAdminUsersPage) => {
   const fetchUsers = useCallback(
     async (page: number, limit: number) => {
       setIsLoading(true);
+      setIsError(false);
 
       try {
         const { data } = await axios.get(`${BASE_URL}/users`, {
@@ -45,7 +48,16 @@ const AdminUsersPage = ({ userData }: IAdminUsersPage) => {
         setUsers(data.data);
         setTotalUsers(data.total);
         setTotalPages(data.pagination.totalPages);
-      } catch {
+      } catch (error) {
+        setIsError(true);
+        const errorMessage = axios.isAxiosError(error)
+          ? error.response?.data?.message || error.message
+          : 'An error occurred';
+
+        toast.error('Failed to load data', {
+          description: errorMessage,
+          duration: 5000,
+        });
       } finally {
         setIsLoading(false);
       }
@@ -135,6 +147,7 @@ const AdminUsersPage = ({ userData }: IAdminUsersPage) => {
             limit={limit}
             users={users}
             setPage={setPage}
+            isError={isError}
             total={totalUsers}
             setLimit={setLimit}
             isLoading={isLoading}

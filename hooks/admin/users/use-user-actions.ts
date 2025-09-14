@@ -3,7 +3,7 @@ import axios from 'axios';
 import { toast } from 'sonner';
 import { BASE_URL } from '@/utils/url';
 
-type ActionType = 'delete' | 'changeRole' | 'toggleEmail' | 'deactivate' | 'reactivate';
+type ActionType = 'delete' | 'changeRole' | 'toggleActivation';
 
 interface UseUserActionsProps {
   token: string;
@@ -77,37 +77,15 @@ const useUserActions = ({ token, onUserUpdated }: UseUserActionsProps) => {
           successMessage = `${modalState.userName}'s role has been changed successfully`;
           break;
 
-        case 'toggleEmail':
+        case 'toggleActivation':
           await axios.patch(
-            `${BASE_URL}/users/${modalState.userId}/toggle-verification`,
+            `${BASE_URL}/users/${modalState.userId}/toggle-activation`,
             {},
             {
               headers: { Authorization: `Bearer ${token}` },
             }
           );
-          successMessage = `${modalState.userName}'s email verification status has been updated`;
-          break;
-
-        case 'deactivate':
-          await axios.patch(
-            `${BASE_URL}/users/${modalState.userId}/deactivate`,
-            {},
-            {
-              headers: { Authorization: `Bearer ${token}` },
-            }
-          );
-          successMessage = `${modalState.userName} has been deactivated successfully`;
-          break;
-
-        case 'reactivate':
-          await axios.patch(
-            `${BASE_URL}/users/${modalState.userId}/reactivate`,
-            {},
-            {
-              headers: { Authorization: `Bearer ${token}` },
-            }
-          );
-          successMessage = `${modalState.userName} has been reactivated successfully`;
+          successMessage = `${modalState.userName}'s activation status has been updated successfully`;
           break;
 
         default:
@@ -140,16 +118,8 @@ const useUserActions = ({ token, onUserUpdated }: UseUserActionsProps) => {
     openModal('delete', userId, userName);
   };
 
-  const toggleEmailVerification = (userId: string, userName: string) => {
-    openModal('toggleEmail', userId, userName);
-  };
-
-  const deactivateUser = (userId: string, userName: string) => {
-    openModal('deactivate', userId, userName);
-  };
-
-  const reactivateUser = (userId: string, userName: string) => {
-    openModal('reactivate', userId, userName);
+  const toggleUserActivation = (userId: string, userName: string) => {
+    openModal('toggleActivation', userId, userName);
   };
 
   const updateUserRole = (userId: string, userName: string, currentRole: string) => {
@@ -158,9 +128,7 @@ const useUserActions = ({ token, onUserUpdated }: UseUserActionsProps) => {
 
   return {
     deleteUser,
-    toggleEmailVerification,
-    deactivateUser,
-    reactivateUser,
+    toggleUserActivation,
     updateUserRole,
     modalState,
     closeModal,

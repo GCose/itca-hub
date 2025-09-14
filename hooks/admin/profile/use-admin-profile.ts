@@ -69,7 +69,6 @@ export const useAdminProfile = ({ token }: UseAdminProfileProps) => {
       setProfile(data.data);
       setError(null);
     } catch (err) {
-      console.error('Error fetching profile:', err);
       setError(err instanceof Error ? err.message : 'An unknown error occurred');
       toast.error('Failed to load profile', {
         description: err instanceof Error ? err.message : 'An unknown error occurred',
@@ -123,7 +122,6 @@ export const useAdminProfile = ({ token }: UseAdminProfileProps) => {
         description: 'Your profile information has been updated.',
       });
     } catch (err) {
-      console.error('Error updating profile:', err);
       toast.error('Failed to update profile', {
         description: err instanceof Error ? err.message : 'An unknown error occurred',
       });
@@ -186,7 +184,6 @@ export const useAdminProfile = ({ token }: UseAdminProfileProps) => {
         description: 'Your password has been updated.',
       });
     } catch (err) {
-      console.error('Error changing password:', err);
       toast.error('Failed to change password', {
         description: err instanceof Error ? err.message : 'An unknown error occurred',
       });
@@ -225,7 +222,6 @@ export const useAdminProfile = ({ token }: UseAdminProfileProps) => {
       toast.success('Profile picture updated successfully');
       return uploadResponse.data.fileUrl;
     } catch (err) {
-      console.error('Error uploading profile image:', err);
       toast.error('Failed to upload profile picture', {
         description: err instanceof Error ? err.message : 'An unknown error occurred',
       });

@@ -86,13 +86,7 @@ const Header = () => {
     >
       <div className="container mx-auto flex items-center justify-between px-4">
         <Link href="/" className="relative z-50 flex items-center">
-          <Image
-            width={120}
-            height={40}
-            alt="ITCA Logo"
-            src="/images/logo.jpg"
-            className="h-10 w-auto"
-          />
+          <Image width={120} height={40} alt="ITCA Logo" src="/images/logo.jpg" />
         </Link>
 
         {/*==================== Desktop Menu (Visible above 1050px) ====================*/}
