@@ -66,7 +66,7 @@ const useUserActions = ({ token, onUserUpdated }: UseUserActionsProps) => {
           break;
 
         case 'changeRole':
-          const newRole = modalState.userRole?.toLowerCase() === 'admin' ? 'USER' : 'ADMIN';
+          const newRole = modalState.userRole?.toLowerCase() === 'admin' ? 'user' : 'admin';
           await axios.patch(
             `${BASE_URL}/users/${modalState.userId}/role`,
             { role: newRole },
