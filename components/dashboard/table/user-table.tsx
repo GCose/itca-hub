@@ -73,16 +73,19 @@ const UserTable = ({
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-white rounded-2xl">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th className="px-8 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                   User
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th className="px-8 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                   Role
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th className="px-8 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  Email Status
+                </th>
+                <th className="px-8 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                   Joined
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th className="px-8 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
                   Actions
                 </th>
               </tr>
@@ -94,7 +97,7 @@ const UserTable = ({
 
                 return (
                   <tr key={user._id} className="hover:bg-gray-200/60 even:bg-gray-100/80">
-                    <td className="whitespace-nowrap px-6 py-4">
+                    <td className="whitespace-nowrap px-8 py-4">
                       <div className="flex items-center">
                         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-blue-700">
                           <User className="h-5 w-5" />
@@ -106,28 +109,40 @@ const UserTable = ({
                       </div>
                     </td>
 
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                    <td className="whitespace-nowrap px-8 py-4 text-sm text-gray-500">
                       {user.role.toLowerCase() === 'user' ? 'Student' : 'Admin'}
                     </td>
 
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                    <td className="whitespace-nowrap px-8 py-4">
+                      {user.isEmailVerified ? (
+                        <span className="inline-flex px-2 py-2 text-sm font-medium rounded-md bg-green-100 text-green-600">
+                          Verified
+                        </span>
+                      ) : (
+                        <span className="inline-flex px-2 py-2 text-sm font-medium rounded-md bg-red-100/70 text-red-600">
+                          Unverified
+                        </span>
+                      )}
+                    </td>
+
+                    <td className="whitespace-nowrap px-8 py-4 text-sm text-gray-500">
                       {new Date(user.joinedDate || user.createdAt).toLocaleDateString()}
                     </td>
 
-                    <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
+                    <td className="whitespace-nowrap px-8 py-4 text-right text-sm font-medium">
                       <div className="flex items-center space-x-1 justify-end">
                         {/*==================== Toggle User Role ====================*/}
                         <button
                           onClick={() => updateUserRole(user._id!, userName, user.role)}
-                          className="rounded-full p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500"
+                          className="rounded-full p-2 text-gray-400 hover:bg-white"
                           title={
                             user.role.toLowerCase() === 'admin' ? 'Make Student' : 'Make Admin'
                           }
                         >
                           {user.role.toLowerCase() === 'admin' ? (
-                            <GraduationCap className="h-5 w-5" />
+                            <GraduationCap className="h-5 w-5 text-blue-600 rounded-full" />
                           ) : (
-                            <Crown className="h-5 w-5" />
+                            <Crown className="h-5 w-5 text-purple-600 rounded-full" />
                           )}
                         </button>
                         {/*==================== End of Toggle User Role ====================*/}
@@ -135,22 +150,22 @@ const UserTable = ({
                         {/*==================== Toggle User Activation ====================*/}
                         <button
                           onClick={() => toggleUserActivation(user._id!, userName)}
-                          className="rounded-full p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500"
                           title={user.isActive ? 'Deactivate User' : 'Activate User'}
+                          className="rounded-full p-2 text-gray-400 hover:bg-white"
                         >
                           {user.isActive ? (
-                            <UserX className="h-5 w-5" />
+                            <UserX className="h-5 w-5 text-amber-400 rounded-full" />
                           ) : (
-                            <UserCheck className="h-5 w-5" />
+                            <UserCheck className="h-5 w-5 text-green-300 rounded-full" />
                           )}
                         </button>
                         {/*==================== End of Toggle User Activation ====================*/}
 
                         {/*==================== Delete User ====================*/}
                         <button
-                          onClick={() => deleteUser(user._id!, userName)}
-                          className="rounded-full p-1 text-red-400 hover:bg-gray-100 hover:text-red-500"
                           title="Delete User"
+                          onClick={() => deleteUser(user._id!, userName)}
+                          className="rounded-full p-2 text-red-400 hover:bg-white hover:text-red-500"
                         >
                           <Trash className="h-5 w-5" />
                         </button>
