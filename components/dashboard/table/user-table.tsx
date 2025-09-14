@@ -69,7 +69,7 @@ const UserTable = ({
       {/*==================== User Table ====================*/}
       <div className="rounded-2xl bg-white">
         {/*==================== Table ====================*/}
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto hide-scrollbar">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-white rounded-2xl">
               <tr>

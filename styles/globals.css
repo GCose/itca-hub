@@ -156,9 +156,13 @@ body {
   color: #f59e0b;
 }
 
-tbody,
-tr {
+.hide-scrollbar {
   scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
 }
 
 input[type='password']::-ms-reveal,

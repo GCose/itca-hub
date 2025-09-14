@@ -21,7 +21,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({
   return (
     <>
       <Head>
-        <title>ITCA Hub | {title}</title>
+        <title>{`ITCA Hub | ${title}`}</title>
         <link rel="icon" href="/images/logo.jpg" />
         <meta name="description" content={description} />
       </Head>

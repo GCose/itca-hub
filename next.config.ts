@@ -2,11 +2,23 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: [
-      'hebbkx1anhila5yf.public.blob.vercel-storage.com',
-      'v0.blob.com',
-      'storage.googleapis.com',
-      'jeetix-file-service.onrender.com',
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'hebbkx1anhila5yf.public.blob.vercel-storage.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'v0.blob.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'storage.googleapis.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'jeetix-file-service.onrender.com',
+      },
     ],
   },
 };

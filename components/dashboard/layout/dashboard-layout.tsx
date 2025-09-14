@@ -10,7 +10,7 @@ const DashboardLayout = ({ children, title = 'Dashboard', token }: DashboardLayo
   return (
     <>
       <Head>
-        <title>ITCA Hub | {title}</title>
+        <title>{`ITCA Hub | ${title}`}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/images/logo.jpg" />
       </Head>
