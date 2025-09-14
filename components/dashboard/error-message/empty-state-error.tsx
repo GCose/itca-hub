@@ -1,27 +1,16 @@
 import React from 'react';
-import { FileText, Upload, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
-import { LucideIcon } from 'lucide-react';
-
-interface EmptyStateProps {
-  title?: string;
-  description?: string;
-  uploadUrl: string;
-  itemName?: string;
-  onRefresh?: () => void;
-  showRefreshButton?: boolean;
-  uploadButtonText?: string;
-  uploadIcon?: LucideIcon;
-}
+import { FileText, Upload, RefreshCw } from 'lucide-react';
+import { EmptyStateProps } from '@/types/interfaces/error';
 
 const EmptyState: React.FC<EmptyStateProps> = ({
   title,
-  description,
   uploadUrl,
-  itemName = 'resource',
   onRefresh,
-  showRefreshButton = true,
+  description,
   uploadButtonText,
+  itemName = 'resource',
+  showRefreshButton = true,
   uploadIcon: UploadIcon = Upload,
 }) => {
   const defaultTitle = `No ${itemName}s found`;

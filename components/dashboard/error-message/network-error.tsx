@@ -1,18 +1,12 @@
-import React from "react";
-import { WifiOff, RefreshCw } from "lucide-react";
-
-interface NetworkErrorProps {
-  title?: string;
-  description?: string;
-  onRetry: () => void;
-  retryButtonText?: string;
-}
+import React from 'react';
+import { WifiOff, RefreshCw } from 'lucide-react';
+import { NetworkErrorProps } from '@/types/interfaces/error';
 
 const NetworkError: React.FC<NetworkErrorProps> = ({
-  title = "Unable to fetch resources",
-  description = "Please check your internet connection and try again.",
   onRetry,
-  retryButtonText = "Refresh",
+  retryButtonText = 'Refresh',
+  title = 'Unable to fetch resources',
+  description = 'Please check your internet connection and try again.',
 }) => {
   return (
     <div className="rounded-2xl bg-white p-8 text-center">
@@ -22,7 +16,7 @@ const NetworkError: React.FC<NetworkErrorProps> = ({
       <div className="flex justify-center">
         <button
           onClick={onRetry}
-          className="inline-flex items-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+          className="inline-flex items-center rounded-lg border-none bg-gray-200/60 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200"
         >
           <RefreshCw className="mr-2 h-4 w-4" />
           {retryButtonText}

@@ -1,18 +1,7 @@
-import { AlertTriangle, X, Loader, Crown, UserX } from 'lucide-react';
 import { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-
-type ActionType = 'delete' | 'changeRole' | 'toggleActivation';
-
-interface UserActionsModalProps {
-  isOpen: boolean;
-  isLoading: boolean;
-  actionType: ActionType;
-  userName: string;
-  userRole?: string;
-  onClose: () => void;
-  onConfirm: () => void;
-}
+import { UserActionsModalProps } from '@/types/interfaces/modal';
+import { AlertTriangle, X, Loader, Crown, UserX } from 'lucide-react';
 
 const UserActionsModal = ({
   isOpen,
@@ -72,8 +61,8 @@ const UserActionsModal = ({
         return {
           icon: <UserX className="h-5 w-5 text-orange-600" />,
           iconBg: 'bg-orange-100',
-          title: 'Toggle User Activation',
-          description: `Are you sure you want to toggle ${userName}'s activation status?`,
+          title: 'Update User Status',
+          description: `Are you sure you want to update ${userName}'s activation status?`,
           confirmText: isLoading ? 'Updating...' : 'Update Status',
           confirmClass:
             'bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-700 hover:to-orange-600',
@@ -98,25 +87,25 @@ const UserActionsModal = ({
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <motion.div
+            exit={{ opacity: 0 }}
             onClick={handleClose}
-            className="absolute inset-0 bg-gray-900/50 backdrop-blur-sm"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
+            className="absolute inset-0 bg-gray-900/50 backdrop-blur-sm"
           />
 
           <motion.div
-            className="relative w-full max-w-md rounded-xl bg-white shadow-2xl"
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.97, y: 10 }}
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{
               type: 'spring',
               damping: 20,
               stiffness: 300,
               duration: 0.3,
             }}
+            className="relative w-full max-w-md rounded-xl bg-white shadow-2xl"
           >
             <div className="absolute -top-12 -right-12 h-32 w-32 rounded-full bg-blue-500/10 animate-pulse"></div>
             <div
@@ -124,7 +113,9 @@ const UserActionsModal = ({
               style={{ animationDelay: '0.5s' }}
             ></div>
 
+            {/*==================== Modal Container ====================*/}
             <div className="relative p-6">
+              {/*==================== Modal Title ====================*/}
               <div className="mb-5 flex justify-between items-center">
                 <div className="flex items-center">
                   <div
@@ -137,38 +128,44 @@ const UserActionsModal = ({
 
                 <button
                   type="button"
-                  className="rounded-full p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-500 disabled:opacity-50"
-                  onClick={handleClose}
                   disabled={isLoading}
+                  onClick={handleClose}
+                  className="rounded-full p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-500 disabled:opacity-50"
                 >
                   <X className="h-5 w-5" />
                 </button>
               </div>
+              {/*==================== End of Modal Title ====================*/}
 
+              {/*==================== Modal Description ====================*/}
               <div className="mb-6">
                 <p className="text-sm text-gray-600">{description}</p>
               </div>
+              {/*==================== End of Modal Description ====================*/}
 
+              {/*==================== Modal Buttons ====================*/}
               <div className="flex justify-end space-x-3">
                 <button
                   type="button"
-                  className="inline-flex justify-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
-                  onClick={handleClose}
                   disabled={isLoading}
+                  onClick={handleClose}
+                  className="inline-flex justify-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
                 >
                   Cancel
                 </button>
                 <button
                   type="button"
-                  className={`inline-flex justify-center items-center rounded-lg px-4 py-2 text-sm font-medium text-white focus:outline-none focus:ring-offset-2 transition-all duration-300 shadow-md hover:shadow-lg disabled:opacity-50 ${confirmClass}`}
                   onClick={onConfirm}
                   disabled={isLoading}
+                  className={`inline-flex justify-center items-center rounded-lg px-4 py-2 text-sm font-medium text-white focus:outline-none focus:ring-offset-2 transition-all duration-300 shadow-md hover:shadow-lg disabled:opacity-50 ${confirmClass}`}
                 >
                   {isLoading && <Loader className="mr-2 h-4 w-4 animate-spin" />}
                   {confirmText}
                 </button>
               </div>
+              {/*==================== End of Modal Buttons ====================*/}
             </div>
+            {/*==================== End of Modal Container ====================*/}
           </motion.div>
         </div>
       )}

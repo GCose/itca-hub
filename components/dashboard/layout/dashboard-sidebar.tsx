@@ -1,36 +1,25 @@
-import { JSX, useRef } from 'react';
 import Link from 'next/link';
+import { useRef } from 'react';
 import { useRouter } from 'next/router';
-import Image from 'next/image';
-import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Users,
-  Calendar,
-  FileText,
-  HelpCircle,
-  User,
   X,
-  LayoutDashboardIcon,
+  User,
+  Users,
+  FileText,
+  Calendar,
   User2Icon,
+  HelpCircle,
+  LayoutDashboardIcon,
 } from 'lucide-react';
+import Image from 'next/image';
+import { NavItem } from '@/types';
+import { motion, AnimatePresence } from 'framer-motion';
+import { DashboardSidebarProps } from '@/types/interfaces/dashboard';
 
-interface SidebarProps {
-  open: boolean;
-  setOpen: (open: boolean) => void;
-}
-
-type NavItem = {
-  name: string;
-  href: string;
-  icon: JSX.Element;
-  children?: NavItem[];
-};
-
-const Sidebar = ({ open, setOpen }: SidebarProps) => {
+const Sidebar = ({ open, setOpen }: DashboardSidebarProps) => {
   const router = useRouter();
   const isAdminRef = useRef(false);
 
-  // Navigation items
   const adminNavItems: NavItem[] = [
     {
       name: 'Overview',
@@ -82,38 +71,20 @@ const Sidebar = ({ open, setOpen }: SidebarProps) => {
     },
   ];
 
-  // Determine NavItems
   const getNavItems = () => {
     isAdminRef.current = router.pathname.startsWith('/admin');
     return isAdminRef.current ? adminNavItems : studentNavItems;
   };
 
-  // Check if a nav item is active
   const isActive = (href: string) => {
-    // For dashboard routes, only exact match
     if (href === '/admin' || href === '/student') {
       return router.pathname === href;
     }
-    // For other routes, either exact match or starts with the path
     return router.pathname === href || router.pathname.startsWith(`${href}/`);
   };
 
   return (
     <>
-      {/*==================== Mobile sidebar backdrop ====================*/}
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            exit={{ opacity: 0 }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            onClick={() => setOpen(false)}
-            className="fixed inset-0 z-40 bg-gray-600/30 backdrop-blur-sm bg-opacity-75 max-[967px]:block hidden"
-          />
-        )}
-      </AnimatePresence>
-      {/*==================== End of Mobile sidebar backdrop ====================*/}
-
       {/*==================== Sidebar ====================*/}
       <div
         className={`fixed inset-y-0 z-50 w-60 transform overflow-hidden max-[968px]:bg-white lg:bg-white transition-transform ease-in-out duration-700 
@@ -124,9 +95,9 @@ const Sidebar = ({ open, setOpen }: SidebarProps) => {
         <div className="absolute inset-0 pointer-events-none">
           {/*==================== Top Right - Tech Circuit Pattern ====================*/}
           <div className="absolute top-5 right-5">
-            <div className="w-8 h-8 rounded-sm bg-blue-500/15"></div>
-            <div className="absolute top-4 right-4 w-6 h-6 rounded-sm bg-amber-500/15"></div>
-            <div className="absolute top-8 right-7 w-4 h-4 rounded-xs bg-blue-500/10"></div>
+            <div className="w-8 h-8 rounded-sm bg-blue-500/25"></div>
+            <div className="absolute top-4 right-4 w-6 h-6 rounded-sm bg-amber-500/25"></div>
+            <div className="absolute top-8 right-7 w-4 h-4 rounded-xs bg-blue-500/20"></div>
           </div>
           {/*==================== End of Top Right - Tech Circuit Pattern ====================*/}
         </div>
@@ -181,7 +152,7 @@ const Sidebar = ({ open, setOpen }: SidebarProps) => {
                   href={item.href}
                   className={`flex items-center px-4 py-3 text-md font-medium  ${
                     isActive(item.href)
-                      ? 'bg-gradient-to-r from-amber-50 to-blue-50 text-blue-700 border-l-2 border-l-amber-500 rounded-r-lg'
+                      ? 'bg-gradient-to-r from-amber-100/70 to-blue-100/70 text-blue-700 border-none rounded-lg'
                       : 'text-gray-700 hover:bg-amber-50/50 hover:text-blue-700'
                   }`}
                 >
@@ -190,7 +161,9 @@ const Sidebar = ({ open, setOpen }: SidebarProps) => {
                   >
                     {item.icon}
                   </span>
-                  <span>{item.name}</span>
+                  <span className={`${isActive(item.href) ? 'font-bold' : 'font-normal'}`}>
+                    {item.name}
+                  </span>
                   {isActive(item.href) && (
                     <span className="ml-auto w-2 h-2 rounded-full bg-amber-500"></span>
                   )}
@@ -203,6 +176,20 @@ const Sidebar = ({ open, setOpen }: SidebarProps) => {
         {/*==================== End of Sidebar Content Container ====================*/}
       </div>
       {/*==================== End of Sidebar ====================*/}
+
+      {/*==================== Mobile sidebar backdrop ====================*/}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            exit={{ opacity: 0 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            onClick={() => setOpen(false)}
+            className="fixed inset-0 z-40 bg-gray-600/30 backdrop-blur-sm bg-opacity-75 max-[967px]:block hidden"
+          />
+        )}
+      </AnimatePresence>
+      {/*==================== End of Mobile sidebar backdrop ====================*/}
     </>
   );
 };

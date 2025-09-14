@@ -1,16 +1,4 @@
-import { ReactNode } from 'react';
-
-interface DashboardPageHeaderProps {
-  title: string;
-  subtitle?: string;
-  description?: string;
-  showPulse?: boolean;
-  actions?: ReactNode;
-  titleColors?: {
-    primary: string;
-    secondary: string;
-  };
-}
+import { DashboardPageHeaderProps } from '@/types/interfaces/dashboard';
 
 const DashboardPageHeader = ({
   title,
@@ -23,9 +11,6 @@ const DashboardPageHeader = ({
     secondary: 'text-amber-500',
   },
 }: DashboardPageHeaderProps) => {
-  /**===================================================================
-   * Splits title into primary and secondary parts if subtitle exists.
-   ===================================================================*/
   const renderTitle = () => {
     if (subtitle) {
       return (
@@ -62,19 +47,19 @@ const DashboardPageHeader = ({
   return (
     <div className="mb-8 w-full">
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between w-full gap-4">
-        {/*==================== Title and Description Section ====================*/}
+        {/*==================== Title and Description ====================*/}
         <div className="flex-1">
           {renderTitle()}
           {description && <p className="text-gray-600">{description}</p>}
         </div>
-        {/*==================== End of Title and Description Section ====================*/}
+        {/*==================== End of Title and Description ====================*/}
 
-        {/*==================== Action Buttons Section ====================*/}
+        {/*==================== Action Buttons ====================*/}
         {actions && <div className="flex-shrink-0 mt-4 sm:mt-0 flex space-x-3">{actions}</div>}
-        {/*==================== End of Action Buttons Section ====================*/}
+        {/*==================== End of Action Buttons ====================*/}
       </div>
     </div>
-  );  
+  );
 };
 
 export default DashboardPageHeader;

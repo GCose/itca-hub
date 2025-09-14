@@ -1,11 +1,13 @@
+import { JSX } from 'react';
+
 export interface RegistrationFormData {
-  firstName: string;
-  lastName: string;
-  schoolEmail: string;
-  password: string;
-  confirmPassword: string;
-  agreeToTerms: boolean;
   role: string;
+  password: string;
+  lastName: string;
+  firstName: string;
+  schoolEmail: string;
+  agreeToTerms: boolean;
+  confirmPassword: string;
 }
 
 export interface FormErrors {
@@ -21,14 +23,32 @@ export interface CustomError extends Error {
 }
 
 export interface UserAuth {
-  firstName: string | undefined;
+  role: string;
+  token: string;
+  userId: unknown;
   lastName: string | undefined;
+  firstName: string | undefined;
   schoolEmail: string | undefined;
   profilePictureUrl: string | undefined;
-  userId: unknown;
-  token: string;
-  role: string;
 }
+
+export type UserProps = {
+  userData: UserAuth;
+};
+
+export type NavItem = {
+  name: string;
+  href: string;
+  icon: JSX.Element;
+  children?: NavItem[];
+};
+
+export interface UseUserActionsProps {
+  token: string;
+  onUserUpdated: () => void;
+}
+
+export type ActionType = 'delete' | 'changeRole' | 'toggleActivation';
 
 export interface Resource {
   resourceId: string;

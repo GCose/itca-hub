@@ -1,32 +1,18 @@
-import { useState } from 'react';
 import axios from 'axios';
 import { toast } from 'sonner';
+import { useState } from 'react';
 import { BASE_URL } from '@/utils/url';
-
-type ActionType = 'delete' | 'changeRole' | 'toggleActivation';
-
-interface UseUserActionsProps {
-  token: string;
-  onUserUpdated: () => void;
-}
-
-interface ModalState {
-  isOpen: boolean;
-  actionType: ActionType;
-  userId: string;
-  userName: string;
-  userRole?: string;
-  isLoading: boolean;
-}
+import { ModalState } from '@/types/interfaces/modal';
+import { ActionType, UseUserActionsProps } from '@/types';
 
 const useUserActions = ({ token, onUserUpdated }: UseUserActionsProps) => {
   const [modalState, setModalState] = useState<ModalState>({
-    isOpen: false,
-    actionType: 'delete',
     userId: '',
     userName: '',
     userRole: '',
+    isOpen: false,
     isLoading: false,
+    actionType: 'delete',
   });
 
   const openModal = (
@@ -36,11 +22,11 @@ const useUserActions = ({ token, onUserUpdated }: UseUserActionsProps) => {
     userRole?: string
   ) => {
     setModalState({
-      isOpen: true,
-      actionType,
       userId,
       userName,
       userRole,
+      actionType,
+      isOpen: true,
       isLoading: false,
     });
   };
@@ -113,7 +99,6 @@ const useUserActions = ({ token, onUserUpdated }: UseUserActionsProps) => {
     }
   };
 
-  /**==================== Action Functions ====================*/
   const deleteUser = (userId: string, userName: string) => {
     openModal('delete', userId, userName);
   };
@@ -128,11 +113,11 @@ const useUserActions = ({ token, onUserUpdated }: UseUserActionsProps) => {
 
   return {
     deleteUser,
-    toggleUserActivation,
-    updateUserRole,
     modalState,
     closeModal,
     executeAction,
+    updateUserRole,
+    toggleUserActivation,
   };
 };
 

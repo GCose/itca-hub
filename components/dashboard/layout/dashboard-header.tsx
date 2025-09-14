@@ -1,20 +1,15 @@
-import { useState, useEffect, useCallback } from 'react';
-import { motion } from 'framer-motion';
-import { Menu, User, LogOut, HelpCircle } from 'lucide-react';
-import Link from 'next/link';
 import axios from 'axios';
-import { BASE_URL } from '@/utils/url';
-import { UserAuth } from '@/types';
+import Link from 'next/link';
 import Image from 'next/image';
 import router from 'next/router';
+import { UserAuth } from '@/types';
+import { motion } from 'framer-motion';
+import { BASE_URL } from '@/utils/url';
+import { useState, useEffect, useCallback } from 'react';
+import { DashboardHeaderProps } from '@/types/interfaces/dashboard';
+import { Menu, User, LogOut, HelpCircle } from 'lucide-react';
 
-interface HeaderProps {
-  sidebarOpen: boolean;
-  setSidebarOpen: (open: boolean) => void;
-  token?: string;
-}
-
-const Header = ({ sidebarOpen, token, setSidebarOpen }: HeaderProps) => {
+const DashboardHeader = ({ sidebarOpen, token, setSidebarOpen }: DashboardHeaderProps) => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [userData, setUserData] = useState<UserAuth | null>(null);
 
@@ -30,7 +25,6 @@ const Header = ({ sidebarOpen, token, setSidebarOpen }: HeaderProps) => {
     } catch {}
   }, [token]);
 
-  // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
@@ -47,13 +41,13 @@ const Header = ({ sidebarOpen, token, setSidebarOpen }: HeaderProps) => {
     fetchUserProfile();
   }, [fetchUserProfile]);
 
-  const fullName = userData?.firstName + ' ' + userData?.lastName;
-  const email = userData?.schoolEmail;
-  const profilePictureUrl = userData?.profilePictureUrl;
-
   const handleLogout = () => {
     router.push('/api/logout');
   };
+
+  const fullName = userData?.firstName + ' ' + userData?.lastName;
+  const email = userData?.schoolEmail;
+  const profilePictureUrl = userData?.profilePictureUrl;
 
   return (
     <header className="sticky z-20 flex h-16 items-center justify-between bg-white rounded-br-4xl rounded-bl-4xl px-4 transition-shadow duration-200 min-[968px]:px-6">
@@ -71,9 +65,9 @@ const Header = ({ sidebarOpen, token, setSidebarOpen }: HeaderProps) => {
         <div className="absolute inset-0 pointer-events-none">
           {/*==================== Top Left - Tech Circuit Pattern ====================*/}
           <div className="absolute top-3 left-15 max-[990px]:left-25">
-            <div className="w-8 h-8 rounded-full bg-blue-500/15"></div>
-            <div className="absolute top-4 right-5 w-6 h-6 rounded-full bg-amber-500/15"></div>
-            <div className="absolute top-6 right-11 w-4 h-4 rounded-full bg-blue-500/10"></div>
+            <div className="w-8 h-8 rounded-full bg-blue-500/25"></div>
+            <div className="absolute top-4 right-5 w-6 h-6 rounded-full bg-amber-500/25"></div>
+            <div className="absolute top-6 right-11 w-4 h-4 rounded-full bg-blue-500/20"></div>
           </div>
           {/*==================== End of Top Left - Tech Circuit Pattern ====================*/}
         </div>
@@ -162,19 +156,23 @@ const Header = ({ sidebarOpen, token, setSidebarOpen }: HeaderProps) => {
               </span>
             </button>
 
-            {/*==================== User Dropdown ====================*/}
+            {/*==================== Dropdown ====================*/}
             {isProfileOpen && (
               <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.2 }}
+                initial={{ opacity: 0, y: 10 }}
                 className="profile-menu absolute right-0 top-full mt-2 w-56 rounded-lg border border-gray-200 bg-white py-2 shadow-lg"
               >
+                {/*==================== Dropdown Info ====================*/}
                 <div className="border-b border-gray-100 px-4 py-2">
                   <p className="text-sm font-medium text-gray-900">{fullName}</p>
                   <p className="text-xs text-gray-500">{email}</p>
                 </div>
+                {/*==================== End of Dropdown Info ====================*/}
+
+                {/*==================== Dropdown Links ====================*/}
                 <div className="py-1">
                   <Link
                     href="/profile"
@@ -191,6 +189,9 @@ const Header = ({ sidebarOpen, token, setSidebarOpen }: HeaderProps) => {
                     Help
                   </Link>
                 </div>
+                {/*==================== End of Dropdown Links ====================*/}
+
+                {/*==================== Logout Button ====================*/}
                 <div className="border-t border-gray-100 py-1">
                   <button
                     onClick={handleLogout}
@@ -200,8 +201,10 @@ const Header = ({ sidebarOpen, token, setSidebarOpen }: HeaderProps) => {
                     <span>Logout</span>
                   </button>
                 </div>
+                {/*==================== End of Logout Button ====================*/}
               </motion.div>
             )}
+            {/*==================== End of Dropdown ====================*/}
           </div>
         )}
       </div>
@@ -209,4 +212,4 @@ const Header = ({ sidebarOpen, token, setSidebarOpen }: HeaderProps) => {
   );
 };
 
-export default Header;
+export default DashboardHeader;

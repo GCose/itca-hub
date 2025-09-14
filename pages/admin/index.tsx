@@ -1,25 +1,16 @@
+import axios from 'axios';
+import { toast } from 'sonner';
+import { NextApiRequest } from 'next';
+import { BASE_URL } from '@/utils/url';
+import { isLoggedIn } from '@/utils/auth';
+import { UserAuth, UserProps } from '@/types';
 import { useState, useEffect, useCallback, FC } from 'react';
+import { DashboardStats } from '@/types/interfaces/dashboard';
+import UserTable from '@/components/dashboard/table/user-table';
 import { Calendar, Users, FileText, PieChart } from 'lucide-react';
 import DashboardLayout from '@/components/dashboard/layout/dashboard-layout';
-import StatsCard from '@/components/dashboard/admin/overview/stats-card';
-import UserTable from '@/components/dashboard/table/user-table';
-import { isLoggedIn } from '@/utils/auth';
-import { NextApiRequest } from 'next';
-import { UserAuth } from '@/types';
-import axios from 'axios';
-import { BASE_URL } from '@/utils/url';
-import { toast } from 'sonner';
-
-interface DashboardStats {
-  totalUsers: number;
-  totalEvents: number;
-  totalResources: number;
-  activeUsers: number;
-}
-
-type UserProps = {
-  userData: UserAuth;
-};
+import DashboardStatsCard from '@/components/dashboard/layout/dashboard-stats-card';
+import DashboardPageHeader from '@/components/dashboard/layout/dashboard-page-header';
 
 const AdminDashboard: FC<UserProps> = ({ userData }) => {
   const [stats, setStats] = useState<DashboardStats>({
@@ -30,11 +21,11 @@ const AdminDashboard: FC<UserProps> = ({ userData }) => {
   });
   const [recentRegistrations, setRecentRegistrations] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [totalPages, setTotalPages] = useState(0);
   const [isError, setIsError] = useState(false);
   const [limit, setLimit] = useState(10);
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0);
   const [total, setTotal] = useState(0);
+  const [page, setPage] = useState(1);
 
   const fetchDashboardData = useCallback(
     async (page: number, limit: number) => {
@@ -67,6 +58,7 @@ const AdminDashboard: FC<UserProps> = ({ userData }) => {
         setTotalPages(recentRegistrations.data.pagination.totalPages);
       } catch (error) {
         setIsError(true);
+
         const errorMessage = axios.isAxiosError(error)
           ? error.response?.data?.message || error.message
           : 'An error occurred';
@@ -88,46 +80,38 @@ const AdminDashboard: FC<UserProps> = ({ userData }) => {
 
   return (
     <DashboardLayout title="Admin Dashboard" token={userData.token}>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2 flex items-center">
-          <span className="text-blue-700 mr-2">Dashboard</span>
-          <span className="text-amber-500">Overview</span>
-          <span className="ml-3 relative">
-            <span className="absolute -top-1 -right-1 flex h-3 w-3">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
-            </span>
-          </span>
-        </h1>
-        <p className="text-gray-600">Welcome to the ITCA Hub admin dashboard</p>
+      {/*==================== Page Header ====================*/}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+        <DashboardPageHeader
+          title="Dashboard"
+          subtitle="Overview"
+          description="Welcome to the ITCA Hub admin dashboard"
+        />
       </div>
+      {/*==================== End of Page Header ====================*/}
 
       {/*==================== Stats Cards ====================*/}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <StatsCard
+        <DashboardStatsCard
           title="Total Users"
-          trendDirection="up"
           isLoading={isLoading}
           value={stats.totalUsers}
           icon={<Users className="h-6 w-6 text-blue-600" />}
         />
-        <StatsCard
-          trendDirection="up"
+        <DashboardStatsCard
           title="Active Events"
           isLoading={isLoading}
           value={stats.totalEvents}
           icon={<Calendar className="h-6 w-6 text-amber-500" />}
         />
-        <StatsCard
+        <DashboardStatsCard
           title="Resources"
-          trendDirection="up"
           isLoading={isLoading}
           value={stats.totalResources}
           icon={<FileText className="h-6 w-6 text-green-500" />}
         />
-        <StatsCard
+        <DashboardStatsCard
           title="Active Users"
-          trendDirection="down"
           isLoading={isLoading}
           value={stats.activeUsers}
           icon={<PieChart className="h-6 w-6 text-purple-500" />}
@@ -135,8 +119,8 @@ const AdminDashboard: FC<UserProps> = ({ userData }) => {
       </div>
       {/*==================== End of Stats Cards ====================*/}
 
+      {/*==================== Recent User Activity ====================*/}
       <div className="grid grid-cols-1 gap-6 pt-4">
-        {/*==================== Recent User Activity ====================*/}
         <div className="lg:col-span-2">
           <h2 className="text-lg font-semibold mb-4">Recent Registrations</h2>
           <UserTable
@@ -153,8 +137,8 @@ const AdminDashboard: FC<UserProps> = ({ userData }) => {
             onUserUpdated={() => fetchDashboardData(page, limit)}
           />
         </div>
-        {/*==================== End of Recent User Activity ====================*/}
       </div>
+      {/*==================== End of Recent User Activity ====================*/}
     </DashboardLayout>
   );
 };

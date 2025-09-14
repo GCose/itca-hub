@@ -2,64 +2,39 @@ import React from 'react';
 import {
   Trash,
   User,
+  UserX,
+  Crown,
+  Users,
+  UserCheck,
   ChevronLeft,
   ChevronRight,
-  UserX,
-  UserCheck,
-  Crown,
   GraduationCap,
-  Users,
 } from 'lucide-react';
-import useUserActions from '@/hooks/admin/users/use-user-actions';
+import { UserTableProps } from '@/types/interfaces/table';
+import UserTableSkeleton from './skeleton/user-table-skeleton';
 import UserActionsModal from '../modals/user/user-actions-modal';
+import useUserActions from '@/hooks/admin/users/use-user-actions';
 import { NetworkError, EmptyState } from '@/components/dashboard/error-message';
 
-interface UserData {
-  _id?: string;
-  name: string;
-  schoolEmail: string;
-  role: string;
-  isActive?: boolean;
-  joinedDate: string;
-  createdAt: string;
-  firstName: string;
-  lastName: string;
-  isEmailVerified?: boolean;
-}
-
-interface UserTableProps {
-  users?: UserData[];
-  isLoading?: boolean;
-  isError?: boolean;
-  total?: number;
-  page: number;
-  setPage: Function;
-  limit: number;
-  setLimit: Function;
-  totalPages: number;
-  token: string;
-  onUserUpdated: () => void;
-}
-
 const UserTable = ({
+  page,
   limit,
   users,
-  isLoading = false,
-  isError = false,
-  total = users?.length,
-  page,
+  token,
   setPage,
   totalPages,
-  token,
+  isError = false,
+  isLoading = false,
+  total = users?.length,
   onUserUpdated,
 }: UserTableProps) => {
   const {
     deleteUser,
-    toggleUserActivation,
-    updateUserRole,
     modalState,
     closeModal,
     executeAction,
+    updateUserRole,
+    toggleUserActivation,
   } = useUserActions({ token, onUserUpdated });
 
   const currentUsers = users || [];
@@ -71,58 +46,7 @@ const UserTable = ({
   }
 
   if (isLoading) {
-    return (
-      <div className="rounded-2xl bg-white">
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                  User
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                  Role
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                  Joined
-                </th>
-                <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200 bg-white">
-              {[...Array(10)].map((_, index) => (
-                <tr key={index} className="even:bg-gray-100/80 border-none">
-                  <td className="whitespace-nowrap px-6 py-4">
-                    <div className="flex items-center">
-                      <div className="h-8 w-8 rounded-full bg-gray-200 animate-pulse"></div>
-                      <div className="ml-4">
-                        <div className="h-4 w-32 rounded bg-gray-200 animate-pulse"></div>
-                        <div className="mt-1 h-3 w-24 rounded bg-gray-200 animate-pulse"></div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="whitespace-nowrap px-6 py-4">
-                    <div className="h-4 w-16 rounded bg-gray-200 animate-pulse"></div>
-                  </td>
-                  <td className="whitespace-nowrap px-6 py-4">
-                    <div className="h-4 w-20 rounded bg-gray-200 animate-pulse"></div>
-                  </td>
-                  <td className="whitespace-nowrap px-6 py-4 text-right">
-                    <div className="flex space-x-1 justify-end">
-                      <div className="h-8 w-8 rounded bg-gray-200 animate-pulse"></div>
-                      <div className="h-8 w-8 rounded bg-gray-200 animate-pulse"></div>
-                      <div className="h-8 w-8 rounded bg-gray-200 animate-pulse"></div>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    );
+    return <UserTableSkeleton />;
   }
 
   if (users?.length === 0) {
@@ -135,14 +59,16 @@ const UserTable = ({
         showRefreshButton={true}
         onRefresh={onUserUpdated}
         uploadButtonText="Back to Dashboard"
-        description="No registered users match your current search criteria. Try adjusting your filters or refresh the page."
+        description="No registered users found. Might be due to wrong filtering or no users exist at all."
       />
     );
   }
 
   return (
     <>
+      {/*==================== User Table ====================*/}
       <div className="rounded-2xl bg-white">
+        {/*==================== Table ====================*/}
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-white rounded-2xl">
@@ -179,12 +105,15 @@ const UserTable = ({
                         </div>
                       </div>
                     </td>
+
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                       {user.role.toLowerCase() === 'user' ? 'Student' : 'Admin'}
                     </td>
+
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                       {new Date(user.joinedDate || user.createdAt).toLocaleDateString()}
                     </td>
+
                     <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
                       <div className="flex items-center space-x-1 justify-end">
                         {/*==================== Toggle User Role ====================*/}
@@ -234,6 +163,7 @@ const UserTable = ({
             </tbody>
           </table>
         </div>
+        {/*==================== End of Table ====================*/}
 
         {/*==================== Pagination ====================*/}
         {totalPages > 1 && (
@@ -314,6 +244,7 @@ const UserTable = ({
         )}
         {/*==================== End of Pagination ====================*/}
       </div>
+      {/*==================== End of User Table ====================*/}
 
       {/*==================== User Actions Modal ====================*/}
       <UserActionsModal
