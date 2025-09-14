@@ -1,18 +1,18 @@
-import { useState, useEffect, useCallback } from 'react';
-import DashboardLayout from '@/components/dashboard/layout/dashboard-layout';
-import { Calendar, Search, ListFilter, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
-import DeleteEventModal from '@/components/dashboard/modals/events/delete-event-modal';
-import EventsEmptyState from '@/components/dashboard/admin/events/events-empty-state';
-import EventsLoadingSkeleton from '@/components/dashboard/admin/events/events-loading-skeleton';
-import EventCard from '@/components/dashboard/admin/events/event-card';
-import CreateEventModal from '@/components/dashboard/modals/events/create-event-modal';
-import EditEventModal from '@/components/dashboard/modals/events/edit-event-modal';
-import { NetworkError } from '@/components/dashboard/error-message';
-import { useEvents } from '@/hooks/admin/events/use-events';
+import { UserAuth } from '@/types';
 import { NextApiRequest } from 'next';
 import { isLoggedIn } from '@/utils/auth';
-import { UserAuth } from '@/types';
+import { useState, useEffect, useCallback } from 'react';
+import { useEvents } from '@/hooks/admin/events/use-events';
+import { NetworkError } from '@/components/dashboard/error-message';
+import { Calendar, Search, ListFilter, RefreshCw } from 'lucide-react';
+import EventCard from '@/components/dashboard/admin/events/event-card';
+import DashboardLayout from '@/components/dashboard/layout/dashboard-layout';
+import EditEventModal from '@/components/dashboard/modals/events/edit-event-modal';
+import EventsEmptyState from '@/components/dashboard/admin/events/events-empty-state';
+import CreateEventModal from '@/components/dashboard/modals/events/create-event-modal';
+import DeleteEventModal from '@/components/dashboard/modals/events/delete-event-modal';
+import EventsLoadingSkeleton from '@/components/dashboard/admin/events/events-loading-skeleton';
 
 interface ApiEvent {
   _id: string;
