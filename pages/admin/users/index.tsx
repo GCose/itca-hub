@@ -112,13 +112,13 @@ const AdminUsersPage = ({ userData }: AdminUsersPageProps) => {
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <select
               value={role}
               title="select"
               onChange={(e) => setRole(e.target.value)}
-              className="w-full rounded-lg border-none bg-white py-2.5 pl-3 pr-8 text-sm text-gray-700 focus:border-blue-500 focus:outline-none  focus:ring-blue-500"
+              className="w-full rounded-lg border-none bg-white py-2.5 pl-3 text-sm text-gray-700 focus:border-blue-500 focus:outline-none  focus:ring-blue-500"
             >
               <option value="all">All Roles</option>
               <option value="admin">Admin</option>
@@ -131,7 +131,7 @@ const AdminUsersPage = ({ userData }: AdminUsersPageProps) => {
               title="select"
               value={status}
               onChange={(e) => setStatus(e.target.value)}
-              className="w-full rounded-lg border-none bg-white py-2.5 pl-3 pr-8 text-sm text-gray-700 focus:border-blue-500 focus:outline-none  focus:ring-blue-500"
+              className="w-full rounded-lg border-none bg-white py-2.5 pl-3 text-sm text-gray-700 focus:border-blue-500 focus:outline-none  focus:ring-blue-500"
             >
               <option value="all">All Status</option>
               <option value="verified">Verified</option>

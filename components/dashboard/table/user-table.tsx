@@ -96,7 +96,7 @@ const UserTable = ({
                 const userName = user.name || `${user.firstName} ${user.lastName}`;
 
                 return (
-                  <tr key={user._id} className="hover:bg-gray-200/60 even:bg-gray-100/80">
+                  <tr key={user._id} className="hover:bg-amber-100/70 even:bg-gray-100/80">
                     <td className="whitespace-nowrap px-8 py-4">
                       <div className="flex items-center">
                         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-blue-700">
