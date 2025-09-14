@@ -134,8 +134,10 @@ const AdminDashboard: FC<UserProps> = ({ userData }) => {
             setPage={setPage}
             setLimit={setLimit}
             isLoading={isLoading}
+            token={userData.token}
             totalPages={totalPages}
             users={recentRegistrations}
+            onUserUpdated={() => fetchDashboardData(page, limit)}
           />
         </div>
         {/*==================== End of Recent User Activity ====================*/}

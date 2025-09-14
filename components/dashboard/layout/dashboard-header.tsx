@@ -6,6 +6,7 @@ import axios from 'axios';
 import { BASE_URL } from '@/utils/url';
 import { UserAuth } from '@/types';
 import Image from 'next/image';
+import router from 'next/router';
 
 interface HeaderProps {
   sidebarOpen: boolean;
@@ -49,6 +50,10 @@ const Header = ({ sidebarOpen, token, setSidebarOpen }: HeaderProps) => {
   const fullName = userData?.firstName + ' ' + userData?.lastName;
   const email = userData?.schoolEmail;
   const profilePictureUrl = userData?.profilePictureUrl;
+
+  const handleLogout = () => {
+    router.push('/api/logout');
+  };
 
   return (
     <header className="sticky z-20 flex h-16 items-center justify-between bg-white rounded-br-4xl rounded-bl-4xl px-4 transition-shadow duration-200 min-[968px]:px-6">
@@ -187,13 +192,13 @@ const Header = ({ sidebarOpen, token, setSidebarOpen }: HeaderProps) => {
                   </Link>
                 </div>
                 <div className="border-t border-gray-100 py-1">
-                  <Link
-                    href="/auth"
-                    className="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                  <button
+                    onClick={handleLogout}
+                    className="flex w-full items-center px-4 py-2.5 text-sm font-medium text-red-600 rounded-lg hover:bg-red-50 hover:text-red-600 transition-colors"
                   >
-                    <LogOut className="mr-3 h-4 w-4 text-red-500" />
-                    Sign out
-                  </Link>
+                    <LogOut className="mr-3 h-5 w-5 text-red-500" />
+                    <span>Logout</span>
+                  </button>
                 </div>
               </motion.div>
             )}

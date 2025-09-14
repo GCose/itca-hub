@@ -138,7 +138,9 @@ const AdminUsersPage = ({ userData }: IAdminUsersPage) => {
             total={totalUsers}
             setLimit={setLimit}
             isLoading={isLoading}
+            token={userData.token}
             totalPages={totalPages}
+            onUserUpdated={() => fetchUsers(page, limit)}
           />
         </div>
       </div>
