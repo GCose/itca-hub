@@ -48,17 +48,14 @@ const EditEventModal = ({ isOpen, event, onClose, onSave }: EditEventModalProps)
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
-  // Populate form when event changes
   useEffect(() => {
     if (event) {
       setTitle(event.title);
       setDescription(event.description || '');
 
-      // Convert date back to input format
       const eventDate = new Date(event.date);
       setDate(eventDate.toISOString().split('T')[0]);
 
-      // Handle time - extract time from time string
       const timeMatch = event.time.match(/(\d{2}):(\d{2})/);
       if (timeMatch) {
         setTime(`${timeMatch[1]}:${timeMatch[2]}`);
@@ -89,14 +86,12 @@ const EditEventModal = ({ isOpen, event, onClose, onSave }: EditEventModalProps)
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Validate file type
       const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
       if (!validTypes.includes(file.type)) {
         toast.error('Please select a valid image file (JPEG, PNG, or WebP)');
         return;
       }
 
-      // Validate file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
         toast.error('Image size should be less than 5MB');
         return;
@@ -104,7 +99,6 @@ const EditEventModal = ({ isOpen, event, onClose, onSave }: EditEventModalProps)
 
       setImage(file);
 
-      // Create preview
       const reader = new FileReader();
       reader.onload = (e) => {
         setImagePreview(e.target?.result as string);
@@ -141,14 +135,11 @@ const EditEventModal = ({ isOpen, event, onClose, onSave }: EditEventModalProps)
     try {
       let imageUrl = currentImageUrl;
 
-      // Upload new image if selected
       if (image) {
         setIsUploadingImage(true);
         imageUrl = await uploadImage(image);
         setIsUploadingImage(false);
       }
-
-      // Format the date and time according to API requirements
       const eventDate = new Date(date).toISOString();
       const eventTime = new Date(`${date}T${time}:00.000Z`).toISOString();
 
@@ -191,9 +182,9 @@ const EditEventModal = ({ isOpen, event, onClose, onSave }: EditEventModalProps)
           <motion.div
             onClick={handleClose}
             className="absolute inset-0 bg-gray-900/50 backdrop-blur-sm"
+            exit={{ opacity: 0 }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
           />
           {/*==================== End of Background Overlay ====================*/}
@@ -205,10 +196,10 @@ const EditEventModal = ({ isOpen, event, onClose, onSave }: EditEventModalProps)
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.97, y: 10 }}
             transition={{
-              type: 'spring',
               damping: 20,
-              stiffness: 300,
               duration: 0.3,
+              type: 'spring',
+              stiffness: 300,
             }}
           >
             <div className="relative p-6">
@@ -232,9 +223,9 @@ const EditEventModal = ({ isOpen, event, onClose, onSave }: EditEventModalProps)
 
                 <button
                   type="button"
-                  className="rounded-full p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-500 disabled:opacity-50"
-                  onClick={handleClose}
                   disabled={isSaving}
+                  onClick={handleClose}
+                  className="rounded-full p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-500 disabled:opacity-50"
                 >
                   <X className="h-5 w-5" />
                 </button>
@@ -253,8 +244,8 @@ const EditEventModal = ({ isOpen, event, onClose, onSave }: EditEventModalProps)
                     id="title"
                     type="text"
                     value={title}
-                    onChange={(e) => setTitle(e.target.value)}
                     placeholder="Enter event title..."
+                    onChange={(e) => setTitle(e.target.value)}
                     className="w-full rounded-lg border border-gray-200 p-2.5 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
                   />
                 </div>
@@ -272,8 +263,8 @@ const EditEventModal = ({ isOpen, event, onClose, onSave }: EditEventModalProps)
                     rows={3}
                     id="description"
                     value={description}
-                    onChange={(e) => setDescription(e.target.value)}
                     placeholder="Describe your event..."
+                    onChange={(e) => setDescription(e.target.value)}
                     className="w-full rounded-lg border border-gray-200 p-2.5 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
                   />
                 </div>
@@ -380,7 +371,7 @@ const EditEventModal = ({ isOpen, event, onClose, onSave }: EditEventModalProps)
                     Event Flyer (Optional - leave blank to keep current)
                   </label>
 
-                  {/* Show current image if exists */}
+                  {/*==================== Show current image if exists ====================*/}
                   {currentImageUrl && !imagePreview && (
                     <div className="mb-3">
                       <p className="text-sm font-medium text-gray-700 mb-2">Current Image:</p>
@@ -393,6 +384,7 @@ const EditEventModal = ({ isOpen, event, onClose, onSave }: EditEventModalProps)
                       </div>
                     </div>
                   )}
+                  {/*==================== End of Show current image if exists ====================*/}
 
                   <div className="relative">
                     <input
@@ -411,7 +403,7 @@ const EditEventModal = ({ isOpen, event, onClose, onSave }: EditEventModalProps)
                     </div>
                   </div>
 
-                  {/* New Image Preview */}
+                  {/*====================  New Image Preview ==================== */}
                   {imagePreview && (
                     <div className="mt-3">
                       <p className="text-sm font-medium text-gray-700 mb-2">New Image Preview:</p>
@@ -424,6 +416,7 @@ const EditEventModal = ({ isOpen, event, onClose, onSave }: EditEventModalProps)
                       </div>
                     </div>
                   )}
+                  {/*====================  End of New Image Preview ==================== */}
                 </div>
                 {/*==================== End of Image Upload ====================*/}
               </div>

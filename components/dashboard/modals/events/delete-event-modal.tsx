@@ -48,10 +48,11 @@ const DeleteEventModal = ({ isOpen, onClose, onConfirm }: DeleteEventModalProps)
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      {/* Background overlay */}
+      {/*==================== Background overlay ====================*/}
       <div className="absolute inset-0 bg-gray-900/50 backdrop-blur-sm" onClick={handleClose} />
+      {/*==================== End of Background overlay ====================*/}
 
-      {/* Modal content */}
+      {/*==================== Modal content ====================*/}
       <div className="relative w-full max-w-md rounded-xl bg-white shadow-2xl transform transition-all duration-300 scale-100 opacity-100">
         <div className="absolute -top-12 -right-12 h-32 w-32 rounded-full bg-red-500/10 animate-pulse"></div>
         <div
@@ -115,6 +116,7 @@ const DeleteEventModal = ({ isOpen, onClose, onConfirm }: DeleteEventModalProps)
           </div>
         </div>
       </div>
+      {/*==================== End of Modal content ====================*/}
     </div>
   );
 };
