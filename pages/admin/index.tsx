@@ -119,7 +119,7 @@ const AdminDashboard: FC<UserProps> = ({ userData }) => {
       </div>
       {/*==================== End of Stats Cards ====================*/}
 
-      {/*==================== Recent User Activity ====================*/}
+      {/*==================== Recent Users Table ====================*/}
       <div className="grid grid-cols-1 gap-6 pt-4">
         <div className="lg:col-span-2">
           <h2 className="text-lg font-semibold mb-4">Recent Registrations</h2>
@@ -138,7 +138,7 @@ const AdminDashboard: FC<UserProps> = ({ userData }) => {
           />
         </div>
       </div>
-      {/*==================== End of Recent User Activity ====================*/}
+      {/*==================== End of Recent Users Table ====================*/}
     </DashboardLayout>
   );
 };
