@@ -333,12 +333,12 @@ const EventsComponent = ({ role, userData }: EventsComponentProps) => {
       ) : events.length === 0 ? (
         <EmptyState
           itemName="event"
-          uploadUrl="/events"
           uploadIcon={Calendar}
           title="No events found"
           showRefreshButton={true}
           onRefresh={handleRefresh}
-          uploadButtonText={role === 'admin' ? 'Create Event' : 'Refresh'}
+          uploadUrl={role === 'admin' ? '/events' : '/help'}
+          uploadButtonText={role === 'admin' ? 'Create Event' : 'Go To Dashboard'}
           description={
             status === 'all'
               ? 'There are no events at the moment. Check back later!'
