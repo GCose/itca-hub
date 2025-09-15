@@ -13,7 +13,7 @@ import {
 import { UserTableProps } from '@/types/interfaces/table';
 import UserTableSkeleton from '../skeletons/user-table-skeleton';
 import UserActionsModal from '../modals/user/user-actions-modal';
-import useUserActions from '@/hooks/admin/users/use-user-actions';
+import useUserActions from '@/hooks/use-user-actions';
 import { NetworkError, EmptyState } from '@/components/dashboard/error-messages';
 
 const UserTable = ({
