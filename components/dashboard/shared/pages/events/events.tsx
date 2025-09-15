@@ -2,7 +2,7 @@ import EventCard from './event-card';
 import { CreateEventData } from '@/types';
 import useEvents from '@/hooks/events/use-events';
 import { useState, useEffect, useCallback } from 'react';
-import { NetworkError } from '@/components/dashboard/error-message';
+import { NetworkError, EmptyState } from '@/components/dashboard/error-message';
 import { EventProps, EventsComponentProps } from '@/types/interfaces/event';
 import DashboardLayout from '@/components/dashboard/layout/dashboard-layout';
 import EditEventModal from '@/components/dashboard/modals/events/edit-event-modal';
@@ -15,11 +15,11 @@ import EventsLoadingSkeleton from '@/components/dashboard/admin/events/events-lo
 const EventsComponent = ({ role, userData }: EventsComponentProps) => {
   const [eventToDelete, setEventToDelete] = useState<string | null>(null);
   const [eventToEdit, setEventToEdit] = useState<EventProps | null>(null);
+  const [events, setEvents] = useState<EventProps[] | null>(null);
   const [currentUserId, setCurrentUserId] = useState<string>('');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [events, setEvents] = useState<EventProps[]>([]);
   const [totalEvents, setTotalEvents] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [status, setStatus] = useState('all');
@@ -91,9 +91,9 @@ const EventsComponent = ({ role, userData }: EventsComponentProps) => {
     loadEvents();
   };
 
-  /**===============================
+  /**===================
    * Refresh handler
-   ===============================*/
+   ===================*/
   const handleRefresh = () => {
     setSearchTerm('');
     setStatus('all');
@@ -101,11 +101,11 @@ const EventsComponent = ({ role, userData }: EventsComponentProps) => {
     loadEvents();
   };
 
-  /**===============================
+  /**===================
    * Modal handlers
-   ===============================*/
+   ===================*/
   const handleEditClick = (eventId: string) => {
-    const event = events.find((e) => e._id === eventId);
+    const event = events?.find((e) => e._id === eventId);
     if (event) {
       setEventToEdit(event);
       setShowEditModal(true);
@@ -115,6 +115,12 @@ const EventsComponent = ({ role, userData }: EventsComponentProps) => {
   const handleDeleteClick = (eventId: string) => {
     setEventToDelete(eventId);
     setShowDeleteModal(true);
+  };
+
+  const resetFilters = () => {
+    setSearchTerm('');
+    setStatus('all');
+    setPage(1);
   };
 
   /**===============================
@@ -175,7 +181,7 @@ const EventsComponent = ({ role, userData }: EventsComponentProps) => {
     }
 
     return (
-      <div className="flex items-center justify-between px-4 py-3 bg-white border-t border-gray-200 sm:px-6 rounded-b-2xl">
+      <div className="flex items-center justify-between  bg-transparent border-t border-gray-200 pt-4">
         <div className="flex justify-between flex-1 sm:hidden">
           <button
             onClick={handlePreviousPage}
@@ -203,7 +209,7 @@ const EventsComponent = ({ role, userData }: EventsComponentProps) => {
           </div>
 
           <div>
-            <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
+            <nav className="relative z-0 inline-flex rounded-md -space-x-px">
               <button
                 onClick={handlePreviousPage}
                 disabled={page === 1}
@@ -274,7 +280,7 @@ const EventsComponent = ({ role, userData }: EventsComponentProps) => {
       {/*==================== End of Page Header ====================*/}
 
       {/*==================== Filters ====================*/}
-      <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-3">
+      <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-4">
         <div className="col-span-2">
           <div className="relative">
             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
@@ -303,40 +309,45 @@ const EventsComponent = ({ role, userData }: EventsComponentProps) => {
             <option value="completed">Completed</option>
           </select>
         </div>
+
+        <div>
+          <button
+            onClick={resetFilters}
+            className="w-full rounded-lg bg-white px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-200"
+          >
+            Reset Filters
+          </button>
+        </div>
       </div>
       {/*==================== End of Filters ====================*/}
 
-      {/*==================== Events Content ====================*/}
-      <div className="rounded-2xl bg-white">
-        {isLoading ? (
-          <EventsLoadingSkeleton />
-        ) : isError ? (
-          <NetworkError
-            title="Unable to fetch events"
-            description="Please check your internet connection and try again."
-            onRetry={handleRefresh}
-          />
-        ) : events.length === 0 ? (
-          <div className="p-8 text-center">
-            <Calendar className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No events found</h3>
-            <p className="text-gray-500 mb-6">
-              {status === 'all'
-                ? 'There are no events at the moment. Check back later!'
-                : `No ${status} events found. Try adjusting your filters.`}
-            </p>
-            {role === 'admin' && (
-              <button
-                onClick={() => setShowCreateModal(true)}
-                className="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Create First Event
-              </button>
-            )}
-          </div>
-        ) : (
-          <div className="p-6">
+      {/*==================== Content Area ====================*/}
+      {isLoading || events === null ? (
+        <EventsLoadingSkeleton />
+      ) : isError ? (
+        <NetworkError
+          onRetry={handleRefresh}
+          title="Unable to fetch events"
+          description="Please check your internet connection and try again."
+        />
+      ) : events.length === 0 ? (
+        <EmptyState
+          itemName="event"
+          uploadUrl="/events"
+          uploadIcon={Calendar}
+          title="No events found"
+          showRefreshButton={true}
+          onRefresh={handleRefresh}
+          uploadButtonText={role === 'admin' ? 'Create Event' : 'Refresh'}
+          description={
+            status === 'all'
+              ? 'There are no events at the moment. Check back later!'
+              : `No ${status} events found. Try adjusting your filters.`
+          }
+        />
+      ) : (
+        <div className="bg-transparent">
+          <div className="py-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {events.map((event) => (
                 <EventCard
@@ -352,13 +363,13 @@ const EventsComponent = ({ role, userData }: EventsComponentProps) => {
               ))}
             </div>
           </div>
-        )}
 
-        {/*==================== Pagination ====================*/}
-        {events.length > 0 && renderPagination()}
-        {/*==================== End of Pagination ====================*/}
-      </div>
-      {/*==================== End of Events Content ====================*/}
+          {/*==================== Pagination ====================*/}
+          {events.length > 0 && renderPagination()}
+          {/*==================== End of Pagination ====================*/}
+        </div>
+      )}
+      {/*==================== End of Content Area ====================*/}
 
       {/*==================== Admin Modals ====================*/}
       {role === 'admin' && (

@@ -1,48 +1,34 @@
-import { useState } from 'react';
-import { X, Calendar, Save, Loader, Upload } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import axios from 'axios';
 import { toast } from 'sonner';
-
-interface CreateEventData {
-  title: string;
-  description: string;
-  date: string;
-  time: string;
-  location: string;
-  capacity: number;
-  registrationRequired: boolean;
-  imageUrl?: string;
-}
-
-interface CreateEventModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSave: (newEvent: CreateEventData) => Promise<void>;
-}
+import { useState } from 'react';
+import { CreateEventData } from '@/types';
+import { motion, AnimatePresence } from 'framer-motion';
+import { X, Calendar, Save, Loader, Upload } from 'lucide-react';
+import { CreateEventModalProps } from '@/types/interfaces/event';
 
 const CreateEventModal = ({ isOpen, onClose, onSave }: CreateEventModalProps) => {
-  const [title, setTitle] = useState('');
+  const [registrationRequired, setRegistrationRequired] = useState(false);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [imagePreview, setImagePreview] = useState<string>('');
+  const [image, setImage] = useState<File | null>(null);
+  const [capacity, setCapacity] = useState<number>(50);
   const [description, setDescription] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
+  const [location, setLocation] = useState('');
+  const [title, setTitle] = useState('');
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
-  const [location, setLocation] = useState('');
-  const [capacity, setCapacity] = useState<number>(50);
-  const [registrationRequired, setRegistrationRequired] = useState(false);
-  const [image, setImage] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string>('');
-  const [isUploadingImage, setIsUploadingImage] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
 
   const resetForm = () => {
-    setTitle('');
-    setDescription('');
     setDate('');
     setTime('');
+    setTitle('');
+    setImage(null);
     setLocation('');
     setCapacity(50);
-    setRegistrationRequired(false);
-    setImage(null);
+    setDescription('');
     setImagePreview('');
+    setRegistrationRequired(false);
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -77,16 +63,10 @@ const CreateEventModal = ({ isOpen, onClose, onSave }: CreateEventModalProps) =>
     formData.append('file', file);
     formData.append('folder', 'events');
 
-    const response = await fetch('https://jeetix-file-service.onrender.com/api/storage/upload', {
-      method: 'POST',
-      body: formData,
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to upload image');
-    }
-
-    const data = await response.json();
+    const { data } = await axios.post(
+      'https://jeetix-file-service.onrender.com/api/storage/upload',
+      formData
+    );
     return data.data.fileUrl;
   };
 
@@ -98,32 +78,28 @@ const CreateEventModal = ({ isOpen, onClose, onSave }: CreateEventModalProps) =>
 
     setIsSaving(true);
     try {
-      // Upload image first
       setIsUploadingImage(true);
       const imageUrl = await uploadImage(image);
       setIsUploadingImage(false);
 
-      // Format the date and time according to API requirements
       const eventDate = new Date(date).toISOString();
       const eventTime = new Date(`${date}T${time}:00.000Z`).toISOString();
 
       const newEvent: CreateEventData = {
         title,
-        description,
-        date: eventDate,
-        time: eventTime,
         location,
         capacity,
-        registrationRequired,
         imageUrl,
+        description,
+        time: eventTime,
+        date: eventDate,
+        registrationRequired,
       };
 
       await onSave(newEvent);
-      toast.success('Event created successfully');
       resetForm();
       onClose();
     } catch {
-      toast.error('Failed to create event. Please try again.');
       setIsUploadingImage(false);
     } finally {
       setIsSaving(false);
@@ -144,11 +120,11 @@ const CreateEventModal = ({ isOpen, onClose, onSave }: CreateEventModalProps) =>
           {/*==================== Background Overlay ====================*/}
           <motion.div
             onClick={handleClose}
-            className="absolute inset-0 bg-gray-900/50 backdrop-blur-sm"
+            exit={{ opacity: 0 }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
+            className="absolute inset-0 bg-gray-900/50 backdrop-blur-sm"
           />
           {/*==================== End of Background Overlay ====================*/}
 
@@ -159,10 +135,10 @@ const CreateEventModal = ({ isOpen, onClose, onSave }: CreateEventModalProps) =>
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.97, y: 10 }}
             transition={{
-              type: 'spring',
               damping: 20,
-              stiffness: 300,
               duration: 0.3,
+              type: 'spring',
+              stiffness: 300,
             }}
           >
             <div className="relative p-6">
@@ -186,9 +162,9 @@ const CreateEventModal = ({ isOpen, onClose, onSave }: CreateEventModalProps) =>
 
                 <button
                   type="button"
-                  className="rounded-full p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-500 disabled:opacity-50"
-                  onClick={handleClose}
                   disabled={isSaving}
+                  onClick={handleClose}
+                  className="rounded-full p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-500 disabled:opacity-50"
                 >
                   <X className="h-5 w-5" />
                 </button>
@@ -207,8 +183,8 @@ const CreateEventModal = ({ isOpen, onClose, onSave }: CreateEventModalProps) =>
                     id="title"
                     type="text"
                     value={title}
-                    onChange={(e) => setTitle(e.target.value)}
                     placeholder="Enter event title..."
+                    onChange={(e) => setTitle(e.target.value)}
                     className="w-full rounded-lg border border-gray-200 p-2.5 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
                   />
                 </div>
@@ -226,8 +202,8 @@ const CreateEventModal = ({ isOpen, onClose, onSave }: CreateEventModalProps) =>
                     rows={3}
                     id="description"
                     value={description}
-                    onChange={(e) => setDescription(e.target.value)}
                     placeholder="Describe your event..."
+                    onChange={(e) => setDescription(e.target.value)}
                     className="w-full rounded-lg border border-gray-200 p-2.5 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
                   />
                 </div>
@@ -279,8 +255,8 @@ const CreateEventModal = ({ isOpen, onClose, onSave }: CreateEventModalProps) =>
                   </label>
                   <input
                     required
-                    id="location"
                     type="text"
+                    id="location"
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
                     placeholder="e.g., Lab 302, Virtual (Zoom), Main Auditorium"
@@ -300,9 +276,9 @@ const CreateEventModal = ({ isOpen, onClose, onSave }: CreateEventModalProps) =>
                       Capacity
                     </label>
                     <input
-                      id="capacity"
-                      type="number"
                       min="1"
+                      type="number"
+                      id="capacity"
                       value={capacity}
                       onChange={(e) => setCapacity(parseInt(e.target.value) || 50)}
                       className="w-full rounded-lg border border-gray-200 p-2.5 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
@@ -339,8 +315,8 @@ const CreateEventModal = ({ isOpen, onClose, onSave }: CreateEventModalProps) =>
                       required
                       id="image"
                       type="file"
-                      accept="image/jpeg,image/jpg,image/png,image/webp"
                       onChange={handleImageChange}
+                      accept="image/jpeg,image/jpg,image/png,image/webp"
                       className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                     />
                     <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors">
@@ -352,7 +328,7 @@ const CreateEventModal = ({ isOpen, onClose, onSave }: CreateEventModalProps) =>
                     </div>
                   </div>
 
-                  {/* Image Preview */}
+                  {/*==================== Image Preview ====================*/}
                   {imagePreview && (
                     <div className="mt-3">
                       <p className="text-sm font-medium text-gray-700 mb-2">Preview:</p>
@@ -365,6 +341,7 @@ const CreateEventModal = ({ isOpen, onClose, onSave }: CreateEventModalProps) =>
                       </div>
                     </div>
                   )}
+                  {/*==================== End of Image Preview ====================*/}
                 </div>
                 {/*==================== End of Image Upload ====================*/}
               </div>
@@ -374,8 +351,8 @@ const CreateEventModal = ({ isOpen, onClose, onSave }: CreateEventModalProps) =>
               <div className="flex justify-end space-x-3">
                 <button
                   type="button"
-                  onClick={handleClose}
                   disabled={isSaving}
+                  onClick={handleClose}
                   className="inline-flex justify-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
                 >
                   Cancel

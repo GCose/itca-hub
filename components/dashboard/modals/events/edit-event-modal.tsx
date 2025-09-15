@@ -1,52 +1,24 @@
-import { useState, useEffect } from 'react';
-import { X, Calendar, Save, Loader, Upload } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import axios from 'axios';
 import { toast } from 'sonner';
-
-interface EditEventData {
-  title: string;
-  description: string;
-  date: string;
-  time: string;
-  location: string;
-  capacity: number;
-  registrationRequired: boolean;
-  imageUrl?: string;
-}
-
-interface Event {
-  id: string;
-  title: string;
-  description: string;
-  date: string;
-  time: string;
-  location: string;
-  status: 'upcoming' | 'ongoing' | 'completed';
-  registrations: number;
-  capacity: number;
-  image?: string;
-}
-
-interface EditEventModalProps {
-  isOpen: boolean;
-  event: Event | null;
-  onClose: () => void;
-  onSave: (eventId: string, eventData: EditEventData) => Promise<void>;
-}
+import { CreateEventData } from '@/types';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { EditEventModalProps } from '@/types/interfaces/modal';
+import { X, Calendar, Save, Loader, Upload } from 'lucide-react';
 
 const EditEventModal = ({ isOpen, event, onClose, onSave }: EditEventModalProps) => {
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [date, setDate] = useState('');
-  const [time, setTime] = useState('');
-  const [location, setLocation] = useState('');
-  const [capacity, setCapacity] = useState<number>(50);
   const [registrationRequired, setRegistrationRequired] = useState(false);
-  const [image, setImage] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string>('');
   const [currentImageUrl, setCurrentImageUrl] = useState<string>('');
   const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [imagePreview, setImagePreview] = useState<string>('');
+  const [image, setImage] = useState<File | null>(null);
+  const [capacity, setCapacity] = useState<number>(50);
+  const [description, setDescription] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+  const [location, setLocation] = useState('');
+  const [title, setTitle] = useState('');
+  const [date, setDate] = useState('');
+  const [time, setTime] = useState('');
 
   useEffect(() => {
     if (event) {
@@ -56,31 +28,31 @@ const EditEventModal = ({ isOpen, event, onClose, onSave }: EditEventModalProps)
       const eventDate = new Date(event.date);
       setDate(eventDate.toISOString().split('T')[0]);
 
-      const timeMatch = event.time.match(/(\d{2}):(\d{2})/);
-      if (timeMatch) {
-        setTime(`${timeMatch[1]}:${timeMatch[2]}`);
-      }
+      const eventTime = new Date(event.time);
+      const hours = eventTime.getHours().toString().padStart(2, '0');
+      const minutes = eventTime.getMinutes().toString().padStart(2, '0');
+      setTime(`${hours}:${minutes}`);
 
       setLocation(event.location);
       setCapacity(event.capacity);
-      setRegistrationRequired(false); // We don't have this info in the event object
-      setCurrentImageUrl(event.image || '');
+      setRegistrationRequired(event.registrationRequired);
+      setCurrentImageUrl(event.imageUrl || '');
       setImagePreview('');
       setImage(null);
     }
   }, [event]);
 
   const resetForm = () => {
-    setTitle('');
-    setDescription('');
     setDate('');
     setTime('');
+    setTitle('');
+    setImage(null);
     setLocation('');
     setCapacity(50);
-    setRegistrationRequired(false);
-    setImage(null);
+    setDescription('');
     setImagePreview('');
     setCurrentImageUrl('');
+    setRegistrationRequired(false);
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -112,16 +84,10 @@ const EditEventModal = ({ isOpen, event, onClose, onSave }: EditEventModalProps)
     formData.append('file', file);
     formData.append('folder', 'events');
 
-    const response = await fetch('https://jeetix-file-service.onrender.com/api/storage/upload', {
-      method: 'POST',
-      body: formData,
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to upload image');
-    }
-
-    const data = await response.json();
+    const { data } = await axios.post(
+      'https://jeetix-file-service.onrender.com/api/storage/upload',
+      formData
+    );
     return data.data.fileUrl;
   };
 
@@ -140,27 +106,25 @@ const EditEventModal = ({ isOpen, event, onClose, onSave }: EditEventModalProps)
         imageUrl = await uploadImage(image);
         setIsUploadingImage(false);
       }
+
       const eventDate = new Date(date).toISOString();
       const eventTime = new Date(`${date}T${time}:00.000Z`).toISOString();
 
-      const eventData: EditEventData = {
+      const eventData: CreateEventData = {
         title,
-        description,
-        date: eventDate,
-        time: eventTime,
         location,
         capacity,
-        registrationRequired,
         imageUrl,
+        description,
+        time: eventTime,
+        date: eventDate,
+        registrationRequired,
       };
 
-      await onSave(event.id, eventData);
-      toast.success('Event updated successfully');
+      await onSave(event._id, eventData);
       resetForm();
       onClose();
-    } catch (error) {
-      console.error('Failed to update event:', error);
-      toast.error('Failed to update event. Please try again.');
+    } catch {
       setIsUploadingImage(false);
     } finally {
       setIsSaving(false);

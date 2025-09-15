@@ -126,7 +126,7 @@ const EventCard = ({
   const statusConfig = getStatusConfig(event.status);
 
   return (
-    <div className="group relative overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:shadow-md hover:shadow-blue-500/10">
+    <div className="group relative overflow-hidden rounded-xl border-none bg-white">
       {/*==================== Event Image ====================*/}
       {event.imageUrl && (
         <div className="aspect-video w-full overflow-hidden">
