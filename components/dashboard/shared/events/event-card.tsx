@@ -68,12 +68,12 @@ const EventCard = ({
         };
       case 'ongoing':
         return {
-          color: 'bg-green-100 text-green-800',
+          color: 'bg-amber-100 text-amber-800',
           text: 'Ongoing',
         };
       case 'completed':
         return {
-          color: 'bg-gray-100 text-gray-800',
+          color: 'bg-green-100 text-green-800',
           text: 'Completed',
         };
       default:
@@ -154,7 +154,7 @@ const EventCard = ({
           <div className="flex-1">
             <h3 className="mb-2 text-lg font-semibold text-gray-900 line-clamp-2">{event.title}</h3>
             <span
-              className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${statusConfig.color}`}
+              className={`inline-flex items-center rounded-full px-2.5 py-1 text-sm font-medium ${statusConfig.color}`}
             >
               {statusConfig.text}
             </span>
@@ -164,16 +164,16 @@ const EventCard = ({
           {role === 'admin' && (
             <div className="ml-3 flex space-x-1">
               <button
+                title="Edit event"
                 onClick={() => onEdit?.(event._id)}
                 className="rounded-md p-1.5 text-gray-400 hover:bg-blue-50 hover:text-blue-600 transition-colors"
-                title="Edit event"
               >
                 <Edit className="h-4 w-4" />
               </button>
               <button
+                title="Delete event"
                 onClick={() => onDelete?.(event._id)}
                 className="rounded-md p-1.5 text-gray-400 hover:bg-red-50 hover:text-red-600 transition-colors"
-                title="Delete event"
               >
                 <Trash2 className="h-4 w-4" />
               </button>

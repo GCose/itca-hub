@@ -196,8 +196,8 @@ const UserTable = ({
               <div className="flex items-center space-x-2">
                 <button
                   title="button"
-                  onClick={() => setPage((prev: number) => Math.max(1, prev - 1))}
                   disabled={page === 1}
+                  onClick={() => setPage((prev: number) => Math.max(1, prev - 1))}
                   className="p-2 text-gray-400 hover:bg-gray-100 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <ChevronLeft className="h-5 w-5" />
