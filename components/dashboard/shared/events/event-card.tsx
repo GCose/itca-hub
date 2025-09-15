@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Image from 'next/image';
 import {
   Edit,
   Clock,
@@ -24,6 +25,7 @@ const EventCard = ({
   currentUserId,
 }: EventCardProps) => {
   const [isRegistering, setIsRegistering] = useState(false);
+  const [imageError, setImageError] = useState(false);
 
   /**===============================
    * Format date for display
@@ -126,17 +128,23 @@ const EventCard = ({
   const statusConfig = getStatusConfig(event.status);
 
   return (
-    <div className="group relative overflow-hidden rounded-xl border-none bg-white">
+    <div className="group relative overflow-hidden rounded-xl border-none bg-white/60">
       {/*==================== Event Image ====================*/}
-      {event.imageUrl && (
-        <div className="aspect-video w-full overflow-hidden">
-          <img
+      <div className="aspect-video w-full overflow-hidden relative">
+        {event.imageUrl && !imageError ? (
+          <Image
             src={event.imageUrl}
             alt={event.title}
-            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            fill
+            className="object-cover transition-transform duration-300 group-hover:scale-105"
+            onError={() => setImageError(true)}
           />
-        </div>
-      )}
+        ) : (
+          <div className="h-full w-full bg-gradient-to-br from-blue-500 via-amber-300 to-blue-500 flex items-center justify-center">
+            <Calendar className="h-16 w-16 text-white/80" />
+          </div>
+        )}
+      </div>
       {/*==================== End of Event Image ====================*/}
 
       {/*==================== Event Content ====================*/}

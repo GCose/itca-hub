@@ -2,9 +2,8 @@ import axios from 'axios';
 import { toast } from 'sonner';
 import { BASE_URL } from '@/utils/url';
 import useDebounce from '@/utils/debounce';
-import { CreateEventData } from '@/types';
 import { useState, useCallback } from 'react';
-import { UseEventsProps, GetEventsParams } from '@/types/interfaces/event';
+import { UseEventsProps, GetEventsParams, CreateEventData } from '@/types/interfaces/event';
 
 const useEvents = ({ token }: UseEventsProps) => {
   const [isLoading, setIsLoading] = useState(false);
