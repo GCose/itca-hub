@@ -25,7 +25,7 @@ export interface CustomError extends Error {
 export interface UserAuth {
   role: string;
   token: string;
-  userId: unknown;
+  userId: string;
   lastName: string | undefined;
   firstName: string | undefined;
   schoolEmail: string | undefined;

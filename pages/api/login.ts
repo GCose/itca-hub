@@ -18,6 +18,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const cookieData = {
         token: data.data.accessToken,
         role: data.data.user.role,
+        userId: data.data.user.userId,
       };
 
       const tokenCookie = serialize('itca_hub', JSON.stringify(cookieData), {
@@ -30,7 +31,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       res.setHeader('Set-Cookie', [tokenCookie]);
 
-      res.json({ token: data.data.accessToken, role: data.data.user.role });
+      res.json({
+        token: data.data.accessToken,
+        role: data.data.user.role,
+        userId: data.data.user.userId,
+      });
     } catch (error: unknown) {
       const { message, statusCode } = getErrorMessage(
         error as AxiosError<ErrorResponseData> | CustomError | Error

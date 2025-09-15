@@ -2,8 +2,9 @@ import axios from 'axios';
 import { toast } from 'sonner';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { CreateEventData } from '@/types/interfaces/event';
+import { CreateEventModalProps } from '@/types/interfaces/modal';
 import { X, Calendar, Save, Loader, Upload } from 'lucide-react';
-import { CreateEventData, CreateEventModalProps } from '@/types/interfaces/event';
 
 const CreateEventModal = ({ isOpen, onClose, onSave }: CreateEventModalProps) => {
   const [registrationRequired, setRegistrationRequired] = useState(false);

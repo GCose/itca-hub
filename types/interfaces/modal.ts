@@ -1,5 +1,5 @@
-import { ActionType, CreateEventData } from '..';
-import { EventProps } from './event';
+import { ActionType } from '..';
+import { CreateEventData, EventProps } from './event';
 
 export interface ModalState {
   userId: string;
@@ -27,4 +27,19 @@ export interface EditEventModalProps {
   event: EventProps | null;
   onClose: () => void;
   onSave: (eventId: string, eventData: CreateEventData) => Promise<void>;
+}
+
+export interface CreateEventModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSave: (newEvent: CreateEventData) => Promise<void>;
+}
+
+export interface RegistrationConfirmationModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+  eventTitle: string;
+  isRegistered: boolean;
+  isLoading: boolean;
 }

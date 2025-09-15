@@ -9,7 +9,7 @@ import CreateEventModal from '@/components/dashboard/modals/events/create-event-
 import DeleteEventModal from '@/components/dashboard/modals/events/delete-event-modal';
 import { Calendar, Search, RefreshCw, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
 import { CreateEventData, EventProps, EventsComponentProps } from '@/types/interfaces/event';
-import EventsLoadingSkeleton from '@/components/dashboard/skeletons/events-loading-skeleton';
+import EventCardSkeleton from '@/components/dashboard/skeletons/event-card-skeleton';
 
 const EventsComponent = ({ role, userData }: EventsComponentProps) => {
   const [eventToDelete, setEventToDelete] = useState<string | null>(null);
@@ -127,7 +127,7 @@ const EventsComponent = ({ role, userData }: EventsComponentProps) => {
    ===============================*/
   useEffect(() => {
     if (role === 'student') {
-      setCurrentUserId((userData.userId as string) || '');
+      setCurrentUserId(userData.userId || '');
     }
   }, [role, userData]);
 
@@ -222,9 +222,7 @@ const EventsComponent = ({ role, userData }: EventsComponentProps) => {
                   key={pageNum}
                   onClick={() => handlePageClick(pageNum)}
                   className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
-                    pageNum === page
-                      ? 'z-10 bg-blue-50 border-blue-500 text-blue-600'
-                      : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
+                    pageNum === page ? 'bg-blue-600 text-white' : 'text-gray-700 hover:bg-gray-100'
                   }`}
                 >
                   {pageNum}
@@ -304,7 +302,6 @@ const EventsComponent = ({ role, userData }: EventsComponentProps) => {
           >
             <option value="all">All Events</option>
             <option value="upcoming">Upcoming</option>
-            <option value="ongoing">Ongoing</option>
             <option value="completed">Completed</option>
           </select>
         </div>
@@ -322,7 +319,7 @@ const EventsComponent = ({ role, userData }: EventsComponentProps) => {
 
       {/*==================== Content Area ====================*/}
       {isLoading || events === null ? (
-        <EventsLoadingSkeleton />
+        <EventCardSkeleton />
       ) : isError ? (
         <NetworkError
           onRetry={handleRefresh}

@@ -62,12 +62,6 @@ export interface EventCardProps {
   onUnregister?: (eventId: string) => Promise<void>;
 }
 
-export interface CreateEventModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSave: (newEvent: CreateEventData) => Promise<void>;
-}
-
 export interface AdminEventsPageProps {
   userData: UserAuth;
 }

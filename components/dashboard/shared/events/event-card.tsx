@@ -14,6 +14,7 @@ import {
 import { toast } from 'sonner';
 import Image from 'next/image';
 import { EventCardProps } from '@/types/interfaces/event';
+import RegistrationConfirmationModal from '../../modals/events/register-event-confirmation-modal';
 
 const EventCard = ({
   role,
@@ -24,6 +25,7 @@ const EventCard = ({
   onUnregister,
   currentUserId,
 }: EventCardProps) => {
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
   const [imageError, setImageError] = useState(false);
 
@@ -140,7 +142,11 @@ const EventCard = ({
   /**===============================
    * Handle registration
    ===============================*/
-  const handleRegistration = async () => {
+  const handleRegistration = () => {
+    setShowConfirmationModal(true);
+  };
+
+  const handleConfirmRegistration = async () => {
     if (!onRegister || !onUnregister) return;
 
     setIsRegistering(true);
@@ -150,6 +156,7 @@ const EventCard = ({
       } else {
         await onRegister(event._id);
       }
+      setShowConfirmationModal(false);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Registration failed';
       toast.error('Registration Error', {
@@ -328,6 +335,17 @@ const EventCard = ({
         {/*==================== End of No Registration Required ====================*/}
       </div>
       {/*==================== End of Event Content ====================*/}
+
+      {/*==================== Registration Confirmation Modal ====================*/}
+      <RegistrationConfirmationModal
+        eventTitle={event.title}
+        isLoading={isRegistering}
+        isRegistered={isRegistered}
+        isOpen={showConfirmationModal}
+        onConfirm={handleConfirmRegistration}
+        onClose={() => setShowConfirmationModal(false)}
+      />
+      {/*==================== End of Registration Confirmation Modal ====================*/}
     </div>
   );
 };
