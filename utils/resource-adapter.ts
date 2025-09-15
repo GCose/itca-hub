@@ -1,9 +1,9 @@
 import {
-  ApiResource,
   Resource,
-  CreateResourcePayload,
-  UpdateResourcePayload,
+  ApiResource,
   JeetixFileItem,
+  UpdateResourcePayload,
+  CreateResourcePayload,
 } from '@/types';
 import { BASE_URL } from './url';
 

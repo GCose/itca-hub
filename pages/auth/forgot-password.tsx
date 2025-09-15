@@ -1,25 +1,24 @@
-import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Mail, AlertCircle, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'sonner';
-import AuthLayout from '@/components/authentication/auth-layout';
-import AuthButton from '@/components/authentication/auth-button';
-import useTimedError from '@/hooks/timed-error';
-import axios, { AxiosError } from 'axios';
-import { BASE_URL } from '@/utils/url';
-import { getErrorMessage } from '@/utils/error';
-import { CustomError, ErrorResponseData, UserAuth } from '@/types';
+import { useState } from 'react';
 import { NextApiRequest } from 'next';
+import { BASE_URL } from '@/utils/url';
+import { motion } from 'framer-motion';
 import { isLoggedIn } from '@/utils/auth';
+import axios, { AxiosError } from 'axios';
+import useTimedError from '@/hooks/timed-error';
+import { getErrorMessage } from '@/utils/error';
+import { Mail, AlertCircle, ArrowRight } from 'lucide-react';
+import { CustomError, ErrorResponseData, UserAuth } from '@/types';
+import AuthButton from '@/components/dashboard/authentication/auth-button';
+import AuthLayout from '@/components/dashboard/authentication/auth-layout';
 
 const ForgotPassword = () => {
   const [schoolEmail, setSchoolEmail] = useState('');
+  const [emailSent, setEmailSent] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useTimedError();
-  const [emailSent, setEmailSent] = useState(false);
 
-  // Validate UTG email format
   const isValidUTGEmail = (email: string): boolean => {
     return email.trim().toLowerCase().endsWith('@utg.edu.gm');
   };
@@ -33,7 +32,6 @@ const ForgotPassword = () => {
       return;
     }
 
-    // Strict validation for UTG email format
     if (!isValidUTGEmail(schoolEmail)) {
       setError('Please enter a valid UTG email address ending with @utg.edu.gm');
       toast.error('Invalid email format', {
@@ -47,7 +45,6 @@ const ForgotPassword = () => {
     try {
       await axios.post(`${BASE_URL}/auth/forgot-password`, { schoolEmail });
 
-      // Show success message
       setEmailSent(true);
       toast.success('Reset code sent to your UTG email', {
         id: toast.loading('Sending reset code...'),
@@ -65,7 +62,6 @@ const ForgotPassword = () => {
     }
   };
 
-  // Right side content that will be displayed in the AuthLayout
   const rightSideContent = (
     <motion.div
       initial={{ opacity: 0, y: 70 }}
@@ -197,7 +193,6 @@ export default ForgotPassword;
 export const getServerSideProps = async ({ req }: { req: NextApiRequest }) => {
   const userData = isLoggedIn(req);
 
-  // If there is user data and the user data type is not boolean, which means it is of type UserAuth object, then
   if (userData && typeof userData !== 'boolean') {
     const { role } = userData as UserAuth;
 

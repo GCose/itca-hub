@@ -1,21 +1,20 @@
-import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
-import { Eye, EyeOff, Lock, ShieldCheck, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'sonner';
-import AuthLayout from '@/components/authentication/auth-layout';
-import AuthButton from '@/components/authentication/auth-button';
-import PasswordStrengthIndicator from '@/components/authentication/sign-up/password-strength-indicator';
-import useTimedError from '@/hooks/timed-error';
-import axios, { AxiosError } from 'axios';
+import { NextApiRequest } from 'next';
 import { BASE_URL } from '@/utils/url';
+import { motion } from 'framer-motion';
+import { useRouter } from 'next/router';
+import { isLoggedIn } from '@/utils/auth';
+import axios, { AxiosError } from 'axios';
+import { useEffect, useState } from 'react';
+import useTimedError from '@/hooks/timed-error';
 import { getErrorMessage } from '@/utils/error';
 import { CustomError, ErrorResponseData, UserAuth } from '@/types';
-import { useRouter } from 'next/router';
-import { NextApiRequest } from 'next';
-import { isLoggedIn } from '@/utils/auth';
+import { Eye, EyeOff, Lock, ShieldCheck, AlertCircle } from 'lucide-react';
+import AuthButton from '@/components/dashboard/authentication/auth-button';
+import AuthLayout from '@/components/dashboard/authentication/auth-layout';
+import PasswordStrengthIndicator from '@/components/dashboard/authentication/sign-up/password-strength-indicator';
 
-// Defining the DTO for reset password API call
 interface ResetPasswordDTO {
   resetToken: string;
   newPassword: string;
@@ -86,7 +85,6 @@ const ResetPassword = () => {
     }
   };
 
-  // Right side content that will be displayed in the AuthLayout
   const rightSideContent = (
     <motion.div
       initial={{ opacity: 0, y: 70 }}
@@ -192,8 +190,6 @@ const ResetPassword = () => {
                   )}
                 </button>
               </div>
-
-              {/* Password strength indicator */}
               <PasswordStrengthIndicator password={newPassword} />
             </div>
 

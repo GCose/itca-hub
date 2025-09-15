@@ -234,14 +234,3 @@ export interface ResourceTableProps {
   onRefresh: () => void;
   onClearFilters: () => void;
 }
-
-export interface CreateEventData {
-  title: string;
-  description: string;
-  date: string;
-  time: string;
-  location: string;
-  capacity: number;
-  registrationRequired: boolean;
-  imageUrl?: string;
-}

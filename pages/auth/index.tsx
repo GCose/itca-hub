@@ -1,23 +1,23 @@
-import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
 import Link from 'next/link';
-import AuthLayout from '@/components/authentication/auth-layout';
-import AuthButton from '@/components/authentication/auth-button';
-import useTimedError from '@/hooks/timed-error';
-import axios, { AxiosError } from 'axios';
-import { CustomError, ErrorResponseData, UserAuth } from '@/types';
-import { useRouter } from 'next/router';
-import { NextApiRequest } from 'next';
-import { isLoggedIn } from '@/utils/auth';
 import { toast } from 'sonner';
+import { useState } from 'react';
+import { NextApiRequest } from 'next';
+import { motion } from 'framer-motion';
+import { useRouter } from 'next/router';
+import { isLoggedIn } from '@/utils/auth';
+import axios, { AxiosError } from 'axios';
 import { getErrorMessage } from '@/utils/error';
+import useTimedError from '@/hooks/timed-error';
+import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
+import { CustomError, ErrorResponseData, UserAuth } from '@/types';
+import AuthButton from '@/components/dashboard/authentication/auth-button';
+import AuthLayout from '@/components/dashboard/authentication/auth-layout';
 
 const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [schoolEmail, setSchoolEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [password, setPassword] = useState('');
   const [error, setError] = useTimedError();
 
   const router = useRouter();
@@ -56,7 +56,6 @@ const SignIn = () => {
     try {
       const { data } = await axios.post('/api/login', { schoolEmail, password });
 
-      // Show that alert user is logged in
       toast.success('Login In Successful', { description: 'You have been logged in sucessfully' });
 
       switch (data.role) {
@@ -79,13 +78,12 @@ const SignIn = () => {
     }
   };
 
-  // Right side content that will be displayed in the AuthLayout
   const rightSideContent = (
     <motion.div
-      initial={{ opacity: 0, x: 70 }}
       animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 1, delay: 0.5 }}
+      initial={{ opacity: 0, x: 70 }}
       className="max-w-4xl text-center"
+      transition={{ duration: 1, delay: 0.5 }}
     >
       <h2 className="text-6xl font-bold mb-6">Unlock Your Potential with ITCA</h2>
       <p className="text-lg text-white/80 mb-8">
@@ -212,7 +210,6 @@ export default SignIn;
 export const getServerSideProps = async ({ req }: { req: NextApiRequest }) => {
   const userData = isLoggedIn(req);
 
-  // If there is user data and the user data type is not boolean, which means it is of type UserAuth object, then
   if (userData && typeof userData !== 'boolean') {
     const { role } = userData as UserAuth;
 

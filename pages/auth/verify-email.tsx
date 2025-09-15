@@ -16,7 +16,7 @@ const VerifyEmail = () => {
     if (token) {
       verifyEmail();
     }
-  }, [token]);
+  });
 
   const verifyEmail = async () => {
     try {
