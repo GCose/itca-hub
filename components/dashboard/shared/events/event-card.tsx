@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import Image from 'next/image';
 import {
   Edit,
   Clock,
@@ -13,6 +12,7 @@ import {
   CheckCircle,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import Image from 'next/image';
 import { EventCardProps } from '@/types/interfaces/event';
 
 const EventCard = ({
@@ -194,15 +194,15 @@ const EventCard = ({
             <span>{formatDate(event.date)}</span>
           </div>
           <div className="flex items-center">
-            <Clock className="mr-2 h-4 w-4 text-blue-500" />
+            <Clock className="mr-2 h-4 w-4 text-amber-500" />
             <span>{formatTime(event.time)}</span>
           </div>
           <div className="flex items-center">
-            <MapPin className="mr-2 h-4 w-4 text-blue-500" />
+            <MapPin className="mr-2 h-4 w-4 text-red-500" />
             <span className="line-clamp-1">{event.location}</span>
           </div>
           <div className="flex items-center">
-            <Users className="mr-2 h-4 w-4 text-blue-500" />
+            <Users className="mr-2 h-4 w-4 text-green-500" />
             <span>
               {event.attendees.length} / {event.capacity} registered
             </span>
@@ -220,8 +220,8 @@ const EventCard = ({
                   You are registered for this event
                 </div>
                 <button
-                  onClick={handleRegistration}
                   disabled={isRegistering}
+                  onClick={handleRegistration}
                   className="w-full inline-flex justify-center items-center rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all duration-300 shadow-md hover:shadow-lg disabled:opacity-50"
                 >
                   {isRegistering ? (
