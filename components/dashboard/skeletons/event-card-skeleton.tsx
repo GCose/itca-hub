@@ -17,6 +17,8 @@ const EventCardSkeleton = () => {
               <div className="flex-1">
                 {/*==================== Title ====================*/}
                 <div className="h-6 bg-gradient-to-r from-gray-100 via-gray-200 to-gray-100 rounded mb-2 w-3/4 animate-pulse" />
+                {/*==================== End of Title ====================*/}
+
                 {/*==================== Status Badge ====================*/}
                 <div className="inline-block h-6 w-20 bg-gradient-to-r from-gray-100 via-gray-200 to-gray-100 rounded-full animate-pulse" />
                 {/*==================== End of Status Badge ====================*/}
@@ -35,6 +37,7 @@ const EventCardSkeleton = () => {
               <div className="h-4 bg-gradient-to-r from-gray-100 via-gray-200 to-gray-100 rounded animate-pulse" />
               <div className="h-4 w-5/6 bg-gradient-to-r from-gray-100 via-gray-200 to-gray-100 rounded animate-pulse" />
             </div>
+            {/*==================== End of Description ====================*/}
 
             {/*==================== Event Details ====================*/}
             <div className="space-y-4 text-sm text-gray-500 mb-4">
