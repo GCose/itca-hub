@@ -14,6 +14,8 @@ const CreateEventModal = ({ isOpen, onClose, onSave }: CreateEventModalProps) =>
   const [description, setDescription] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [location, setLocation] = useState('');
+  const [toDate, setToDate] = useState('');
+  const [toTime, setToTime] = useState('');
   const [title, setTitle] = useState('');
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
@@ -21,6 +23,8 @@ const CreateEventModal = ({ isOpen, onClose, onSave }: CreateEventModalProps) =>
   const resetForm = () => {
     setDate('');
     setTime('');
+    setToDate('');
+    setToTime('');
     setTitle('');
     setImage(null);
     setLocation('');
@@ -33,14 +37,12 @@ const CreateEventModal = ({ isOpen, onClose, onSave }: CreateEventModalProps) =>
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Validate file type
       const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
       if (!validTypes.includes(file.type)) {
         toast.error('Please select a valid image file (JPEG, PNG, or WebP)');
         return;
       }
 
-      // Validate file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
         toast.error('Image size should be less than 5MB');
         return;
@@ -48,7 +50,6 @@ const CreateEventModal = ({ isOpen, onClose, onSave }: CreateEventModalProps) =>
 
       setImage(file);
 
-      // Create preview
       const reader = new FileReader();
       reader.onload = (e) => {
         setImagePreview(e.target?.result as string);
@@ -93,6 +94,8 @@ const CreateEventModal = ({ isOpen, onClose, onSave }: CreateEventModalProps) =>
         time: eventTime,
         date: eventDate,
         registrationRequired,
+        ...(toDate && { toDate: new Date(toDate).toISOString() }),
+        ...(toTime && { toTime: new Date(`${toDate || date}T${toTime}:00.000Z`).toISOString() }),
       };
 
       await onSave(newEvent);
@@ -129,16 +132,16 @@ const CreateEventModal = ({ isOpen, onClose, onSave }: CreateEventModalProps) =>
 
           {/*==================== Modal Content ====================*/}
           <motion.div
-            className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-xl bg-white shadow-2xl"
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.97, y: 10 }}
             transition={{
               damping: 20,
               duration: 0.3,
               type: 'spring',
               stiffness: 300,
             }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.97, y: 10 }}
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-xl bg-white shadow-2xl"
           >
             <div className="relative p-6">
               {/*==================== Modal Header ====================*/}
@@ -260,16 +263,16 @@ const CreateEventModal = ({ isOpen, onClose, onSave }: CreateEventModalProps) =>
                       {/*==================== Date ====================*/}
                       <div>
                         <label
-                          htmlFor="date"
+                          htmlFor="toDate"
                           className="block text-sm font-medium text-gray-700 mb-1"
                         >
                           To Date:
                         </label>
                         <input
-                          id="date"
+                          id="toDate"
                           type="date"
-                          value={date}
-                          onChange={(e) => setDate(e.target.value)}
+                          value={toDate}
+                          onChange={(e) => setToDate(e.target.value)}
                           className="w-full rounded-lg border border-gray-200 p-2.5 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
                         />
                       </div>
@@ -278,16 +281,16 @@ const CreateEventModal = ({ isOpen, onClose, onSave }: CreateEventModalProps) =>
                       {/*==================== Time ====================*/}
                       <div>
                         <label
-                          htmlFor="time"
+                          htmlFor="toTime"
                           className="block text-sm font-medium text-gray-700 mb-1"
                         >
                           To Time:
                         </label>
                         <input
-                          id="time"
+                          id="toTime"
                           type="time"
-                          value={time}
-                          onChange={(e) => setTime(e.target.value)}
+                          value={toTime}
+                          onChange={(e) => setToTime(e.target.value)}
                           className="w-full rounded-lg border border-gray-200 p-2.5 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
                         />
                       </div>

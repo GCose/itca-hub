@@ -5,6 +5,8 @@ export interface CreateEventData {
   description: string;
   date: string;
   time: string;
+  toDate?: string;
+  toTime?: string;
   location: string;
   capacity: number;
   registrationRequired: boolean;
@@ -33,6 +35,8 @@ export interface EventProps {
   description: string;
   date: string;
   time: string;
+  toDate?: string;
+  toTime?: string;
   location: string;
   status: 'upcoming' | 'ongoing' | 'completed';
   capacity: number;

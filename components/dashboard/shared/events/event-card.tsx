@@ -47,13 +47,58 @@ const EventCard = ({
     try {
       const date = new Date(timeString);
       return date.toLocaleTimeString('en-US', {
-        hour: '2-digit',
+        hour: 'numeric',
         minute: '2-digit',
-        hour12: false,
+        hour12: true,
       });
     } catch {
       return timeString;
     }
+  };
+
+  /**===============================
+   * Format date range for display
+   ===============================*/
+  const formatDateRange = () => {
+    const startDate = formatDate(event.date);
+
+    if (!event.toDate) {
+      return startDate;
+    }
+
+    const endDate = formatDate(event.toDate);
+    const startDateObj = new Date(event.date);
+    const endDateObj = new Date(event.toDate);
+
+    if (startDateObj.toDateString() === endDateObj.toDateString()) {
+      return startDate;
+    }
+
+    return `${startDate} - ${endDate}`;
+  };
+
+  /**===============================
+   * Format time range for display
+   ===============================*/
+  const formatTimeRange = () => {
+    const startTime = formatTime(event.time);
+
+    if (!event.toTime) {
+      return startTime;
+    }
+
+    if (event.toDate) {
+      const startDateObj = new Date(event.date);
+      const endDateObj = new Date(event.toDate);
+
+      if (startDateObj.toDateString() !== endDateObj.toDateString()) {
+        const endTime = formatTime(event.toTime);
+        return `Start: ${startTime} • End: ${endTime}`;
+      }
+    }
+
+    const endTime = formatTime(event.toTime);
+    return `${startTime} - ${endTime}`;
   };
 
   /**===============================
@@ -188,14 +233,14 @@ const EventCard = ({
         {/*==================== End of Event Description ====================*/}
 
         {/*==================== Event Details ====================*/}
-        <div className="space-y-2 text-sm text-gray-500">
+        <div className="space-y-4 text-sm text-gray-500">
           <div className="flex items-center">
             <Calendar className="mr-2 h-4 w-4 text-blue-500" />
-            <span>{formatDate(event.date)}</span>
+            <span>{formatDateRange()}</span>
           </div>
           <div className="flex items-center">
             <Clock className="mr-2 h-4 w-4 text-amber-500" />
-            <span>{formatTime(event.time)}</span>
+            <span>{formatTimeRange()}</span>
           </div>
           <div className="flex items-center">
             <MapPin className="mr-2 h-4 w-4 text-red-500" />

@@ -17,6 +17,8 @@ const EditEventModal = ({ isOpen, event, onClose, onSave }: EditEventModalProps)
   const [description, setDescription] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [location, setLocation] = useState('');
+  const [toDate, setToDate] = useState('');
+  const [toTime, setToTime] = useState('');
   const [title, setTitle] = useState('');
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
@@ -34,6 +36,22 @@ const EditEventModal = ({ isOpen, event, onClose, onSave }: EditEventModalProps)
       const minutes = eventTime.getMinutes().toString().padStart(2, '0');
       setTime(`${hours}:${minutes}`);
 
+      if (event.toDate) {
+        const eventToDate = new Date(event.toDate);
+        setToDate(eventToDate.toISOString().split('T')[0]);
+      } else {
+        setToDate('');
+      }
+
+      if (event.toTime) {
+        const eventToTime = new Date(event.toTime);
+        const toHours = eventToTime.getHours().toString().padStart(2, '0');
+        const toMinutes = eventToTime.getMinutes().toString().padStart(2, '0');
+        setToTime(`${toHours}:${toMinutes}`);
+      } else {
+        setToTime('');
+      }
+
       setLocation(event.location);
       setCapacity(event.capacity);
       setRegistrationRequired(event.registrationRequired);
@@ -46,6 +64,8 @@ const EditEventModal = ({ isOpen, event, onClose, onSave }: EditEventModalProps)
   const resetForm = () => {
     setDate('');
     setTime('');
+    setToDate('');
+    setToTime('');
     setTitle('');
     setImage(null);
     setLocation('');
@@ -120,6 +140,8 @@ const EditEventModal = ({ isOpen, event, onClose, onSave }: EditEventModalProps)
         time: eventTime,
         date: eventDate,
         registrationRequired,
+        ...(toDate && { toDate: new Date(toDate).toISOString() }),
+        ...(toTime && { toTime: new Date(`${toDate || date}T${toTime}:00.000Z`).toISOString() }),
       };
 
       await onSave(event._id, eventData);
@@ -235,41 +257,94 @@ const EditEventModal = ({ isOpen, event, onClose, onSave }: EditEventModalProps)
                 </div>
                 {/*==================== End of Description ====================*/}
 
-                {/*==================== Date and Time Container ====================*/}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-                  {/*==================== Date ====================*/}
+                {/*==================== From and To Date ====================*/}
+                <div className="grid grid-cols-1 gap-4 mb-6">
+                  <h3 className="text-sm font-semibold text-gray-700">Date & Time</h3>
                   <div>
-                    <label htmlFor="date" className="block text-sm font-medium text-gray-700 mb-1">
-                      Date <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      required
-                      id="date"
-                      type="date"
-                      value={date}
-                      onChange={(e) => setDate(e.target.value)}
-                      className="w-full rounded-lg border border-gray-200 p-2.5 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
-                    />
-                  </div>
-                  {/*==================== End of Date ====================*/}
+                    {/*==================== From Date and Time ====================*/}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                      {/*==================== Date ====================*/}
+                      <div>
+                        <label
+                          htmlFor="date"
+                          className="block text-sm font-medium text-gray-700 mb-1"
+                        >
+                          From Date: <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          required
+                          id="date"
+                          type="date"
+                          value={date}
+                          onChange={(e) => setDate(e.target.value)}
+                          className="w-full rounded-lg border border-gray-200 p-2.5 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+                        />
+                      </div>
+                      {/*==================== End of Date ====================*/}
 
-                  {/*==================== Time ====================*/}
-                  <div>
-                    <label htmlFor="time" className="block text-sm font-medium text-gray-700 mb-1">
-                      Time <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      required
-                      id="time"
-                      type="time"
-                      value={time}
-                      onChange={(e) => setTime(e.target.value)}
-                      className="w-full rounded-lg border border-gray-200 p-2.5 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
-                    />
+                      {/*==================== Time ====================*/}
+                      <div>
+                        <label
+                          htmlFor="time"
+                          className="block text-sm font-medium text-gray-700 mb-1"
+                        >
+                          From Time: <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          required
+                          id="time"
+                          type="time"
+                          value={time}
+                          onChange={(e) => setTime(e.target.value)}
+                          className="w-full rounded-lg border border-gray-200 p-2.5 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+                        />
+                      </div>
+                      {/*==================== End of Time ====================*/}
+                    </div>
+                    {/*==================== End of From Date and Time ====================*/}
+
+                    {/*==================== To Date and Time ====================*/}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                      {/*==================== Date ====================*/}
+                      <div>
+                        <label
+                          htmlFor="toDate"
+                          className="block text-sm font-medium text-gray-700 mb-1"
+                        >
+                          To Date:
+                        </label>
+                        <input
+                          id="toDate"
+                          type="date"
+                          value={toDate}
+                          onChange={(e) => setToDate(e.target.value)}
+                          className="w-full rounded-lg border border-gray-200 p-2.5 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+                        />
+                      </div>
+                      {/*==================== End of Date ====================*/}
+
+                      {/*==================== Time ====================*/}
+                      <div>
+                        <label
+                          htmlFor="toTime"
+                          className="block text-sm font-medium text-gray-700 mb-1"
+                        >
+                          To Time:
+                        </label>
+                        <input
+                          id="toTime"
+                          type="time"
+                          value={toTime}
+                          onChange={(e) => setToTime(e.target.value)}
+                          className="w-full rounded-lg border border-gray-200 p-2.5 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+                        />
+                      </div>
+                      {/*==================== End of Time ====================*/}
+                    </div>
+                    {/*==================== End of To Date and Time ====================*/}
                   </div>
-                  {/*==================== End of Time ====================*/}
                 </div>
-                {/*==================== End of Date and Time Container ====================*/}
+                {/*==================== End of From and To Date ====================*/}
 
                 {/*==================== Location ====================*/}
                 <div className="mb-8">
