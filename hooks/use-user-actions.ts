@@ -1,9 +1,10 @@
-import axios from 'axios';
 import { toast } from 'sonner';
 import { useState } from 'react';
 import { BASE_URL } from '@/utils/url';
+import axios, { AxiosError } from 'axios';
+import { getErrorMessage } from '@/utils/error';
 import { ModalState } from '@/types/interfaces/modal';
-import { ActionType, UseUserActionsProps } from '@/types';
+import { ActionType, UseUserActionsProps, CustomError, ErrorResponseData } from '@/types';
 
 const useUserActions = ({ token, onUserUpdated }: UseUserActionsProps) => {
   const [modalState, setModalState] = useState<ModalState>({
@@ -86,12 +87,12 @@ const useUserActions = ({ token, onUserUpdated }: UseUserActionsProps) => {
       onUserUpdated();
       closeModal();
     } catch (error) {
-      const errorMessage = axios.isAxiosError(error)
-        ? error.response?.data?.message || `Failed to ${modalState.actionType} user`
-        : `Failed to ${modalState.actionType} user`;
+      const { message } = getErrorMessage(
+        error as AxiosError<ErrorResponseData> | CustomError | Error
+      );
 
       toast.error('Action Failed', {
-        description: errorMessage,
+        description: message,
         duration: 5000,
       });
 

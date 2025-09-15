@@ -1,8 +1,10 @@
-import axios from 'axios';
 import { toast } from 'sonner';
 import { BASE_URL } from '@/utils/url';
+import axios, { AxiosError } from 'axios';
 import useDebounce from '@/utils/debounce';
 import { useState, useCallback } from 'react';
+import { getErrorMessage } from '@/utils/error';
+import { CustomError, ErrorResponseData } from '@/types';
 import { UseEventsProps, GetEventsParams, CreateEventData } from '@/types/interfaces/event';
 
 const useEvents = ({ token }: UseEventsProps) => {
@@ -40,12 +42,12 @@ const useEvents = ({ token }: UseEventsProps) => {
         };
       } catch (error) {
         setIsError(true);
-        const errorMessage = axios.isAxiosError(error)
-          ? error.response?.data?.message || error.message
-          : 'Failed to fetch events';
+        const { message } = getErrorMessage(
+          error as AxiosError<ErrorResponseData> | CustomError | Error
+        );
 
         toast.error('Failed to load events', {
-          description: errorMessage,
+          description: message,
           duration: 5000,
         });
 
@@ -84,12 +86,12 @@ const useEvents = ({ token }: UseEventsProps) => {
         return data.data;
       } catch (error) {
         setIsError(true);
-        const errorMessage = axios.isAxiosError(error)
-          ? error.response?.data?.message || error.message
-          : 'Failed to create event';
+        const { message } = getErrorMessage(
+          error as AxiosError<ErrorResponseData> | CustomError | Error
+        );
 
         toast.error('Failed to create event', {
-          description: errorMessage,
+          description: message,
           duration: 5000,
         });
 
@@ -124,12 +126,12 @@ const useEvents = ({ token }: UseEventsProps) => {
         return data.data;
       } catch (error) {
         setIsError(true);
-        const errorMessage = axios.isAxiosError(error)
-          ? error.response?.data?.message || error.message
-          : 'Failed to update event';
+        const { message } = getErrorMessage(
+          error as AxiosError<ErrorResponseData> | CustomError | Error
+        );
 
         toast.error('Failed to update event', {
-          description: errorMessage,
+          description: message,
           duration: 5000,
         });
 
@@ -164,12 +166,12 @@ const useEvents = ({ token }: UseEventsProps) => {
         return true;
       } catch (error) {
         setIsError(true);
-        const errorMessage = axios.isAxiosError(error)
-          ? error.response?.data?.message || error.message
-          : 'Failed to delete event';
+        const { message } = getErrorMessage(
+          error as AxiosError<ErrorResponseData> | CustomError | Error
+        );
 
         toast.error('Failed to delete event', {
-          description: errorMessage,
+          description: message,
           duration: 5000,
         });
 
@@ -208,12 +210,12 @@ const useEvents = ({ token }: UseEventsProps) => {
         return data.data;
       } catch (error) {
         setIsError(true);
-        const errorMessage = axios.isAxiosError(error)
-          ? error.response?.data?.message || error.message
-          : 'Failed to register for event';
+        const { message } = getErrorMessage(
+          error as AxiosError<ErrorResponseData> | CustomError | Error
+        );
 
         toast.error('Failed to register for event', {
-          description: errorMessage,
+          description: message,
           duration: 5000,
         });
 
@@ -248,12 +250,12 @@ const useEvents = ({ token }: UseEventsProps) => {
         return data.data;
       } catch (error) {
         setIsError(true);
-        const errorMessage = axios.isAxiosError(error)
-          ? error.response?.data?.message || error.message
-          : 'Failed to unregister from event';
+        const { message } = getErrorMessage(
+          error as AxiosError<ErrorResponseData> | CustomError | Error
+        );
 
         toast.error('Failed to unregister from event', {
-          description: errorMessage,
+          description: message,
           duration: 5000,
         });
 
@@ -283,12 +285,12 @@ const useEvents = ({ token }: UseEventsProps) => {
         return data.data;
       } catch (error) {
         setIsError(true);
-        const errorMessage = axios.isAxiosError(error)
-          ? error.response?.data?.message || error.message
-          : 'Failed to fetch event';
+        const { message } = getErrorMessage(
+          error as AxiosError<ErrorResponseData> | CustomError | Error
+        );
 
         toast.error('Failed to load event', {
-          description: errorMessage,
+          description: message,
           duration: 5000,
         });
 

@@ -268,10 +268,6 @@ const EventCard = ({
           <div className="mt-4 pt-4 border-t border-gray-100">
             {isRegistered ? (
               <div className="space-y-3">
-                <div className="flex items-center text-green-600 text-sm font-medium">
-                  <CheckCircle className="mr-2 h-4 w-4" />
-                  You are registered for this event
-                </div>
                 <button
                   disabled={isRegistering}
                   onClick={handleRegistration}
