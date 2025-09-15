@@ -1,7 +1,7 @@
 import { UserAuth } from '@/types';
 import { NextApiRequest } from 'next';
 import { isLoggedIn } from '@/utils/auth';
-import EventsComponent from '@/components/dashboard/shared/pages/events/events';
+import EventsComponent from '@/components/dashboard/shared/events/events';
 import { StudentEventsPageProps } from '@/types/interfaces/event';
 
 const StudentEventsPage = ({ userData }: StudentEventsPageProps) => {

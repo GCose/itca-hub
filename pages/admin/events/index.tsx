@@ -2,7 +2,7 @@ import { UserAuth } from '@/types';
 import { NextApiRequest } from 'next';
 import { isLoggedIn } from '@/utils/auth';
 import { AdminEventsPageProps } from '@/types/interfaces/event';
-import EventsComponent from '@/components/dashboard/shared/pages/events/events';
+import EventsComponent from '@/components/dashboard/shared/events/events';
 
 const AdminEventsPage = ({ userData }: AdminEventsPageProps) => {
   return <EventsComponent role="admin" userData={userData} />;

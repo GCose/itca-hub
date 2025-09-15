@@ -1,6 +1,6 @@
 import EventCard from './event-card';
 import { CreateEventData } from '@/types';
-import useEvents from '@/hooks/events/use-events';
+import useEvents from '@/hooks/use-event';
 import { useState, useEffect, useCallback } from 'react';
 import { NetworkError, EmptyState } from '@/components/dashboard/error-messages';
 import { EventProps, EventsComponentProps } from '@/types/interfaces/event';
