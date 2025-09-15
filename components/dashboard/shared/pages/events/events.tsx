@@ -2,7 +2,7 @@ import EventCard from './event-card';
 import { CreateEventData } from '@/types';
 import useEvents from '@/hooks/events/use-events';
 import { useState, useEffect, useCallback } from 'react';
-import { NetworkError, EmptyState } from '@/components/dashboard/error-message';
+import { NetworkError, EmptyState } from '@/components/dashboard/error-messages';
 import { EventProps, EventsComponentProps } from '@/types/interfaces/event';
 import DashboardLayout from '@/components/dashboard/layout/dashboard-layout';
 import EditEventModal from '@/components/dashboard/modals/events/edit-event-modal';
@@ -10,7 +10,7 @@ import DashboardPageHeader from '@/components/dashboard/layout/dashboard-page-he
 import CreateEventModal from '@/components/dashboard/modals/events/create-event-modal';
 import DeleteEventModal from '@/components/dashboard/modals/events/delete-event-modal';
 import { Calendar, Search, RefreshCw, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
-import EventsLoadingSkeleton from '@/components/dashboard/admin/events/events-loading-skeleton';
+import EventsLoadingSkeleton from '@/components/dashboard/skeletons/events-loading-skeleton';
 
 const EventsComponent = ({ role, userData }: EventsComponentProps) => {
   const [eventToDelete, setEventToDelete] = useState<string | null>(null);

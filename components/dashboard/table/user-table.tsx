@@ -11,10 +11,10 @@ import {
   GraduationCap,
 } from 'lucide-react';
 import { UserTableProps } from '@/types/interfaces/table';
-import UserTableSkeleton from './skeleton/user-table-skeleton';
+import UserTableSkeleton from '../skeletons/user-table-skeleton';
 import UserActionsModal from '../modals/user/user-actions-modal';
 import useUserActions from '@/hooks/admin/users/use-user-actions';
-import { NetworkError, EmptyState } from '@/components/dashboard/error-message';
+import { NetworkError, EmptyState } from '@/components/dashboard/error-messages';
 
 const UserTable = ({
   page,

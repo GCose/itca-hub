@@ -9,8 +9,8 @@ import { useResources } from '@/hooks/admin/resources/use-resources';
 import DashboardPageHeader from '@/components/dashboard/layout/dashboard-page-header';
 import ResourceTable from '@/components/dashboard/table/resource-table';
 import ResourceFilters from '@/components/dashboard/table/resource-table-filters';
-import ResourceFilterSkeleton from '@/components/dashboard/table/skeleton/resource-filter-skeleton';
-import ResourceTableSkeleton from '@/components/dashboard/table/skeleton/resource-table-skeleton';
+import ResourceFilterSkeleton from '@/components/dashboard/skeletons/resource-filter-skeleton';
+import ResourceTableSkeleton from '@/components/dashboard/skeletons/resource-table-skeleton';
 
 interface AdminResourcesPageProps {
   userData: UserAuth;

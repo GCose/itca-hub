@@ -1,12 +1,12 @@
-import { useState, useRef } from 'react';
-import { NextApiRequest } from 'next';
-import { Shield, Calendar, Camera, Lock, Edit3, Save, X, Eye, EyeOff, Crown } from 'lucide-react';
-import DashboardLayout from '@/components/dashboard/layout/dashboard-layout';
-import DashboardPageHeader from '@/components/dashboard/layout/dashboard-page-header';
 import { UserAuth } from '@/types';
+import { NextApiRequest } from 'next';
+import { useState, useRef } from 'react';
 import { isLoggedIn } from '@/utils/auth';
 import { useAdminProfile } from '@/hooks/admin/profile/use-admin-profile';
-import UserProfileSkeleton from '@/components/dashboard/student/skeleton/user-profile';
+import DashboardLayout from '@/components/dashboard/layout/dashboard-layout';
+import UserProfileSkeleton from '@/components/dashboard/skeletons/user-profile';
+import DashboardPageHeader from '@/components/dashboard/layout/dashboard-page-header';
+import { Shield, Calendar, Camera, Lock, Edit3, Save, X, Eye, EyeOff, Crown } from 'lucide-react';
 
 interface AdminProfilePageProps {
   userData: UserAuth;

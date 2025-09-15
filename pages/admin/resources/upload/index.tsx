@@ -1,4 +1,4 @@
-import ResourceUploader from '@/components/dashboard/admin/resources/uploader/resource-uploader';
+import ResourceUploader from '@/components/dashboard/resources/resource-uploader';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import DashboardLayout from '@/components/dashboard/layout/dashboard-layout';

@@ -9,8 +9,8 @@ import { NextApiRequest } from 'next';
 import { useStudentResources } from '@/hooks/student/resources/use-student-resources';
 import ResourceTable from '@/components/dashboard/table/resource-table';
 import ResourceFilters from '@/components/dashboard/table/resource-table-filters';
-import ResourceFilterSkeleton from '@/components/dashboard/table/skeleton/resource-filter-skeleton';
-import ResourceTableSkeleton from '@/components/dashboard/table/skeleton/resource-table-skeleton';
+import ResourceFilterSkeleton from '@/components/dashboard/skeletons/resource-filter-skeleton';
+import ResourceTableSkeleton from '@/components/dashboard/skeletons/resource-table-skeleton';
 
 interface StudentResourcesPageProps {
   userData: UserAuth;

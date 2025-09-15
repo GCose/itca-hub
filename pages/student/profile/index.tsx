@@ -6,7 +6,7 @@ import DashboardPageHeader from '@/components/dashboard/layout/dashboard-page-he
 import { UserAuth } from '@/types';
 import { isLoggedIn } from '@/utils/auth';
 import { useStudentProfile } from '@/hooks/student/profile/use-student-profile';
-import UserProfileSkeleton from '@/components/dashboard/student/skeleton/user-profile';
+import UserProfileSkeleton from '@/components/dashboard/skeletons/user-profile';
 
 interface StudentProfilePageProps {
   userData: UserAuth;
