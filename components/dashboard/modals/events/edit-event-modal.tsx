@@ -1,11 +1,11 @@
 import axios from 'axios';
+import Image from 'next/image';
 import { toast } from 'sonner';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CreateEventData } from '@/types/interfaces/event';
 import { EditEventModalProps } from '@/types/interfaces/modal';
 import { X, Calendar, Save, Loader, Upload } from 'lucide-react';
-import Image from 'next/image';
 
 const EditEventModal = ({ isOpen, event, onClose, onSave }: EditEventModalProps) => {
   const [registrationRequired, setRegistrationRequired] = useState(false);
@@ -449,7 +449,8 @@ const EditEventModal = ({ isOpen, event, onClose, onSave }: EditEventModalProps)
                     <div className="mt-3">
                       <p className="text-sm font-medium text-gray-700 mb-2">New Image Preview:</p>
                       <div className="relative w-full h-32 rounded-lg overflow-hidden border border-gray-200">
-                        <img
+                        <Image
+                          fill
                           src={imagePreview}
                           alt="New event flyer preview"
                           className="w-full h-full object-cover"

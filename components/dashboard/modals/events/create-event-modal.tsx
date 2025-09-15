@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { CreateEventData } from '@/types/interfaces/event';
 import { CreateEventModalProps } from '@/types/interfaces/modal';
 import { X, Calendar, Save, Loader, Upload } from 'lucide-react';
+import Image from 'next/image';
 
 const CreateEventModal = ({ isOpen, onClose, onSave }: CreateEventModalProps) => {
   const [registrationRequired, setRegistrationRequired] = useState(false);
@@ -390,7 +391,8 @@ const CreateEventModal = ({ isOpen, onClose, onSave }: CreateEventModalProps) =>
                     <div className="mt-3">
                       <p className="text-sm font-medium text-gray-700 mb-2">Preview:</p>
                       <div className="relative w-full h-32 rounded-lg overflow-hidden border border-gray-200">
-                        <img
+                        <Image
+                          fill
                           src={imagePreview}
                           alt="Event flyer preview"
                           className="w-full h-full object-cover"

@@ -54,85 +54,85 @@ export interface AdminUsersPageProps {
 }
 
 export interface Resource {
-  resourceId: string;
+  type: string;
   title: string;
-  description: string;
+  fileUrl: string;
   category: string;
+  fileSize: string;
+  fileName: string;
   downloads: number;
   viewCount: number;
-  fileUrls: string[];
-  fileUrl: string;
-  fileName: string;
-  type: string;
-  fileSize: string;
-  visibility: 'all' | 'admin';
-  academicLevel: 'undergraduate' | 'postgraduate' | 'all';
-  department: string;
-  isDeleted: boolean;
-  deletedAt?: string;
-  deletedBy?: string;
-  createdBy: string;
-  updatedBy?: string;
   createdAt: string;
   updatedAt: string;
+  createdBy: string;
+  fileUrls: string[];
+  resourceId: string;
+  department: string;
+  isDeleted: boolean;
+  deletedBy?: string;
+  deletedAt?: string;
+  updatedBy?: string;
+  description: string;
   dateUploaded: string;
+  visibility: 'all' | 'admin';
+  academicLevel: 'undergraduate' | 'postgraduate' | 'all';
 }
 
 export interface ApiResource {
   _id: string;
-  resourceId: string;
   title: string;
-  description: string;
   category: string;
   downloads: number;
   viewCount: number;
-  fileUrls: string[];
-  visibility: 'all' | 'admin';
-  academicLevel: 'undergraduate' | 'postgraduate' | 'all';
+  createdAt: string;
+  createdBy: string;
+  updatedAt: string;
+  resourceId: string;
   department: string;
   isDeleted: boolean;
   deletedAt?: string;
   deletedBy?: string;
-  createdBy: string;
   updatedBy?: string;
-  createdAt: string;
-  updatedAt: string;
+  fileUrls: string[];
+  description: string;
+  visibility: 'all' | 'admin';
+  academicLevel: 'undergraduate' | 'postgraduate' | 'all';
 }
 
 export interface CreateResourcePayload {
   title: string;
-  description: string;
   category: string;
   fileUrls: string[];
+  department: string;
+  description: string;
   visibility: 'all' | 'admin';
   academicLevel: 'undergraduate' | 'postgraduate' | 'all';
-  department: string;
 }
 
 export interface UpdateResourcePayload {
   title?: string;
-  description?: string;
   category?: string;
+  department?: string;
   fileUrls?: string[];
+  description?: string;
   visibility?: 'all' | 'admin';
   academicLevel?: 'undergraduate' | 'postgraduate' | 'all';
-  department?: string;
 }
 
 export interface ResourceFiltersProps {
-  searchTerm: string;
-  setSearchTerm: (term: string) => void;
-  department: string;
-  setDepartment: (dept: string) => void;
   fileType: string;
-  setFileType: (type: string) => void;
   category: string;
-  setCategory: (category: string) => void;
+  searchTerm: string;
+  department: string;
   visibility?: string;
-  setVisibility?: (visibility: string) => void;
   fileTypes: string[];
   categories: string[];
   clearFilters?: () => void;
+  setFileType: (type: string) => void;
+  setSearchTerm: (term: string) => void;
+  setDepartment: (dept: string) => void;
+  setCategory: (category: string) => void;
+  setVisibility?: (visibility: string) => void;
 }
 
 export interface ItcaApiResponse<T = unknown> {
@@ -142,35 +142,35 @@ export interface ItcaApiResponse<T = unknown> {
 }
 
 export interface ResourcesResponse {
-  resources: ApiResource[];
   pagination: {
+    limit: number;
     total: number;
     totalPages: number;
     currentPage: number;
-    limit: number;
     hasNextPage: boolean;
     hasPrevPage: boolean;
   };
+  resources: ApiResource[];
 }
 
 export interface JeetixResponse {
   status: string;
   data: {
-    fileName: string;
     fileUrl: string;
+    fileName: string;
   };
 }
 
 export interface JeetixListResponse {
   status: string;
   data: Array<{
-    name: string;
     url: string;
+    name: string;
     metadata: {
       size: string;
+      mediaLink: string;
       contentType: string;
       timeCreated: string;
-      mediaLink: string;
       [key: string]: unknown;
     };
   }>;
@@ -182,22 +182,22 @@ export interface JeetixFileInfo {
     fileUrl: string;
     metadata: {
       size: string;
+      mediaLink: string;
       contentType: string;
       timeCreated: string;
-      mediaLink: string;
       [key: string]: unknown;
     };
   };
 }
 
 export interface JeetixFileItem {
-  name: string;
   url: string;
+  name: string;
   metadata: {
     size: string;
+    mediaLink: string;
     contentType: string;
     timeCreated: string;
-    mediaLink: string;
     [key: string]: unknown;
   };
 }
@@ -206,31 +206,31 @@ export interface ResourcesParams {
   page?: number;
   limit?: number;
   search?: string;
-  department?: string;
   category?: string;
   fileType?: string;
   visibility?: string;
+  department?: string;
   includeDeleted?: boolean;
 }
 
 export interface UseResourceViewerProps {
-  resourceId?: string;
   token: string;
+  resourceId?: string;
 }
 
 export interface ResourceTableProps {
-  resources: Resource[];
-  allResources: Resource[];
-  isLoading: boolean;
-  isError?: boolean;
   token: string;
+  isError?: boolean;
   searchTerm: string;
+  isLoading: boolean;
+  resources: Resource[];
+  onRefresh: () => void;
+  allResources: Resource[];
+  onClearFilters: () => void;
   userRole: 'admin' | 'user';
   mode?: 'default' | 'recycleBin';
   onDeleteResource?: (resourceId: string) => Promise<boolean>;
-  onDeleteMultiple?: (resourceIds: string[]) => Promise<boolean>;
   onRestoreResource?: (resourceId: string) => Promise<boolean>;
+  onDeleteMultiple?: (resourceIds: string[]) => Promise<boolean>;
   onRestoreMultiple?: (resourceIds: string[]) => Promise<boolean>;
-  onRefresh: () => void;
-  onClearFilters: () => void;
 }
