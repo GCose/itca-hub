@@ -1,24 +1,23 @@
-import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { CheckCircle } from 'lucide-react';
 import Link from 'next/link';
-import AuthLayout from '@/components/authentication/auth-layout';
-import { CustomError, ErrorResponseData, RegistrationFormData, UserAuth } from '@/types';
-import { validatePersonalInfo, validateSecurity } from '@/utils/sign-up/validation';
-import PersonalInfoStep from '@/components/authentication/sign-up/personal-info-steps';
-import SecurityStep from '@/components/authentication/sign-up/security-step';
-import StepIndicator from '@/components/authentication/sign-up/step-indicator';
-import useTimedError from '@/hooks/timed-error';
-import axios, { AxiosError } from 'axios';
+import { toast } from 'sonner';
+import { useState } from 'react';
+import { NextApiRequest } from 'next';
+import { motion } from 'framer-motion';
 import { BASE_URL } from '@/utils/url';
 import { useRouter } from 'next/router';
-import { NextApiRequest } from 'next';
 import { isLoggedIn } from '@/utils/auth';
-import { toast } from 'sonner';
+import axios, { AxiosError } from 'axios';
+import { CheckCircle } from 'lucide-react';
 import { getErrorMessage } from '@/utils/error';
+import useTimedError from '@/hooks/timed-error';
+import AuthLayout from '@/components/dashboard/authentication/auth-layout';
+import { validatePersonalInfo, validateSecurity } from '@/utils/sign-up/validation';
+import { CustomError, ErrorResponseData, RegistrationFormData, UserAuth } from '@/types';
+import SecurityStep from '@/components/dashboard/authentication/sign-up/security-step';
+import StepIndicator from '@/components/dashboard/authentication/sign-up/step-indicator';
+import PersonalInfoStep from '@/components/dashboard/authentication/sign-up/personal-info-steps';
 
 const SignUp = () => {
-  const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState<RegistrationFormData>({
     firstName: '',
@@ -29,13 +28,13 @@ const SignUp = () => {
     agreeToTerms: false,
     role: 'user',
   });
+  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useTimedError();
   const [step, setStep] = useState(1);
 
   const router = useRouter();
 
-  // Event handlers
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
     setFormData({
@@ -74,7 +73,6 @@ const SignUp = () => {
     try {
       await axios.post(`${BASE_URL}/auth/register`, formData);
 
-      // Show alert that the user has registered successfully
       toast.error('Account created successfully', {
         description: 'Your account has been verified and you are not eligible to use the system',
       });
@@ -93,7 +91,6 @@ const SignUp = () => {
     }
   };
 
-  // Right side content that will be displayed in the AuthLayout
   const rightSideContent = (
     <motion.div
       initial={{ opacity: 0, y: 70 }}
@@ -206,7 +203,6 @@ export default SignUp;
 export const getServerSideProps = async ({ req }: { req: NextApiRequest }) => {
   const userData = isLoggedIn(req);
 
-  // If there is user data and the user data type is not boolean, which means it is of type UserAuth object, then
   if (userData && typeof userData !== 'boolean') {
     const { role } = userData as UserAuth;
 
