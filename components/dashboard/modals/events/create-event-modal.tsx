@@ -1,10 +1,9 @@
 import axios from 'axios';
 import { toast } from 'sonner';
 import { useState } from 'react';
-import { CreateEventData } from '@/types';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Calendar, Save, Loader, Upload } from 'lucide-react';
-import { CreateEventModalProps } from '@/types/interfaces/event';
+import { CreateEventData, CreateEventModalProps } from '@/types/interfaces/event';
 
 const CreateEventModal = ({ isOpen, onClose, onSave }: CreateEventModalProps) => {
   const [registrationRequired, setRegistrationRequired] = useState(false);
@@ -174,8 +173,8 @@ const CreateEventModal = ({ isOpen, onClose, onSave }: CreateEventModalProps) =>
               {/*==================== Form Content ====================*/}
               <div className="mb-6">
                 {/*==================== Title ====================*/}
-                <div className="mb-4">
-                  <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
+                <div className="mb-7">
+                  <label htmlFor="title" className="block text-sm font-semibold text-gray-700 mb-1">
                     Event Title <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -191,15 +190,16 @@ const CreateEventModal = ({ isOpen, onClose, onSave }: CreateEventModalProps) =>
                 {/*==================== End of Title ====================*/}
 
                 {/*==================== Description ====================*/}
-                <div className="mb-4">
+                <div className="mb-6">
                   <label
                     htmlFor="description"
-                    className="block text-sm font-medium text-gray-700 mb-1"
+                    className="block text-sm font-semibold text-gray-700 mb-1"
                   >
-                    Description
+                    Description <span className="text-red-500">*</span>
                   </label>
                   <textarea
                     rows={3}
+                    required
                     id="description"
                     value={description}
                     placeholder="Describe your event..."
@@ -209,47 +209,100 @@ const CreateEventModal = ({ isOpen, onClose, onSave }: CreateEventModalProps) =>
                 </div>
                 {/*==================== End of Description ====================*/}
 
-                {/*==================== Date and Time Container ====================*/}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                  {/*==================== Date ====================*/}
+                {/*==================== From and To Date ====================*/}
+                <div className="grid grid-cols-1 gap-4 mb-6">
+                  <h3 className="text-sm font-semibold text-gray-700">Date & Time</h3>
                   <div>
-                    <label htmlFor="date" className="block text-sm font-medium text-gray-700 mb-1">
-                      Date <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      required
-                      id="date"
-                      type="date"
-                      value={date}
-                      onChange={(e) => setDate(e.target.value)}
-                      className="w-full rounded-lg border border-gray-200 p-2.5 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
-                    />
-                  </div>
-                  {/*==================== End of Date ====================*/}
+                    {/*==================== From Date and Time ====================*/}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                      {/*==================== Date ====================*/}
+                      <div>
+                        <label
+                          htmlFor="date"
+                          className="block text-sm font-medium text-gray-700 mb-1"
+                        >
+                          From Date: <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          required
+                          id="date"
+                          type="date"
+                          value={date}
+                          onChange={(e) => setDate(e.target.value)}
+                          className="w-full rounded-lg border border-gray-200 p-2.5 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+                        />
+                      </div>
+                      {/*==================== End of Date ====================*/}
 
-                  {/*==================== Time ====================*/}
-                  <div>
-                    <label htmlFor="time" className="block text-sm font-medium text-gray-700 mb-1">
-                      Time <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      required
-                      id="time"
-                      type="time"
-                      value={time}
-                      onChange={(e) => setTime(e.target.value)}
-                      className="w-full rounded-lg border border-gray-200 p-2.5 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
-                    />
+                      {/*==================== Time ====================*/}
+                      <div>
+                        <label
+                          htmlFor="time"
+                          className="block text-sm font-medium text-gray-700 mb-1"
+                        >
+                          From Time: <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          required
+                          id="time"
+                          type="time"
+                          value={time}
+                          onChange={(e) => setTime(e.target.value)}
+                          className="w-full rounded-lg border border-gray-200 p-2.5 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+                        />
+                      </div>
+                      {/*==================== End of Time ====================*/}
+                    </div>
+                    {/*==================== End of From Date and Time ====================*/}
+
+                    {/*==================== To Date and Time ====================*/}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                      {/*==================== Date ====================*/}
+                      <div>
+                        <label
+                          htmlFor="date"
+                          className="block text-sm font-medium text-gray-700 mb-1"
+                        >
+                          To Date:
+                        </label>
+                        <input
+                          id="date"
+                          type="date"
+                          value={date}
+                          onChange={(e) => setDate(e.target.value)}
+                          className="w-full rounded-lg border border-gray-200 p-2.5 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+                        />
+                      </div>
+                      {/*==================== End of Date ====================*/}
+
+                      {/*==================== Time ====================*/}
+                      <div>
+                        <label
+                          htmlFor="time"
+                          className="block text-sm font-medium text-gray-700 mb-1"
+                        >
+                          To Time:
+                        </label>
+                        <input
+                          id="time"
+                          type="time"
+                          value={time}
+                          onChange={(e) => setTime(e.target.value)}
+                          className="w-full rounded-lg border border-gray-200 p-2.5 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+                        />
+                      </div>
+                      {/*==================== End of Time ====================*/}
+                    </div>
+                    {/*==================== End of To Date and Time ====================*/}
                   </div>
-                  {/*==================== End of Time ====================*/}
                 </div>
-                {/*==================== End of Date and Time Container ====================*/}
+                {/*==================== End of From and To Date ====================*/}
 
                 {/*==================== Location ====================*/}
-                <div className="mb-4">
+                <div className="mb-8">
                   <label
                     htmlFor="location"
-                    className="block text-sm font-medium text-gray-700 mb-1"
+                    className="block text-sm font-semibold text-gray-700 mb-1"
                   >
                     Location <span className="text-red-500">*</span>
                   </label>
@@ -266,12 +319,12 @@ const CreateEventModal = ({ isOpen, onClose, onSave }: CreateEventModalProps) =>
                 {/*==================== End of Location ====================*/}
 
                 {/*==================== Capacity and Registration Container ====================*/}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
                   {/*==================== Capacity ====================*/}
                   <div>
                     <label
                       htmlFor="capacity"
-                      className="block text-sm font-medium text-gray-700 mb-1"
+                      className="block text-sm font-semibold text-gray-700 mb-1"
                     >
                       Capacity
                     </label>
@@ -295,7 +348,7 @@ const CreateEventModal = ({ isOpen, onClose, onSave }: CreateEventModalProps) =>
                         onChange={(e) => setRegistrationRequired(e.target.checked)}
                         className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                       />
-                      <span className="text-sm font-medium text-gray-700">
+                      <span className="text-sm font-semibold text-gray-700">
                         Registration Required
                       </span>
                     </label>
@@ -306,7 +359,7 @@ const CreateEventModal = ({ isOpen, onClose, onSave }: CreateEventModalProps) =>
 
                 {/*==================== Image Upload ====================*/}
                 <div className="mb-4">
-                  <label htmlFor="image" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="image" className="block text-sm font-semibold text-gray-700 mb-1">
                     Event Flyer <span className="text-red-500">*</span>
                   </label>
 

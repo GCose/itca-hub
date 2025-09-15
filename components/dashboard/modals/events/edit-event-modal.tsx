@@ -1,10 +1,11 @@
 import axios from 'axios';
 import { toast } from 'sonner';
-import { CreateEventData } from '@/types';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { CreateEventData } from '@/types/interfaces/event';
 import { EditEventModalProps } from '@/types/interfaces/modal';
 import { X, Calendar, Save, Loader, Upload } from 'lucide-react';
+import Image from 'next/image';
 
 const EditEventModal = ({ isOpen, event, onClose, onSave }: EditEventModalProps) => {
   const [registrationRequired, setRegistrationRequired] = useState(false);
@@ -199,8 +200,8 @@ const EditEventModal = ({ isOpen, event, onClose, onSave }: EditEventModalProps)
               {/*==================== Form Content ====================*/}
               <div className="mb-6">
                 {/*==================== Title ====================*/}
-                <div className="mb-4">
-                  <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
+                <div className="mb-7">
+                  <label htmlFor="title" className="block text-sm font-semibold text-gray-700 mb-1">
                     Event Title <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -216,10 +217,10 @@ const EditEventModal = ({ isOpen, event, onClose, onSave }: EditEventModalProps)
                 {/*==================== End of Title ====================*/}
 
                 {/*==================== Description ====================*/}
-                <div className="mb-4">
+                <div className="mb-6">
                   <label
                     htmlFor="description"
-                    className="block text-sm font-medium text-gray-700 mb-1"
+                    className="block text-sm font-semibold text-gray-700 mb-1"
                   >
                     Description
                   </label>
@@ -235,7 +236,7 @@ const EditEventModal = ({ isOpen, event, onClose, onSave }: EditEventModalProps)
                 {/*==================== End of Description ====================*/}
 
                 {/*==================== Date and Time Container ====================*/}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
                   {/*==================== Date ====================*/}
                   <div>
                     <label htmlFor="date" className="block text-sm font-medium text-gray-700 mb-1">
@@ -271,7 +272,7 @@ const EditEventModal = ({ isOpen, event, onClose, onSave }: EditEventModalProps)
                 {/*==================== End of Date and Time Container ====================*/}
 
                 {/*==================== Location ====================*/}
-                <div className="mb-4">
+                <div className="mb-8">
                   <label
                     htmlFor="location"
                     className="block text-sm font-medium text-gray-700 mb-1"
@@ -291,19 +292,19 @@ const EditEventModal = ({ isOpen, event, onClose, onSave }: EditEventModalProps)
                 {/*==================== End of Location ====================*/}
 
                 {/*==================== Capacity and Registration Container ====================*/}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
                   {/*==================== Capacity ====================*/}
                   <div>
                     <label
                       htmlFor="capacity"
-                      className="block text-sm font-medium text-gray-700 mb-1"
+                      className="block text-sm font-semibold text-gray-700 mb-1"
                     >
                       Capacity
                     </label>
                     <input
-                      id="capacity"
-                      type="number"
                       min="1"
+                      type="number"
+                      id="capacity"
                       value={capacity}
                       onChange={(e) => setCapacity(parseInt(e.target.value) || 50)}
                       className="w-full rounded-lg border border-gray-200 p-2.5 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
@@ -320,7 +321,7 @@ const EditEventModal = ({ isOpen, event, onClose, onSave }: EditEventModalProps)
                         onChange={(e) => setRegistrationRequired(e.target.checked)}
                         className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                       />
-                      <span className="text-sm font-medium text-gray-700">
+                      <span className="text-sm font-semibold text-gray-700">
                         Registration Required
                       </span>
                     </label>
@@ -331,7 +332,7 @@ const EditEventModal = ({ isOpen, event, onClose, onSave }: EditEventModalProps)
 
                 {/*==================== Image Upload ====================*/}
                 <div className="mb-4">
-                  <label htmlFor="image" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="image" className="block text-sm font-semibold text-gray-700 mb-1">
                     Event Flyer (Optional - leave blank to keep current)
                   </label>
 
@@ -340,7 +341,8 @@ const EditEventModal = ({ isOpen, event, onClose, onSave }: EditEventModalProps)
                     <div className="mb-3">
                       <p className="text-sm font-medium text-gray-700 mb-2">Current Image:</p>
                       <div className="relative w-full h-32 rounded-lg overflow-hidden border border-gray-200">
-                        <img
+                        <Image
+                          fill
                           src={currentImageUrl}
                           alt="Current event flyer"
                           className="w-full h-full object-cover"

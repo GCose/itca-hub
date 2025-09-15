@@ -133,11 +133,11 @@ const EventCard = ({
       <div className="aspect-video w-full overflow-hidden relative">
         {event.imageUrl && !imageError ? (
           <Image
-            src={event.imageUrl}
-            alt={event.title}
             fill
-            className="object-cover transition-transform duration-300 group-hover:scale-105"
+            alt={event.title}
+            src={event.imageUrl}
             onError={() => setImageError(true)}
+            className="object-cover transition-transform duration-300 group-hover:scale-105"
           />
         ) : (
           <div className="h-full w-full bg-gradient-to-br from-blue-500 via-amber-300 to-blue-500 flex items-center justify-center">
@@ -239,8 +239,8 @@ const EventCard = ({
               </div>
             ) : canRegister ? (
               <button
-                onClick={handleRegistration}
                 disabled={isRegistering}
+                onClick={handleRegistration}
                 className="w-full inline-flex justify-center items-center rounded-lg bg-gradient-to-r from-blue-600 to-blue-500 px-4 py-2 text-sm font-medium text-white hover:from-blue-700 hover:to-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-300 shadow-md hover:shadow-lg disabled:opacity-50"
               >
                 {isRegistering ? (

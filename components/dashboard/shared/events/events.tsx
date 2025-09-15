@@ -257,7 +257,7 @@ const EventsComponent = ({ role, userData }: EventsComponentProps) => {
             <div className="flex items-center space-x-3">
               <button
                 onClick={handleRefresh}
-                className="inline-flex items-center rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                className="inline-flex items-center rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
               >
                 <RefreshCw className="h-4 w-4 mr-2" />
                 Refresh
@@ -337,12 +337,12 @@ const EventsComponent = ({ role, userData }: EventsComponentProps) => {
           showRefreshButton={true}
           onRefresh={handleRefresh}
           uploadUrl={role === 'admin' ? '/events' : '/help'}
-          uploadButtonText={role === 'admin' ? 'Create Event' : 'Go To Dashboard'}
           description={
             status === 'all'
               ? 'There are no events at the moment. Check back later!'
               : `No ${status} events found. Try adjusting your filters.`
           }
+          uploadButtonText={role === 'admin' ? 'Create Event' : 'Go To Dashboard'}
         />
       ) : (
         <div className="bg-transparent">
