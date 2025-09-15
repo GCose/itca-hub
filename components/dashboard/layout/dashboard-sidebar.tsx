@@ -109,10 +109,11 @@ const Sidebar = ({ open, setOpen }: DashboardSidebarProps) => {
           <div className="justify-between items-center p-4 max-[967px]:flex hidden">
             <Link href="/" className="flex items-center">
               <Image
-                width={150}
-                height={150}
+                priority
+                width={120}
+                height={40}
                 alt="ITCA Logo"
-                className="mr-2"
+                className="h-auto"
                 src="/images/logo.jpg"
               />
             </Link>
@@ -133,11 +134,12 @@ const Sidebar = ({ open, setOpen }: DashboardSidebarProps) => {
               className="flex items-center"
             >
               <Image
+                priority
                 width={150}
                 height={150}
                 alt="ITCA Logo"
-                className="mr-2"
                 src="/images/logo.jpg"
+                className="mr-2 h-auto"
               />
             </Link>
           </div>

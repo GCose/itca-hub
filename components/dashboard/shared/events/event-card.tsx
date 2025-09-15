@@ -186,6 +186,7 @@ const EventCard = ({
         {event.imageUrl && !imageError ? (
           <Image
             fill
+            priority
             alt={event.title}
             src={event.imageUrl}
             onError={() => setImageError(true)}

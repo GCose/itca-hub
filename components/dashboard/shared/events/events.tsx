@@ -180,11 +180,11 @@ const EventsComponent = ({ role, userData }: EventsComponentProps) => {
     }
 
     return (
-      <div className="flex items-center justify-between  bg-transparent border-t border-gray-200 pt-4">
+      <div className="flex items-center justify-between bg-transparent border-t border-gray-200 pt-4">
         <div className="flex justify-between flex-1 sm:hidden">
           <button
-            onClick={handlePreviousPage}
             disabled={page === 1}
+            onClick={handlePreviousPage}
             className="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Previous
@@ -210,8 +210,8 @@ const EventsComponent = ({ role, userData }: EventsComponentProps) => {
           <div>
             <nav className="relative z-0 inline-flex rounded-md -space-x-px">
               <button
-                onClick={handlePreviousPage}
                 disabled={page === 1}
+                onClick={handlePreviousPage}
                 className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <ChevronLeft className="h-5 w-5" />
@@ -221,7 +221,7 @@ const EventsComponent = ({ role, userData }: EventsComponentProps) => {
                 <button
                   key={pageNum}
                   onClick={() => handlePageClick(pageNum)}
-                  className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
+                  className={`relative inline-flex items-center px-4 py-0 border-none rounded-md text-sm font-medium ${
                     pageNum === page ? 'bg-blue-600 text-white' : 'text-gray-700 hover:bg-gray-100'
                   }`}
                 >
