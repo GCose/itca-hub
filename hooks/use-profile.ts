@@ -1,15 +1,15 @@
-import axios, { AxiosError } from 'axios';
 import { toast } from 'sonner';
-import { BASE_URL } from '@/utils/url';
-import { getErrorMessage } from '@/utils/error';
-import { useState, useEffect, useCallback } from 'react';
-import { CustomError, ErrorResponseData } from '@/types';
 import {
   UseProfileProps,
   UserProfile,
   UpdateProfilePayload,
   ChangePasswordPayload,
 } from '@/types/interfaces/profile';
+import { BASE_URL } from '@/utils/url';
+import axios, { AxiosError } from 'axios';
+import { getErrorMessage } from '@/utils/error';
+import { useState, useEffect, useCallback } from 'react';
+import { CustomError, ErrorResponseData } from '@/types';
 
 const useProfile = ({ token }: UseProfileProps) => {
   const [isChangingPassword, setIsChangingPassword] = useState(false);
@@ -156,6 +156,52 @@ const useProfile = ({ token }: UseProfileProps) => {
   };
 
   /**=========================================
+   * Uploads profile image to Jeetix ONLY
+   * Does not save to database
+   =========================================*/
+  const uploadImageOnly = async (file: File) => {
+    setIsUploadingImage(true);
+
+    try {
+      if (!file.type.startsWith('image/')) {
+        throw new Error('Please select a valid image file');
+      }
+
+      if (file.size > 5 * 1024 * 1024) {
+        throw new Error('Image file size must be less than 5MB');
+      }
+
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('folder', 'itca-profiles');
+
+      const { data } = await axios.post(
+        'https://jeetix-file-service.onrender.com/api/storage/upload',
+        formData
+      );
+
+      if (data.status !== 'success' || !data.data?.fileUrl) {
+        throw new Error('Failed to upload image');
+      }
+
+      toast.success('Image uploaded! Click "Save Changes" to update your profile');
+      return data.data.fileUrl;
+    } catch (err) {
+      const { message } = getErrorMessage(
+        err as AxiosError<ErrorResponseData> | CustomError | Error
+      );
+
+      toast.error('Failed to upload image', {
+        description: message,
+        duration: 5000,
+      });
+      throw err;
+    } finally {
+      setIsUploadingImage(false);
+    }
+  };
+
+  /**=========================================
    * Uploads profile image to Jeetix
    =========================================*/
   const uploadProfileImage = async (file: File) => {
@@ -219,6 +265,7 @@ const useProfile = ({ token }: UseProfileProps) => {
     isLoading,
     updateProfile,
     changePassword,
+    uploadImageOnly,
     isUploadingImage,
     isUpdatingProfile,
     isChangingPassword,

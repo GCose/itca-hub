@@ -23,16 +23,16 @@ import DashboardPageHeader from '@/components/dashboard/layout/dashboard-page-he
 
 const ProfileComponent = ({ role, userData }: ProfileComponentProps) => {
   const {
+    error,
     profile,
     isLoading,
-    error,
     updateProfile,
     changePassword,
-    uploadProfileImage,
+    refetchProfile,
+    uploadImageOnly,
+    isUploadingImage,
     isUpdatingProfile,
     isChangingPassword,
-    isUploadingImage,
-    refetchProfile,
   } = useProfile({ token: userData.token });
 
   const [isChangingPasswordMode, setIsChangingPasswordMode] = useState(false);
@@ -113,7 +113,14 @@ const ProfileComponent = ({ role, userData }: ProfileComponentProps) => {
     if (!file) return;
 
     try {
-      await uploadProfileImage(file);
+      const imageUrl = await uploadImageOnly(file);
+      if (imageUrl) {
+        // Update form state immediately for instant feedback
+        setProfileForm((prev) => ({
+          ...prev,
+          profilePictureUrl: imageUrl,
+        }));
+      }
     } catch (error) {
       console.error('Error uploading image:', error);
     }
