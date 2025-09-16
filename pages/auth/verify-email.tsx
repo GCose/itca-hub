@@ -87,6 +87,7 @@ const VerifyEmail = () => {
         {/*==================== Verification Card ====================*/}
         <div className="bg-transparent p-8 md:p-12 space-y-8">
           {/*==================== ITCA Header ====================*/}
+
           <div className="text-center space-y-3">
             <motion.div
               initial={{ scale: 0 }}
@@ -100,9 +101,9 @@ const VerifyEmail = () => {
             <h1 className="text-3xl font-bold text-gray-800">Email Verification</h1>
             <p className="text-gray-600 text-lg">ITCA Account Activation</p>
           </div>
-          {/*==================== End of ITCA Header ====================*/}
 
           {/*==================== Status Display ====================*/}
+
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -187,9 +188,9 @@ const VerifyEmail = () => {
               </motion.div>
             )}
           </motion.div>
-          {/*==================== End of Status Display ====================*/}
 
           {/*==================== Footer ====================*/}
+
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -203,7 +204,6 @@ const VerifyEmail = () => {
               </span>
             </p>
           </motion.div>
-          {/*==================== End of Footer ====================*/}
         </div>
       </motion.div>
     </div>
