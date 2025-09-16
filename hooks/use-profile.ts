@@ -201,57 +201,6 @@ const useProfile = ({ token }: UseProfileProps) => {
     }
   };
 
-  /**=========================================
-   * Uploads profile image to Jeetix
-   =========================================*/
-  const uploadProfileImage = async (file: File) => {
-    setIsUploadingImage(true);
-
-    try {
-      if (!file.type.startsWith('image/')) {
-        throw new Error('Please select a valid image file');
-      }
-
-      if (file.size > 5 * 1024 * 1024) {
-        throw new Error('Image file size must be less than 5MB');
-      }
-
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('folder', 'itca-profiles');
-
-      const { data } = await axios.post(
-        'https://jeetix-file-service.onrender.com/api/storage/upload',
-        formData
-      );
-
-      if (data.status !== 'success' || !data.data?.fileUrl) {
-        throw new Error('Failed to upload image');
-      }
-
-      await updateProfile({ profilePictureUrl: data.data.fileUrl });
-
-      toast.success('Profile picture updated successfully', {
-        description: 'Your profile picture has been updated.',
-        duration: 4000,
-      });
-
-      return data.data.fileUrl;
-    } catch (err) {
-      const { message } = getErrorMessage(
-        err as AxiosError<ErrorResponseData> | CustomError | Error
-      );
-
-      toast.error('Failed to upload profile picture', {
-        description: message,
-        duration: 5000,
-      });
-      throw err;
-    } finally {
-      setIsUploadingImage(false);
-    }
-  };
-
   /**===============================================
    * Fetch profile when component mounts
    ===============================================*/
@@ -269,7 +218,6 @@ const useProfile = ({ token }: UseProfileProps) => {
     isUploadingImage,
     isUpdatingProfile,
     isChangingPassword,
-    uploadProfileImage,
     refetchProfile: fetchProfile,
   };
 };
