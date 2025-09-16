@@ -12,8 +12,8 @@ import { getErrorMessage } from '@/utils/error';
 import useTimedError from '@/hooks/timed-error';
 import AuthLayout from '@/components/dashboard/authentication/auth-layout';
 import { validatePersonalInfo, validateSecurity } from '@/utils/sign-up/validation';
-import { CustomError, ErrorResponseData, RegistrationFormData, UserAuth } from '@/types';
 import SecurityStep from '@/components/dashboard/authentication/sign-up/security-step';
+import { CustomError, ErrorResponseData, RegistrationFormData, UserAuth } from '@/types';
 import StepIndicator from '@/components/dashboard/authentication/sign-up/step-indicator';
 import PersonalInfoStep from '@/components/dashboard/authentication/sign-up/personal-info-steps';
 
@@ -73,7 +73,7 @@ const SignUp = () => {
     try {
       await axios.post(`${BASE_URL}/auth/register`, formData);
 
-      toast.error('Account created successfully', {
+      toast.success('Account created successfully', {
         description: 'Your account has been verified and you are not eligible to use the system',
       });
 
