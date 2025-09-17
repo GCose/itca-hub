@@ -1,37 +1,25 @@
-import React from "react";
-
-interface AuthButtonProps {
-  type?: "button" | "submit" | "reset";
-  variant?: "primary" | "secondary";
-  disabled?: boolean;
-  onClick?: () => void;
-  isLoading?: boolean;
-  loadingText?: string;
-  children: React.ReactNode;
-  className?: string;
-  fullWidth?: boolean;
-}
+import React from 'react';
+import { AuthButtonProps } from '@/types/interfaces/auth';
 
 const AuthButton = ({
   onClick,
   children,
-  className = "",
-  type = "button",
+  className = '',
+  type = 'button',
   disabled = false,
   fullWidth = true,
   isLoading = false,
-  variant = "primary",
-  loadingText = "Loading...",
+  variant = 'primary',
+  loadingText = 'Loading...',
 }: AuthButtonProps) => {
-  // Primary button (blue with amber slide-in effect)
-  if (variant === "primary") {
+  if (variant === 'primary') {
     return (
       <button
         type={type}
-        disabled={disabled || isLoading}
         onClick={onClick}
+        disabled={disabled || isLoading}
         className={`group relative ${
-          fullWidth ? "w-full" : ""
+          fullWidth ? 'w-full' : ''
         } py-3 px-4 border-0 rounded-lg text-white bg-blue-700 hover:bg-blue-700 focus:outline-none transition-colors cursor-pointer disabled:opacity-70 overflow-hidden ${className}`}
       >
         {/*==================== Amber overlay that slides in ====================*/}
@@ -45,19 +33,16 @@ const AuthButton = ({
     );
   }
 
-  // Secondary button (gray/white)
   return (
     <button
       type={type}
       onClick={onClick}
       disabled={disabled || isLoading}
       className={`${
-        fullWidth ? "w-full" : ""
+        fullWidth ? 'w-full' : ''
       } py-3 px-4 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none transition-colors cursor-pointer disabled:opacity-70 ${className}`}
     >
-      <span className="flex justify-center items-center">
-        {isLoading ? loadingText : children}
-      </span>
+      <span className="flex justify-center items-center">{isLoading ? loadingText : children}</span>
     </button>
   );
 };

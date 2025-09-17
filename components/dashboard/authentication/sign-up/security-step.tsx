@@ -1,21 +1,10 @@
 import React from 'react';
-import { motion } from 'framer-motion';
-import { Eye, EyeOff, Lock } from 'lucide-react';
 import Link from 'next/link';
-import { RegistrationFormData } from '@/types';
-import PasswordStrengthIndicator from './password-strength-indicator';
+import { motion } from 'framer-motion';
 import AuthButton from '../auth-button';
-
-interface SecurityStepProps {
-  formData: RegistrationFormData;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onPrevious: () => void;
-  isLoading: boolean;
-  showPassword: boolean;
-  showConfirmPassword: boolean;
-  toggleShowPassword: () => void;
-  toggleShowConfirmPassword: () => void;
-}
+import { Eye, EyeOff, Lock } from 'lucide-react';
+import { SecurityStepProps } from '@/types/interfaces/auth';
+import PasswordStrengthIndicator from './password-strength-indicator';
 
 const SecurityStep = ({
   formData,

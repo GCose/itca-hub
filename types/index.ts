@@ -1,19 +1,5 @@
 import { JSX } from 'react';
 
-export interface RegistrationFormData {
-  role: string;
-  password: string;
-  lastName: string;
-  firstName: string;
-  schoolEmail: string;
-  agreeToTerms: boolean;
-  confirmPassword: string;
-}
-
-export interface FormErrors {
-  [key: string]: string;
-}
-
 export interface ErrorResponseData {
   message?: string;
 }
@@ -142,6 +128,8 @@ export interface ItcaApiResponse<T = unknown> {
 }
 
 export interface ResourcesResponse {
+  status: string;
+  data: any;
   pagination: {
     limit: number;
     total: number;

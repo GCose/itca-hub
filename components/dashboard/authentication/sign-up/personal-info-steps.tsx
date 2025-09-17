@@ -1,8 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Mail, User } from 'lucide-react';
-import { RegistrationFormData } from '@/types';
 import AuthButton from '../auth-button';
+import { Mail, User } from 'lucide-react';
+import { RegistrationFormData } from '@/types/interfaces/auth';
 
 interface PersonalInfoStepProps {
   formData: RegistrationFormData;
