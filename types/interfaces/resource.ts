@@ -47,3 +47,16 @@ export interface SingleResourceResponse {
 export interface UseResourcesProps {
   token: string;
 }
+
+export interface FetchResourcesParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+  sortBy?: string;
+  category?: string;
+  includeDeleted?: boolean;
+  sortOrder?: 'asc' | 'desc';
+  visibility?: 'all' | 'admin';
+  academicLevel?: 'undergraduate' | 'postgraduate' | 'all';
+  department?: 'computer_science' | 'information_systems' | 'telecommunications' | 'all';
+}

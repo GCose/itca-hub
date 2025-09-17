@@ -1,10 +1,12 @@
 import { toast } from 'sonner';
+import JSZip from 'jszip';
 import {
   Resource,
   Pagination,
   UseResourcesProps,
   ResourcesResponse,
   SingleResourceResponse,
+  FetchResourcesParams,
 } from '@/types/interfaces/resource';
 import { BASE_URL } from '@/utils/url';
 import axios, { AxiosError } from 'axios';
@@ -26,25 +28,44 @@ const useResources = ({ token }: UseResourcesProps) => {
   });
 
   const fetchResources = useCallback(
-    async (page = 0, limit = 10, includeDeleted = false) => {
+    async (params: FetchResourcesParams = {}) => {
+      const {
+        page = 0,
+        limit = 10,
+        search,
+        category,
+        visibility,
+        academicLevel,
+        department,
+        sortBy = 'createdAt',
+        sortOrder = 'desc',
+        includeDeleted = false,
+      } = params;
+
       setIsLoading(true);
       setIsError(false);
 
       try {
-        const params = new URLSearchParams({
-          page: page.toString(),
-          limit: limit.toString(),
-        });
-
-        const response = await axios.get<ResourcesResponse>(`${BASE_URL}/resources?${params}`, {
+        const { data } = await axios.get<ResourcesResponse>(`${BASE_URL}/resources`, {
+          params: {
+            page: page.toString(),
+            limit: limit.toString(),
+            ...(search?.trim() && { search: search.trim() }),
+            ...(category && category !== 'all' && { category }),
+            ...(visibility && visibility !== 'all' && { visibility }),
+            ...(academicLevel && academicLevel !== 'all' && { academicLevel }),
+            ...(department && department !== 'all' && { department }),
+            ...(sortBy && { sortBy }),
+            ...(sortOrder && { sortOrder }),
+          },
           headers: {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
         });
 
-        if (response.data.status === 'success') {
-          let filteredResources = response.data.data.resources;
+        if (data.status === 'success') {
+          let filteredResources = data.data.resources;
 
           if (!includeDeleted) {
             filteredResources = filteredResources.filter(
@@ -53,7 +74,7 @@ const useResources = ({ token }: UseResourcesProps) => {
           }
 
           setResources(filteredResources);
-          setPagination(response.data.data.pagination);
+          setPagination(data.data.pagination);
           setIsError(false);
         } else {
           throw new Error('Failed to fetch resources');
@@ -154,9 +175,80 @@ const useResources = ({ token }: UseResourcesProps) => {
     [token]
   );
 
-  const refreshResources = useCallback(() => {
-    fetchResources(pagination.currentPage, pagination.limit);
-  }, [fetchResources, pagination.currentPage, pagination.limit]);
+  const downloadResource = useCallback(
+    async (resource: Resource) => {
+      try {
+        await trackDownload(resource.resourceId);
+
+        if (resource.fileUrls.length === 1) {
+          window.open(resource.fileUrls[0], '_blank');
+          return;
+        }
+
+        const zip = new JSZip();
+        const promises = resource.fileUrls.map(async (fileUrl, index) => {
+          const response = await fetch(fileUrl);
+          const blob = await response.blob();
+          const fileName = fileUrl.split('/').pop() || `file_${index + 1}`;
+          zip.file(fileName, blob);
+        });
+
+        await Promise.all(promises);
+
+        const zipBlob = await zip.generateAsync({ type: 'blob' });
+        const zipUrl = URL.createObjectURL(zipBlob);
+
+        const link = document.createElement('a');
+        link.href = zipUrl;
+        link.download = `${resource.title}.zip`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        URL.revokeObjectURL(zipUrl);
+      } catch (error) {
+        const { message } = getErrorMessage(
+          error as AxiosError<ErrorResponseData> | CustomError | Error
+        );
+        toast.error('Failed to download resource', {
+          description: message,
+          duration: 5000,
+        });
+      }
+    },
+    [trackDownload]
+  );
+
+  const downloadFile = useCallback(
+    async (fileUrl: string, resourceId?: string) => {
+      try {
+        if (resourceId) {
+          await trackDownload(resourceId);
+        }
+        window.open(fileUrl, '_blank');
+      } catch (error) {
+        const { message } = getErrorMessage(
+          error as AxiosError<ErrorResponseData> | CustomError | Error
+        );
+        toast.error('Failed to download file', {
+          description: message,
+          duration: 5000,
+        });
+      }
+    },
+    [trackDownload]
+  );
+
+  const refreshResources = useCallback(
+    (params: FetchResourcesParams = {}) => {
+      fetchResources({
+        page: pagination.currentPage,
+        limit: pagination.limit,
+        ...params,
+      });
+    },
+    [fetchResources, pagination.currentPage, pagination.limit]
+  );
 
   useEffect(() => {
     fetchResources();
@@ -171,6 +263,8 @@ const useResources = ({ token }: UseResourcesProps) => {
     trackDownload,
     fetchResources,
     refreshResources,
+    downloadResource,
+    downloadFile,
     fetchSingleResource,
   };
 };
