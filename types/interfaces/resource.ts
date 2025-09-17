@@ -60,3 +60,25 @@ export interface FetchResourcesParams {
   academicLevel?: 'undergraduate' | 'postgraduate' | 'all';
   department?: 'computer_science' | 'information_systems' | 'telecommunications' | 'all';
 }
+
+export interface ResourceTableProps {
+  page: number;
+  total: number;
+  token: string;
+  limit: number;
+  isError?: boolean;
+  isLoading: boolean;
+  searchTerm: string;
+  totalPages: number;
+  onRefresh: () => void;
+  resources: Resource[];
+  allResources: Resource[];
+  userRole: 'admin' | 'user';
+  onClearFilters: () => void;
+  mode?: 'default' | 'recycleBin';
+  setPage: (page: number) => void;
+  onDeleteResource?: (resourceId: string) => Promise<boolean>;
+  onRestoreResource?: (resourceId: string) => Promise<boolean>;
+  onDeleteMultiple?: (resourceIds: string[]) => Promise<boolean>;
+  onRestoreMultiple?: (resourceIds: string[]) => Promise<boolean>;
+}
