@@ -1,4 +1,5 @@
 import { ActionType } from '..';
+import { Resource } from './resource';
 import { CreateEventData, EventProps } from './event';
 
 export interface ModalState {
@@ -24,8 +25,8 @@ export interface UserActionsModalProps {
 
 export interface EditEventModalProps {
   isOpen: boolean;
-  event: EventProps | null;
   onClose: () => void;
+  event: EventProps | null;
   onSave: (eventId: string, eventData: CreateEventData) => Promise<void>;
 }
 
@@ -37,9 +38,104 @@ export interface CreateEventModalProps {
 
 export interface RegistrationConfirmationModalProps {
   isOpen: boolean;
+  eventTitle: string;
+  isLoading: boolean;
   onClose: () => void;
   onConfirm: () => void;
-  eventTitle: string;
   isRegistered: boolean;
-  isLoading: boolean;
+}
+
+export interface ResourceEditModalProps {
+  isOpen: boolean;
+  resource: Resource;
+  isLoading?: boolean;
+  onClose: () => void;
+  onSave: (updatedResource: Partial<Resource>) => Promise<void>;
+}
+
+export interface UpdateResourcePayload {
+  title?: string;
+  description?: string;
+  category?:
+    | 'lecture_note'
+    | 'assignment'
+    | 'past_papers'
+    | 'tutorial'
+    | 'textbook'
+    | 'research_papers';
+  fileUrls?: string[];
+  visibility?: 'all' | 'admin';
+  academicLevel?: 'undergraduate' | 'postgraduate' | 'all';
+  department?: 'computer_science' | 'information_systems' | 'telecommunications' | 'all';
+}
+
+export interface ResourceAnalyticsProps {
+  token: string;
+  isOpen?: boolean;
+  resource: Resource;
+  onClose: () => void;
+}
+
+export interface ResourceAnalyticsData {
+  views: number;
+  downloads: number;
+  uniqueViewers: number;
+  uniqueDownloaders: number;
+  viewsByDay: Array<{
+    date: string;
+    count: number;
+  }>;
+  downloadsByDay: Array<{
+    date: string;
+    count: number;
+  }>;
+  resource: {
+    _id: string;
+    title: string;
+    category: string;
+    downloads: number;
+    viewCount: number;
+    fileUrls: string[];
+    visibility: string;
+    department: string;
+    description: string;
+    academicLevel: string;
+  };
+}
+
+export interface ResourceAnalyticsResponse {
+  status: string;
+  data: ResourceAnalyticsData;
+}
+
+export interface DeleteResourceModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  isLoading?: boolean;
+  resourceCount: number;
+  onConfirm: () => Promise<void>;
+  mode?: 'delete' | 'restore' | 'permanent';
+}
+
+export interface BaseModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export interface ModalActionProps extends BaseModalProps {
+  onConfirm: () => Promise<void>;
+  isLoading?: boolean;
+}
+
+export interface ModalApiResponse<T = unknown> {
+  status: 'success' | 'error';
+  data?: T;
+  message?: string;
+}
+
+export interface ResourceModalActions {
+  onEdit: (resource: Resource) => void;
+  onDelete: (resource: Resource) => void;
+  onAnalytics: (resource: Resource) => void;
+  onRestore?: (resource: Resource) => void;
 }

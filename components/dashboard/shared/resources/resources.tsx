@@ -283,7 +283,6 @@ const ResourcesComponent = ({ role, userData }: ResourcesComponentProps) => {
 
           {/*==================== Resource Table ====================*/}
           <ResourceTable
-            userRole={role === 'admin' ? 'admin' : 'user'}
             isError={isError}
             isLoading={false}
             resources={resources}
@@ -297,6 +296,7 @@ const ResourcesComponent = ({ role, userData }: ResourcesComponentProps) => {
             page={pagination.currentPage}
             onClearFilters={clearFilters}
             totalPages={pagination.totalPages}
+            userRole={role === 'admin' ? 'admin' : 'user'}
           />
           {/*==================== End of Resource Table ====================*/}
         </>
