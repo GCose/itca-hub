@@ -20,9 +20,9 @@ const useResources = ({ token }: UseResourcesProps) => {
   const [isError, setIsError] = useState(false);
   const [pagination, setPagination] = useState<Pagination>({
     total: 0,
+    limit: 10,
     totalPages: 0,
     currentPage: 0,
-    limit: 10,
     hasNextPage: false,
     hasPrevPage: false,
   });
@@ -30,15 +30,15 @@ const useResources = ({ token }: UseResourcesProps) => {
   const fetchResources = useCallback(
     async (params: FetchResourcesParams = {}) => {
       const {
-        page = 0,
-        limit = 10,
         search,
         category,
+        page = 0,
+        limit = 10,
+        department,
         visibility,
         academicLevel,
-        department,
-        sortBy = 'createdAt',
         sortOrder = 'desc',
+        sortBy = 'createdAt',
         includeDeleted = false,
       } = params;
 
