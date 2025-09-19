@@ -97,3 +97,66 @@ export interface AdminResourcesPageProps {
 export interface StudentResourcesPageProps {
   userData: UserAuth;
 }
+
+export interface CreateResourcePayload {
+  title: string;
+  description: string;
+  category:
+    | 'lecture_note'
+    | 'assignment'
+    | 'past_papers'
+    | 'tutorial'
+    | 'textbook'
+    | 'research_papers';
+  fileUrls: string[];
+  visibility: 'all' | 'admin';
+  academicLevel: 'undergraduate' | 'postgraduate' | 'all';
+  department: 'computer_science' | 'information_systems' | 'telecommunications' | 'all';
+}
+
+export interface UpdateResourcePayload {
+  title?: string;
+  description?: string;
+  category?:
+    | 'lecture_note'
+    | 'assignment'
+    | 'past_papers'
+    | 'tutorial'
+    | 'textbook'
+    | 'research_papers';
+  fileUrls?: string[];
+  visibility?: 'all' | 'admin';
+  academicLevel?: 'undergraduate' | 'postgraduate' | 'all';
+  department?: 'computer_science' | 'information_systems' | 'telecommunications' | 'all';
+}
+
+export interface ResourceAnalyticsData {
+  views: number;
+  downloads: number;
+  uniqueViewers: number;
+  uniqueDownloaders: number;
+  viewsByDay: Array<{
+    date: string;
+    count: number;
+  }>;
+  downloadsByDay: Array<{
+    date: string;
+    count: number;
+  }>;
+  resource: {
+    _id: string;
+    title: string;
+    category: string;
+    downloads: number;
+    viewCount: number;
+    fileUrls: string[];
+    visibility: string;
+    department: string;
+    description: string;
+    academicLevel: string;
+  };
+}
+
+export interface UseResourceAdminProps {
+  token: string;
+}

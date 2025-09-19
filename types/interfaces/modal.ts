@@ -53,22 +53,6 @@ export interface ResourceEditModalProps {
   onSave: (updatedResource: Partial<Resource>) => Promise<void>;
 }
 
-export interface UpdateResourcePayload {
-  title?: string;
-  description?: string;
-  category?:
-    | 'lecture_note'
-    | 'assignment'
-    | 'past_papers'
-    | 'tutorial'
-    | 'textbook'
-    | 'research_papers';
-  fileUrls?: string[];
-  visibility?: 'all' | 'admin';
-  academicLevel?: 'undergraduate' | 'postgraduate' | 'all';
-  department?: 'computer_science' | 'information_systems' | 'telecommunications' | 'all';
-}
-
 export interface ResourceAnalyticsProps {
   token: string;
   isOpen?: boolean;
