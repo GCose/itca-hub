@@ -1,13 +1,19 @@
+import { UserAuth } from '..';
+
 export interface Resource {
+  _id: string;
   title: string;
   category: string;
   downloads: number;
   viewCount: number;
-  createdBy: string;
+  createdBy: {
+    _id: string;
+    firstName: string;
+    lastName: string;
+  };
   createdAt: string;
   updatedAt: string;
   fileUrls: string[];
-  resourceId: string;
   isDeleted: boolean;
   updatedBy?: string;
   description: string;
@@ -16,6 +22,7 @@ export interface Resource {
   visibility: 'all' | 'admin';
   academicLevel: 'undergraduate' | 'postgraduate' | 'all';
   department: 'computer_science' | 'information_systems' | 'telecommunications' | 'all';
+  __v?: number;
 }
 
 export interface Pagination {
@@ -78,7 +85,15 @@ export interface ResourceTableProps {
   mode?: 'default' | 'recycleBin';
   setPage: (page: number) => void;
   onDeleteResource?: (resourceId: string) => Promise<boolean>;
-  onRestoreResource?: (resourceId: string) => Promise<boolean>;
   onDeleteMultiple?: (resourceIds: string[]) => Promise<boolean>;
+  onRestoreResource?: (resourceId: string) => Promise<boolean>;
   onRestoreMultiple?: (resourceIds: string[]) => Promise<boolean>;
+}
+
+export interface AdminResourcesPageProps {
+  userData: UserAuth;
+}
+
+export interface StudentResourcesPageProps {
+  userData: UserAuth;
 }

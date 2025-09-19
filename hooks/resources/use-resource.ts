@@ -1,5 +1,5 @@
-import { toast } from 'sonner';
 import JSZip from 'jszip';
+import { toast } from 'sonner';
 import {
   Resource,
   Pagination,
@@ -118,8 +118,7 @@ const useResources = ({ token }: UseResourcesProps) => {
         const { message } = getErrorMessage(
           error as AxiosError<ErrorResponseData> | CustomError | Error
         );
-
-        toast.error('Failed to load resource', {
+        toast.error('Failed to fetch resource', {
           description: message,
           duration: 5000,
         });
@@ -178,7 +177,7 @@ const useResources = ({ token }: UseResourcesProps) => {
   const downloadResource = useCallback(
     async (resource: Resource) => {
       try {
-        await trackDownload(resource.resourceId);
+        await trackDownload(resource._id);
 
         if (resource.fileUrls.length === 1) {
           window.open(resource.fileUrls[0], '_blank');

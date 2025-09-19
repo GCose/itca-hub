@@ -1,77 +1,55 @@
 import {
-  Download,
-  BarChart2,
+  Eye,
   Edit,
+  Users,
+  Radio,
   Trash,
   Trash2,
+  Laptop,
+  Bookmark,
+  Database,
+  BarChart2,
+  Download,
   RotateCcw,
+  RefreshCw,
+  ArrowLeft,
+  ShieldAlert,
   ChevronLeft,
   ChevronRight,
-  Users,
-  ShieldAlert,
-  RefreshCw,
-  Eye,
-  Bookmark,
   BookmarkCheck,
-  ArrowLeft,
-  Laptop,
-  Database,
-  Radio,
 } from 'lucide-react';
-import { Resource } from '@/types/interfaces/resource';
-import { useState, useEffect } from 'react';
-import useResourceTable from '@/hooks/resources/use-resource-table';
-import useResources from '@/hooks/resources/use-resource';
-import ResourceTableSkeleton from '../skeletons/resource-table-skeleton';
-import formatDepartment from '@/utils/format-department';
-import { EmptyState, NetworkError, NoResults } from '@/components/dashboard/error-messages';
 import { toast } from 'sonner';
+import { useState, useEffect } from 'react';
+import formatDepartment from '@/utils/format-department';
+import useResources from '@/hooks/resources/use-resource';
+import useResourceTable from '@/hooks/resources/use-resource-table';
 import ResourceEditModal from '../modals/resources/edit-resource-modal';
-import ResourceAnalytics from '../modals/resources/analytics-resource-modal';
+import ResourceTableSkeleton from '../skeletons/resource-table-skeleton';
+import { Resource, ResourceTableProps } from '@/types/interfaces/resource';
 import DeleteResourceModal from '../modals/resources/delete-resource-modal';
-
-interface ResourceTableProps {
-  resources: Resource[];
-  allResources: Resource[];
-  isLoading: boolean;
-  isError?: boolean;
-  token: string;
-  searchTerm: string;
-  userRole: 'admin' | 'user';
-  mode?: 'default' | 'recycleBin';
-  onDeleteResource?: (resourceId: string) => Promise<boolean>;
-  onDeleteMultiple?: (resourceIds: string[]) => Promise<boolean>;
-  onRestoreResource?: (resourceId: string) => Promise<boolean>;
-  onRestoreMultiple?: (resourceIds: string[]) => Promise<boolean>;
-  onRefresh: () => void;
-  onClearFilters: () => void;
-  total: number;
-  totalPages: number;
-  limit: number;
-  page: number;
-  setPage: (page: number) => void;
-}
+import ResourceAnalytics from '../modals/resources/analytics-resource-modal';
+import { EmptyState, NetworkError, NoResults } from '@/components/dashboard/error-messages';
 
 const ResourceTable = ({
-  resources,
-  allResources,
-  isLoading,
-  isError = false,
+  page,
   token,
-  searchTerm,
+  total,
+  limit,
+  setPage,
   userRole,
+  onRefresh,
+  resources,
+  isLoading,
+  totalPages,
+  searchTerm,
+  allResources,
+  isError = false,
+  onClearFilters,
   mode = 'default',
   onDeleteResource,
   onDeleteMultiple,
   onRestoreResource,
   onRestoreMultiple,
-  onRefresh,
-  onClearFilters,
-  total,
-  totalPages,
-  page,
-  setPage,
-  limit,
 }: ResourceTableProps) => {
   const [bookmarks, setBookmarks] = useState<Record<string, boolean>>({});
 
@@ -145,15 +123,15 @@ const ResourceTable = ({
     if (e) e.stopPropagation();
 
     const newBookmarks = { ...bookmarks };
-    const isCurrentlyBookmarked = bookmarks[resource.resourceId];
+    const isCurrentlyBookmarked = bookmarks[resource._id];
 
     if (isCurrentlyBookmarked) {
-      delete newBookmarks[resource.resourceId];
+      delete newBookmarks[resource._id];
       toast.success('Bookmark removed', {
         description: `${resource.title} has been removed from bookmarks.`,
       });
     } else {
-      newBookmarks[resource.resourceId] = true;
+      newBookmarks[resource._id] = true;
       toast.success('Bookmark added', {
         description: `${resource.title} has been added to bookmarks.`,
       });
@@ -168,7 +146,7 @@ const ResourceTable = ({
   const handleRestoreResource = async (resource: Resource, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
     if (onRestoreResource) {
-      await onRestoreResource(resource.resourceId);
+      await onRestoreResource(resource._id);
     }
   };
 
@@ -274,7 +252,7 @@ const ResourceTable = ({
                     onClick={selectAll}
                     className="inline-flex items-center rounded-lg bg-blue-100 text-blue-700 px-3 py-1.5 text-sm font-medium hover:bg-blue-200"
                   >
-                    {resources.every((item) => selectedResources[item.resourceId])
+                    {resources.every((item) => selectedResources[item._id])
                       ? 'Deselect All'
                       : 'Select All'}
                   </button>
@@ -371,7 +349,7 @@ const ResourceTable = ({
               <tbody className="bg-white">
                 {resources.map((resource, index) => (
                   <tr
-                    key={resource.resourceId}
+                    key={resource._id}
                     onClick={
                       userRole === 'user'
                         ? () => handleDoubleClick(resource)
@@ -381,7 +359,7 @@ const ResourceTable = ({
                       userRole === 'admin' ? () => handleDoubleClick(resource) : undefined
                     }
                     className={`${
-                      userRole === 'admin' && selectedResources[resource.resourceId]
+                      userRole === 'admin' && selectedResources[resource._id]
                         ? 'bg-amber-100'
                         : index % 2 === 1
                           ? 'bg-gray-100/80'
@@ -510,7 +488,7 @@ const ResourceTable = ({
                                   <BarChart2 className="h-4 w-4" />
                                 </button>
 
-                                {selectedResources[resource.resourceId] && (
+                                {selectedResources[resource._id] && (
                                   <button
                                     onClick={(e) => {
                                       e.stopPropagation();
@@ -531,13 +509,11 @@ const ResourceTable = ({
                           <>
                             {/*==================== Student Actions ====================*/}
                             <button
-                              title={
-                                bookmarks[resource.resourceId] ? 'Remove Bookmark' : 'Add Bookmark'
-                              }
+                              title={bookmarks[resource._id] ? 'Remove Bookmark' : 'Add Bookmark'}
                               onClick={(e) => toggleBookmark(resource, e)}
                               className="rounded-full p-1.5 text-gray-500 hover:bg-gray-100 hover:text-amber-600"
                             >
-                              {bookmarks[resource.resourceId] ? (
+                              {bookmarks[resource._id] ? (
                                 <BookmarkCheck className="h-4 w-4 text-amber-500" />
                               ) : (
                                 <Bookmark className="h-4 w-4" />
@@ -652,8 +628,8 @@ const ResourceTable = ({
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/50 backdrop-blur-sm">
               <ResourceAnalytics
                 token={token}
-                resource={selectedResource}
                 isOpen={showAnalytics}
+                resource={selectedResource}
                 onClose={() => setShowAnalytics(false)}
               />
             </div>
@@ -663,11 +639,11 @@ const ResourceTable = ({
           {/*==================== Edit Modal ====================*/}
           {showEditModal && selectedResource && (
             <ResourceEditModal
+              isLoading={isEditing}
               isOpen={showEditModal}
               resource={selectedResource}
               onSave={handleSaveResource}
               onClose={() => setShowEditModal(false)}
-              isLoading={isEditing}
             />
           )}
           {/*==================== End of Edit Modal ====================*/}
@@ -677,11 +653,11 @@ const ResourceTable = ({
       {/*==================== Delete Modal ====================*/}
       {userRole === 'admin' && showDeleteModal && (
         <DeleteResourceModal
-          resourceCount={hasMultipleSelected ? selectedCount : 1}
-          isOpen={showDeleteModal}
-          onConfirm={mode === 'recycleBin' ? confirmRestore : confirmDelete}
-          onClose={() => setShowDeleteModal(false)}
           isLoading={isDeleting}
+          isOpen={showDeleteModal}
+          onClose={() => setShowDeleteModal(false)}
+          resourceCount={hasMultipleSelected ? selectedCount : 1}
+          onConfirm={mode === 'recycleBin' ? confirmRestore : confirmDelete}
         />
       )}
       {/*==================== End of Delete Modal ====================*/}
