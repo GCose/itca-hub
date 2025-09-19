@@ -364,7 +364,7 @@ const ResourceTable = ({
                         : index % 2 === 1
                           ? 'bg-gray-100/80'
                           : ''
-                    } hover:bg-gray-200/60 border-none transition-colors cursor-pointer`}
+                    } hover:bg-amber-100 border-none transition-colors cursor-pointer`}
                   >
                     {/*==================== Title Column ====================*/}
                     <td className="px-5 py-4">
