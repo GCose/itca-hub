@@ -1,20 +1,20 @@
-import { useState, useMemo, useEffect, useCallback } from 'react';
-import { useRouter } from 'next/router';
-import axios, { AxiosError } from 'axios';
 import { toast } from 'sonner';
 import { BASE_URL } from '@/utils/url';
+import { useRouter } from 'next/router';
+import axios, { AxiosError } from 'axios';
 import { getErrorMessage } from '@/utils/error';
-import { CustomError, ErrorResponseData } from '@/types';
 import { Resource } from '@/types/interfaces/resource';
+import { CustomError, ErrorResponseData } from '@/types';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 
 interface UseResourceTableProps {
-  resources: Resource[];
   token: string;
-  userRole: 'admin' | 'user';
   onRefresh: () => void;
+  resources: Resource[];
+  userRole: 'admin' | 'user';
   onDeleteResource?: (resourceId: string) => Promise<boolean>;
-  onDeleteMultiple?: (resourceIds: string[]) => Promise<boolean>;
   onRestoreResource?: (resourceId: string) => Promise<boolean>;
+  onDeleteMultiple?: (resourceIds: string[]) => Promise<boolean>;
   onRestoreMultiple?: (resourceIds: string[]) => Promise<boolean>;
 }
 
@@ -30,13 +30,13 @@ const useResourceTable = ({
 }: UseResourceTableProps) => {
   const router = useRouter();
 
+  const [selectedResources, setSelectedResources] = useState<Record<string, boolean>>({});
   const [selectedResource, setSelectedResource] = useState<Resource | null>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showAnalytics, setShowAnalytics] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [selectedResources, setSelectedResources] = useState<Record<string, boolean>>({});
+  const [isEditing, setIsEditing] = useState(false);
 
   const selectedCount = useMemo(
     () => Object.values(selectedResources).filter(Boolean).length,
@@ -61,6 +61,9 @@ const useResourceTable = ({
     clearSelection();
   }, [clearSelection]);
 
+  /**=======================================
+   * Handle single row selection (toggle)
+   =======================================*/
   const toggleSelection = useCallback((resource: Resource, event: React.MouseEvent) => {
     const isMultiSelectKey = event.ctrlKey || event.metaKey;
 
@@ -68,8 +71,8 @@ const useResourceTable = ({
       const newSelection = { ...prev };
 
       if (!isMultiSelectKey) {
-        if (prev[resource.resourceId] && Object.values(prev).filter(Boolean).length === 1) {
-          newSelection[resource.resourceId] = false;
+        if (prev[resource._id] && Object.values(prev).filter(Boolean).length === 1) {
+          newSelection[resource._id] = false;
           return newSelection;
         }
 
@@ -78,29 +81,35 @@ const useResourceTable = ({
         });
       }
 
-      newSelection[resource.resourceId] = !prev[resource.resourceId];
+      newSelection[resource._id] = !prev[resource._id];
       return newSelection;
     });
   }, []);
 
+  /**=======================================
+   * Select all resources on current page
+   =======================================*/
   const selectAll = useCallback(() => {
     const newSelection = { ...selectedResources };
-    const allSelected = resources.every((item) => selectedResources[item.resourceId]);
+    const allSelected = resources.every((item) => selectedResources[item._id]);
 
     resources.forEach((item) => {
-      newSelection[item.resourceId] = !allSelected;
+      newSelection[item._id] = !allSelected;
     });
 
     setSelectedResources(newSelection);
   }, [resources, selectedResources]);
 
+  /**====================================================
+   * Handle double-click to navigate to resource viewer
+   ====================================================*/
   const handleDoubleClick = useCallback(
     (resource: Resource) => {
       clearSelection();
       const viewPath =
         userRole === 'admin'
-          ? `/admin/resources/view/${resource.resourceId}`
-          : `/student/resources/view/${resource.resourceId}`;
+          ? `/admin/resources/view/${resource._id}`
+          : `/student/resources/view/${resource._id}`;
       router.push(viewPath);
     },
     [router, clearSelection, userRole]
@@ -138,7 +147,7 @@ const useResourceTable = ({
 
       if (selectedResource && !hasMultipleSelected) {
         if (onDeleteResource) {
-          success = await onDeleteResource(selectedResource.resourceId);
+          success = await onDeleteResource(selectedResource._id);
         }
       } else if (hasMultipleSelected) {
         if (onDeleteMultiple) {
@@ -150,6 +159,7 @@ const useResourceTable = ({
         clearSelection();
         setShowDeleteModal(false);
         setSelectedResource(null);
+        onRefresh();
       }
     } catch (error) {
       const { message } = getErrorMessage(
@@ -172,7 +182,7 @@ const useResourceTable = ({
 
       if (selectedResource && !hasMultipleSelected) {
         if (onRestoreResource) {
-          success = await onRestoreResource(selectedResource.resourceId);
+          success = await onRestoreResource(selectedResource._id);
         }
       } else if (hasMultipleSelected) {
         if (onRestoreMultiple) {
@@ -184,6 +194,7 @@ const useResourceTable = ({
         clearSelection();
         setShowDeleteModal(false);
         setSelectedResource(null);
+        onRefresh();
       }
     } catch (error) {
       const { message } = getErrorMessage(
@@ -198,23 +209,19 @@ const useResourceTable = ({
     }
   };
 
-  const handleSaveResource = async (updatedResource: Resource) => {
+  /**=========================================
+   * Save resource changes using direct API call
+   =========================================*/
+  const handleSaveResource = async (updatedResource: Partial<Resource>) => {
     setIsEditing(true);
-
     try {
-      const updatePayload = {
-        title: updatedResource.title,
-        description: updatedResource.description,
-        category: updatedResource.category,
-        fileUrls: updatedResource.fileUrls,
-        visibility: updatedResource.visibility,
-        academicLevel: updatedResource.academicLevel,
-        department: updatedResource.department,
-      };
+      if (!selectedResource) {
+        throw new Error('No resource selected');
+      }
 
       const response = await axios.patch(
-        `${BASE_URL}/resources/${updatedResource.resourceId}`,
-        updatePayload,
+        `${BASE_URL}/resources/${selectedResource._id}`,
+        updatedResource,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -225,16 +232,16 @@ const useResourceTable = ({
 
       if (response.data.status === 'success') {
         toast.success('Resource updated successfully');
-        onRefresh();
         setShowEditModal(false);
+        setSelectedResource(null);
+        onRefresh();
       } else {
-        throw new Error('Failed to update resource');
+        throw new Error(response.data.message || 'Failed to update resource');
       }
     } catch (error) {
       const { message } = getErrorMessage(
         error as AxiosError<ErrorResponseData> | CustomError | Error
       );
-
       toast.error('Failed to update resource', {
         description: message,
         duration: 5000,
@@ -249,26 +256,26 @@ const useResourceTable = ({
     isEditing,
     selectAll,
     isDeleting,
-    selectedCount,
-    confirmDelete,
-    showEditModal,
     showAnalytics,
+    showEditModal,
+    confirmDelete,
+    selectedCount,
     confirmRestore,
     clearSelection,
-    showDeleteModal,
     toggleSelection,
+    showDeleteModal,
+    setShowAnalytics,
     selectedResource,
     setShowEditModal,
-    setShowAnalytics,
     selectedResources,
     handleDoubleClick,
     setShowDeleteModal,
-    handleSaveResource,
     handleEditResource,
-    handleViewAnalytics,
-    selectedResourceIds,
+    handleSaveResource,
     hasMultipleSelected,
     setSelectedResource,
+    selectedResourceIds,
+    handleViewAnalytics,
     handleDeleteResource,
     handleDeleteSelected,
   };
