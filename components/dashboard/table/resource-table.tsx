@@ -6,7 +6,6 @@ import {
   Trash,
   Trash2,
   Laptop,
-  Bookmark,
   Database,
   BarChart2,
   Download,
@@ -16,10 +15,7 @@ import {
   ShieldAlert,
   ChevronLeft,
   ChevronRight,
-  BookmarkCheck,
 } from 'lucide-react';
-import { toast } from 'sonner';
-import { useState, useEffect } from 'react';
 import formatDepartment from '@/utils/format-department';
 import useResources from '@/hooks/resources/use-resource';
 import useResourceTable from '@/hooks/resources/use-resource-table';
@@ -51,24 +47,6 @@ const ResourceTable = ({
   onRestoreResource,
   onRestoreMultiple,
 }: ResourceTableProps) => {
-  const [bookmarks, setBookmarks] = useState<Record<string, boolean>>({});
-
-  /**===============================================
-   * Load bookmarks from localStorage on mount
-   ===============================================*/
-  useEffect(() => {
-    if (userRole === 'user') {
-      const savedBookmarks = localStorage.getItem('studentBookmarks');
-      if (savedBookmarks) {
-        try {
-          setBookmarks(JSON.parse(savedBookmarks));
-        } catch (error) {
-          console.error('Error loading bookmarks:', error);
-        }
-      }
-    }
-  }, [userRole]);
-
   const { downloadResource } = useResources({ token });
 
   const {
@@ -107,32 +85,6 @@ const ResourceTable = ({
     onRestoreResource,
     onRestoreMultiple,
   });
-
-  const saveBookmarks = (newBookmarks: Record<string, boolean>) => {
-    setBookmarks(newBookmarks);
-    localStorage.setItem('studentBookmarks', JSON.stringify(newBookmarks));
-  };
-
-  const toggleBookmark = (resource: Resource, e?: React.MouseEvent) => {
-    if (e) e.stopPropagation();
-
-    const newBookmarks = { ...bookmarks };
-    const isCurrentlyBookmarked = bookmarks[resource._id];
-
-    if (isCurrentlyBookmarked) {
-      delete newBookmarks[resource._id];
-      toast.success('Bookmark removed', {
-        description: `${resource.title} has been removed from bookmarks.`,
-      });
-    } else {
-      newBookmarks[resource._id] = true;
-      toast.success('Bookmark added', {
-        description: `${resource.title} has been added to bookmarks.`,
-      });
-    }
-
-    saveBookmarks(newBookmarks);
-  };
 
   const handleRestoreResource = async (resource: Resource, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
@@ -509,18 +461,6 @@ const ResourceTable = ({
                         ) : (
                           <>
                             {/*==================== Student Actions ====================*/}
-                            <button
-                              title={bookmarks[resource._id] ? 'Remove Bookmark' : 'Add Bookmark'}
-                              onClick={(e) => toggleBookmark(resource, e)}
-                              className="rounded-full p-1.5 text-gray-500 hover:bg-gray-100 hover:text-amber-600"
-                            >
-                              {bookmarks[resource._id] ? (
-                                <BookmarkCheck className="h-4 w-4 text-amber-500" />
-                              ) : (
-                                <Bookmark className="h-4 w-4" />
-                              )}
-                            </button>
-
                             <button
                               title="Download Resource"
                               onClick={(e) => handleDownload(resource, e)}

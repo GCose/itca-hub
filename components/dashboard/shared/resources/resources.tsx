@@ -47,7 +47,7 @@ const ResourcesComponent = ({ role, userData }: ResourcesComponentProps) => {
       if (role !== 'admin' || !adminHook?.toggleResourceTrash) return false;
 
       try {
-        await adminHook.toggleResourceTrash(resourceId);
+        await adminHook.deleteResourcePermanently(resourceId);
         return true;
       } catch {
         return false;

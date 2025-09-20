@@ -8,7 +8,7 @@ const DeleteResourceModal = ({
   onConfirm,
   resourceCount,
   isLoading = false,
-  mode = 'delete',
+  mode = 'permanent',
 }: DeleteResourceModalProps) => {
   const isSingleResource = resourceCount === 1;
 
