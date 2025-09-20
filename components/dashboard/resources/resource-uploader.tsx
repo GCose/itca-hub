@@ -33,7 +33,6 @@ const ResourceUploader = ({ token, onUploadComplete, onError }: ResourceUploader
     handleFileChange,
   } = useResourceUploader({ token, onUploadComplete, onError });
 
-  // Add React state for file management
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
   const getFileIcon = (fileType?: string) => {
@@ -98,7 +97,6 @@ const ResourceUploader = ({ token, onUploadComplete, onError }: ResourceUploader
   const isFormValid =
     selectedFiles.length > 0 && title.trim() && description.trim() && category && department;
 
-  // Updated file change handler to use React state
   const handleFileChangeWithState = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
 
@@ -114,16 +112,13 @@ const ResourceUploader = ({ token, onUploadComplete, onError }: ResourceUploader
       setSelectedFiles((prev) => [...prev, ...newFiles]);
     }
 
-    // Clear the input for next selection
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
 
-    // Call original handler for hook logic
     handleFileChange(e);
   };
 
-  // React state-based file removal
   const removeFile = (index: number) => {
     setSelectedFiles((prev) => prev.filter((_, i) => i !== index));
   };
