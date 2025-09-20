@@ -306,32 +306,32 @@ const ResourceTable = ({
                 <tr>
                   <th
                     scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                    className="px-6 py-3 text-left text-sm font-normal uppercase tracking-wider text-gray-500"
                   >
                     Title
                   </th>
                   <th
                     scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                    className="px-6 py-3 text-left text-sm font-normal uppercase tracking-wider text-gray-500"
                   >
                     Description
                   </th>
                   <th
                     scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                    className="px-6 py-3 text-left text-sm font-normal uppercase tracking-wider text-gray-500"
                   >
                     Department
                   </th>
                   <th
                     scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                    className="px-6 py-3 text-left text-sm font-normal uppercase tracking-wider text-gray-500"
                   >
                     Category
                   </th>
                   {userRole === 'admin' && mode === 'default' && (
                     <th
                       scope="col"
-                      className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                      className="px-6 py-3 text-left text-sm font-normal uppercase tracking-wider text-gray-500"
                     >
                       Usage
                     </th>
