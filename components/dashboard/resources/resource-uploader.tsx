@@ -8,6 +8,7 @@ import {
   FileType,
   Image as ImageIcon,
 } from 'lucide-react';
+import { useState } from 'react';
 import { ResourceUploaderProps } from '@/types/interfaces/resource';
 import useResourceUploader from '@/hooks/admin/resources/use-resource-uploader';
 
@@ -31,6 +32,9 @@ const ResourceUploader = ({ token, onUploadComplete, onError }: ResourceUploader
     formatFileSize,
     handleFileChange,
   } = useResourceUploader({ token, onUploadComplete, onError });
+
+  // Add React state for file management
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
   const getFileIcon = (fileType?: string) => {
     if (!fileType) return <FileType className="h-5 w-5 text-gray-500" />;
@@ -91,34 +95,37 @@ const ResourceUploader = ({ token, onUploadComplete, onError }: ResourceUploader
     }
   };
 
-  // Convert FileList to array and handle multiple files properly
-  const selectedFiles: File[] = [];
-  if (fileInputRef.current?.files) {
-    for (let i = 0; i < fileInputRef.current.files.length; i++) {
-      selectedFiles.push(fileInputRef.current.files[i]);
-    }
-  }
-
   const isFormValid =
     selectedFiles.length > 0 && title.trim() && description.trim() && category && department;
 
-  const removeFile = (index: number) => {
-    if (fileInputRef.current?.files) {
-      const dt = new DataTransfer();
-      const files = Array.from(fileInputRef.current.files);
+  // Updated file change handler to use React state
+  const handleFileChangeWithState = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0) return;
 
-      files.forEach((file, i) => {
-        if (i !== index) {
-          dt.items.add(file);
-        }
-      });
+    const newFiles = Array.from(e.target.files);
+    const totalFiles = selectedFiles.length + newFiles.length;
 
-      fileInputRef.current.files = dt.files;
-
-      // Trigger change event to update the component
-      const event = new Event('change', { bubbles: true });
-      fileInputRef.current.dispatchEvent(event);
+    // Respect 20 file limit
+    if (totalFiles > 20) {
+      const remainingSlots = 20 - selectedFiles.length;
+      const filesToAdd = newFiles.slice(0, remainingSlots);
+      setSelectedFiles((prev) => [...prev, ...filesToAdd]);
+    } else {
+      setSelectedFiles((prev) => [...prev, ...newFiles]);
     }
+
+    // Clear the input for next selection
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+
+    // Call original handler for hook logic
+    handleFileChange(e);
+  };
+
+  // React state-based file removal
+  const removeFile = (index: number) => {
+    setSelectedFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
   const addMoreFiles = () => {
@@ -291,7 +298,7 @@ const ResourceUploader = ({ token, onUploadComplete, onError }: ResourceUploader
                 multiple
                 className="hidden"
                 ref={fileInputRef}
-                onChange={handleFileChange}
+                onChange={handleFileChangeWithState}
               />
             </label>
           </div>
