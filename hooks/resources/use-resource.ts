@@ -55,7 +55,7 @@ const useResources = ({ token }: UseResourcesProps) => {
             limit: limit.toString(),
             ...(debouncedSearchQuery?.trim() && { search: debouncedSearchQuery.trim() }),
             ...(category && category !== 'all' && { category }),
-            ...(visibility && visibility !== 'all' && { visibility }),
+            ...(visibility && { visibility }),
             ...(academicLevel && academicLevel !== 'all' && { academicLevel }),
             ...(department && department !== 'all' && { department }),
             ...(sortBy && { sortBy }),
