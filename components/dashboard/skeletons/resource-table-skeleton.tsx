@@ -6,7 +6,7 @@ const ResourceTableSkeleton = () => {
         <div className="px-5 py-4 border-b border-gray-200">
           <div className="h-6 w-1/4 rounded bg-gray-200 animate-pulse"></div>
         </div>
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto hide-scrollbar">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>

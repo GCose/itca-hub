@@ -3,7 +3,7 @@ import React from 'react';
 const UserTableSkeleton = () => {
   return (
     <div className="rounded-2xl bg-white">
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto hide-scrollbar">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>

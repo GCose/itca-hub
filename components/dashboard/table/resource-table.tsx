@@ -299,7 +299,7 @@ const ResourceTable = ({
               </button>
             </div>
           </div>
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto hide-scrollbar">
             <table className="min-w-full divide-y divide-gray-200">
               {/*==================== Table Head ====================*/}
               <thead className="bg-gray-50">
