@@ -17,6 +17,7 @@ const useResourceAdmin = ({ token }: UseResourceAdminProps) => {
   const uploadFile = useCallback(async (file: File): Promise<string> => {
     const formData = new FormData();
     formData.append('file', file);
+    formData.append('folder', 'itca-resources');
 
     try {
       const response = await axios.post(
@@ -54,9 +55,6 @@ const useResourceAdmin = ({ token }: UseResourceAdminProps) => {
         });
 
         if (response.data.status === 'success') {
-          toast.success('Resource created successfully', {
-            description: 'Your resource has been uploaded and is now available in the library.',
-          });
           return response.data.data.resource;
         } else {
           throw new Error('Failed to create resource');

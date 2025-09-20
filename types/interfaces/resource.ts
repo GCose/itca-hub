@@ -180,3 +180,12 @@ export interface ResourceUploaderProps {
   }) => void;
   onError?: (error: string) => void;
 }
+
+export interface UploadProgress {
+  percentage: number;
+  totalFiles: number;
+  uploadedUrls: string[];
+  currentFileName: string;
+  currentFileIndex: number;
+  phase: 'idle' | 'validating' | 'uploading' | 'creating' | 'failed';
+}
