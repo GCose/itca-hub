@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import useResources from '@/hooks/resources/use-resource';
 import useResourceAdmin from '@/hooks/resources/use-resource-admin';
 import { ResourcesComponentProps } from '@/types/interfaces/resource';
@@ -24,6 +24,17 @@ const ResourcesComponent = ({ role, userData }: ResourcesComponentProps) => {
   const [category, setCategory] = useState('all');
   const [visibility, setVisibility] = useState<'all' | 'admin'>('all');
 
+  const { currentPage, limit } = pagination;
+
+  const filterParams = useMemo(
+    () => ({
+      ...(department !== 'all' && { department }),
+      ...(category !== 'all' && { category }),
+      visibility: role === 'student' ? 'all' : visibility,
+    }),
+    [department, category, visibility, role]
+  );
+
   const handleDeleteResource = useCallback(
     async (resourceId: string): Promise<boolean> => {
       if (role !== 'admin' || !adminHook?.toggleResourceTrash) return false;
@@ -40,48 +51,37 @@ const ResourcesComponent = ({ role, userData }: ResourcesComponentProps) => {
 
   const loadResources = useCallback(() => {
     fetchResources({
-      page: pagination.currentPage,
-      limit: pagination.limit,
-      ...(department !== 'all' && { department }),
-      ...(category !== 'all' && { category }),
-      visibility: role === 'student' ? 'all' : visibility,
+      page: currentPage,
+      limit,
+      ...filterParams,
     });
-  }, [
-    fetchResources,
-    department,
-    category,
-    visibility,
-    pagination.currentPage,
-    pagination.limit,
-    role,
-  ]);
+  }, [fetchResources, currentPage, limit, filterParams]);
 
-  const handlePageChange = (newPage: number) => {
-    fetchResources({
-      page: newPage,
-      limit: pagination.limit,
-      ...(department !== 'all' && { department }),
-      ...(category !== 'all' && { category }),
-      visibility: role === 'student' ? 'all' : visibility,
-    });
-  };
+  const handlePageChange = useCallback(
+    (newPage: number) => {
+      fetchResources({
+        page: newPage,
+        limit,
+        ...filterParams,
+      });
+    },
+    [fetchResources, limit, filterParams]
+  );
 
-  const clearFilters = () => {
+  const clearFilters = useCallback(() => {
     setSearchTerm('');
     setDepartment('all');
     setCategory('all');
     setVisibility('all');
-  };
+  }, [setSearchTerm]);
 
   useEffect(() => {
     fetchResources({
       page: 0,
-      limit: pagination.limit,
-      ...(department !== 'all' && { department }),
-      ...(category !== 'all' && { category }),
-      visibility: role === 'student' ? 'all' : visibility,
+      limit,
+      ...filterParams,
     });
-  }, [department, category, visibility, role, fetchResources, pagination.limit]);
+  }, [filterParams, fetchResources, limit]);
 
   const pageConfig = {
     admin: {

@@ -3,8 +3,8 @@ import { UserAuth } from '@/types';
 import { NextApiRequest } from 'next';
 import { ArrowLeft } from 'lucide-react';
 import { isLoggedIn } from '@/utils/auth';
-import { useState, useEffect } from 'react';
 import useResources from '@/hooks/resources/use-resource';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { RecycleBinPageProps } from '@/types/interfaces/resource';
 import useResourceAdmin from '@/hooks/resources/use-resource-admin';
 import ResourceTable from '@/components/dashboard/table/resource-table';
@@ -22,79 +22,98 @@ const RecycleBinPage = ({ userData }: RecycleBinPageProps) => {
 
   const [deletedResources, setDeletedResources] = useState<typeof resources>([]);
 
-  useEffect(() => {
-    const fetchAllResources = async () => {
-      await fetchResources({
-        includeDeleted: true,
-        page: pagination.currentPage,
-        limit: pagination.limit,
-      });
-    };
+  const { currentPage, limit } = pagination;
 
-    fetchAllResources();
-  }, [fetchResources, pagination.currentPage, pagination.limit]);
+  const fetchParams = useMemo(
+    () => ({
+      includeDeleted: true,
+      page: currentPage,
+      limit,
+    }),
+    [currentPage, limit]
+  );
+
+  useEffect(() => {
+    fetchResources(fetchParams);
+  }, [fetchResources, fetchParams]);
 
   useEffect(() => {
     setDeletedResources(resources.filter((r) => r.isDeleted));
   }, [resources]);
 
-  const handlePageChange = (newPage: number) => {
-    fetchResources({
-      includeDeleted: true,
-      page: newPage,
-      limit: pagination.limit,
-    });
-  };
+  const handlePageChange = useCallback(
+    (newPage: number) => {
+      fetchResources({
+        includeDeleted: true,
+        page: newPage,
+        limit,
+      });
+    },
+    [fetchResources, limit]
+  );
 
-  const handleRefresh = () => {
+  const handleRefresh = useCallback(() => {
     fetchResources({
       includeDeleted: true,
-      page: pagination.currentPage,
-      limit: pagination.limit,
+      page: currentPage,
+      limit,
     });
-  };
+  }, [fetchResources, currentPage, limit]);
 
   return (
     <DashboardLayout title="Recycle Bin" token={userData.token}>
-      {/*==================== Page Header ====================*/}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <DashboardPageHeader
           title="Recycle"
           subtitle="Bin"
           description="View and manage deleted resources. Items remain here for 30 days before being permanently removed."
           actions={
-            <Link
-              href="/admin/resources"
-              className="inline-flex items-center rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-gray-500 focus:ring-offset-2 transition-colors"
-            >
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Resources
-            </Link>
+            <div className="flex flex-col gap-4 w-full md:flex-row sm:mt-0 space-x-3">
+              <Link
+                href="/admin/resources"
+                className="inline-flex items-center rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Back to Resources
+              </Link>
+            </div>
           }
         />
       </div>
-      {/*==================== End of Page Header ====================*/}
 
-      {/*==================== Resource Table ====================*/}
       <ResourceTable
         searchTerm=""
-        userRole="admin"
-        mode="recycleBin"
+        limit={limit}
+        isError={false}
+        page={currentPage}
         isLoading={isLoading}
         token={userData.token}
-        total={pagination.total}
-        limit={pagination.limit}
-        onRefresh={handleRefresh}
         onClearFilters={() => {}}
+        onRefresh={handleRefresh}
         setPage={handlePageChange}
         resources={deletedResources}
-        page={pagination.currentPage}
+        total={deletedResources.length}
         allResources={deletedResources}
-        totalPages={pagination.totalPages}
-        onRestoreResource={toggleResourceTrash}
-        onDeleteResource={deleteResourcePermanently}
+        totalPages={Math.ceil(deletedResources.length / limit)}
+        userRole="admin"
+        mode="recycleBin"
+        onRestoreResource={async (resourceId: string) => {
+          try {
+            await toggleResourceTrash(resourceId);
+            return true;
+          } catch {
+            return false;
+          }
+        }}
+        onDeleteResource={async (resourceId: string) => {
+          try {
+            await deleteResourcePermanently(resourceId);
+            return true;
+          } catch {
+            return false;
+          }
+        }}
       />
-      {/*==================== End of Resource Table ====================*/}
     </DashboardLayout>
   );
 };

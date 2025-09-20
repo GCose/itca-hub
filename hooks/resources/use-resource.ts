@@ -11,8 +11,8 @@ import {
 import { BASE_URL } from '@/utils/url';
 import axios, { AxiosError } from 'axios';
 import useDebounce from '@/utils/debounce';
+import { useState, useCallback } from 'react';
 import { getErrorMessage } from '@/utils/error';
-import { useState, useCallback, useEffect } from 'react';
 import { CustomError, ErrorResponseData } from '@/types';
 
 const useResources = ({ token }: UseResourcesProps) => {
@@ -77,7 +77,10 @@ const useResources = ({ token }: UseResourcesProps) => {
           }
 
           setResources(filteredResources);
-          setPagination(data.data.pagination);
+          setPagination((prev) => ({
+            ...prev,
+            ...data.data.pagination,
+          }));
           setIsError(false);
         } else {
           throw new Error('Failed to fetch resources');
@@ -251,10 +254,6 @@ const useResources = ({ token }: UseResourcesProps) => {
     },
     [fetchResources, pagination.currentPage, pagination.limit]
   );
-
-  useEffect(() => {
-    fetchResources();
-  }, [fetchResources]);
 
   return {
     isError,
