@@ -386,7 +386,7 @@ const ResourceTable = ({
                     {/*==================== End of Title Column ====================*/}
 
                     {/*==================== Description Column ====================*/}
-                    <td className="px-5 py-4 max-w-[350px] text-md font-normal text-gray-500 whitespace ">
+                    <td className="px-5 py-4 max-w-[250px] text-md font-normal text-gray-500 truncate">
                       {resource.description}
                     </td>
                     {/*==================== End of Description Column ====================*/}
