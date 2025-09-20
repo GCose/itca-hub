@@ -16,7 +16,7 @@ const ResourcesComponent = ({ role, userData }: ResourcesComponentProps) => {
       token: userData.token,
     });
 
-  const adminHook = role === 'admin' ? useResourceAdmin({ token: userData.token }) : null;
+  const adminHook = useResourceAdmin({ token: userData.token });
 
   const [department, setDepartment] = useState<
     'all' | 'computer_science' | 'information_systems' | 'telecommunications'
@@ -26,16 +26,16 @@ const ResourcesComponent = ({ role, userData }: ResourcesComponentProps) => {
 
   const handleDeleteResource = useCallback(
     async (resourceId: string): Promise<boolean> => {
-      if (!adminHook?.toggleResourceTrash) return false;
+      if (role !== 'admin' || !adminHook?.toggleResourceTrash) return false;
 
       try {
         await adminHook.toggleResourceTrash(resourceId);
         return true;
-      } catch (error) {
+      } catch {
         return false;
       }
     },
-    [adminHook]
+    [adminHook, role]
   );
 
   const loadResources = useCallback(() => {
@@ -44,7 +44,7 @@ const ResourcesComponent = ({ role, userData }: ResourcesComponentProps) => {
       limit: pagination.limit,
       ...(department !== 'all' && { department }),
       ...(category !== 'all' && { category }),
-      ...(role === 'admin' && visibility !== 'all' && { visibility }),
+      visibility: role === 'student' ? 'all' : visibility,
     });
   }, [
     fetchResources,
@@ -62,7 +62,7 @@ const ResourcesComponent = ({ role, userData }: ResourcesComponentProps) => {
       limit: pagination.limit,
       ...(department !== 'all' && { department }),
       ...(category !== 'all' && { category }),
-      ...(role === 'admin' && visibility !== 'all' && { visibility }),
+      visibility: role === 'student' ? 'all' : visibility,
     });
   };
 
@@ -79,7 +79,7 @@ const ResourcesComponent = ({ role, userData }: ResourcesComponentProps) => {
       limit: pagination.limit,
       ...(department !== 'all' && { department }),
       ...(category !== 'all' && { category }),
-      ...(role === 'admin' && visibility !== 'all' && { visibility }),
+      visibility: role === 'student' ? 'all' : visibility,
     });
   }, [department, category, visibility, role, fetchResources, pagination.limit]);
 
