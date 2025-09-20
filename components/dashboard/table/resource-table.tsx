@@ -290,7 +290,7 @@ const ResourceTable = ({
                   )}
                   <th
                     scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 w-32"
+                    className="px-6 py-3 text-left text-sm font-normal uppercase tracking-wider text-gray-500 w-32"
                   >
                     Actions
                   </th>
