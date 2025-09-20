@@ -35,6 +35,13 @@ const ResourcesComponent = ({ role, userData }: ResourcesComponentProps) => {
     [department, category, visibility, role]
   );
 
+  const filteredResources = useMemo(() => {
+    if (role === 'student') {
+      return resources.filter((resource) => resource.visibility === 'all');
+    }
+    return resources;
+  }, [resources, role]);
+
   const handleDeleteResource = useCallback(
     async (resourceId: string): Promise<boolean> => {
       if (role !== 'admin' || !adminHook?.toggleResourceTrash) return false;
@@ -247,7 +254,6 @@ const ResourcesComponent = ({ role, userData }: ResourcesComponentProps) => {
           <ResourceTable
             isError={isError}
             isLoading={false}
-            resources={resources}
             token={userData.token}
             searchTerm={searchTerm}
             total={pagination.total}
@@ -255,6 +261,7 @@ const ResourcesComponent = ({ role, userData }: ResourcesComponentProps) => {
             allResources={resources}
             onRefresh={loadResources}
             setPage={handlePageChange}
+            resources={filteredResources}
             page={pagination.currentPage}
             onClearFilters={clearFilters}
             totalPages={pagination.totalPages}
