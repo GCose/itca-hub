@@ -1,14 +1,15 @@
-import { useState, useEffect } from 'react';
-import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
-import DashboardLayout from '@/components/dashboard/layout/dashboard-layout';
-import DashboardPageHeader from '@/components/dashboard/layout/dashboard-page-header';
 import { UserAuth } from '@/types';
-import { isLoggedIn } from '@/utils/auth';
 import { NextApiRequest } from 'next';
+import { ArrowLeft } from 'lucide-react';
+import { isLoggedIn } from '@/utils/auth';
+import { useState, useEffect } from 'react';
 import useResources from '@/hooks/resources/use-resource';
+import { RecycleBinPageProps } from '@/types/interfaces/resource';
 import useResourceAdmin from '@/hooks/resources/use-resource-admin';
 import ResourceTable from '@/components/dashboard/table/resource-table';
+import DashboardLayout from '@/components/dashboard/layout/dashboard-layout';
+import DashboardPageHeader from '@/components/dashboard/layout/dashboard-page-header';
 
 const RecycleBinPage = ({ userData }: RecycleBinPageProps) => {
   const { resources, isLoading, pagination, fetchResources } = useResources({
