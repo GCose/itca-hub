@@ -36,8 +36,8 @@ const ProfileComponent = ({ role, userData }: ProfileComponentProps) => {
   } = useProfile({ token: userData.token });
 
   const [isChangingPasswordMode, setIsChangingPasswordMode] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [showPasswords, setShowPasswords] = useState({
     current: false,
     new: false,
@@ -56,9 +56,6 @@ const ProfileComponent = ({ role, userData }: ProfileComponentProps) => {
     confirmPassword: '',
   });
 
-  /**=====================================
-   * Handle profile edit mode activation
-   =====================================*/
   const handleProfileEdit = () => {
     setIsEditingProfile(true);
     setProfileForm({
@@ -68,9 +65,6 @@ const ProfileComponent = ({ role, userData }: ProfileComponentProps) => {
     });
   };
 
-  /**======================
-   * Handle profile save
-   ======================*/
   const handleProfileSave = async () => {
     try {
       await updateProfile(profileForm);
@@ -80,9 +74,6 @@ const ProfileComponent = ({ role, userData }: ProfileComponentProps) => {
     }
   };
 
-  /**=========================
-   * Handle password change
-   =========================*/
   const handlePasswordChange = async () => {
     if (passwordForm.newPassword !== passwordForm.confirmPassword) {
       return;
@@ -105,9 +96,6 @@ const ProfileComponent = ({ role, userData }: ProfileComponentProps) => {
     }
   };
 
-  /**===============================================
-   * Handle file selection for profile image
-   ===============================================*/
   const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -115,7 +103,6 @@ const ProfileComponent = ({ role, userData }: ProfileComponentProps) => {
     try {
       const imageUrl = await uploadImageOnly(file);
       if (imageUrl) {
-        // Update form state immediately for instant feedback
         setProfileForm((prev) => ({
           ...prev,
           profilePictureUrl: imageUrl,
@@ -130,9 +117,6 @@ const ProfileComponent = ({ role, userData }: ProfileComponentProps) => {
     }
   };
 
-  /**=============================
-   * Toggle password visibility
-   =============================*/
   const togglePasswordVisibility = (field: 'current' | 'new' | 'confirm') => {
     setShowPasswords((prev) => ({
       ...prev,
@@ -140,9 +124,6 @@ const ProfileComponent = ({ role, userData }: ProfileComponentProps) => {
     }));
   };
 
-  /**======================
-   * Format date helper
-   ======================*/
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
