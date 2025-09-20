@@ -5,9 +5,9 @@ import useResourceAdmin from '@/hooks/resources/use-resource-admin';
 import { ResourcesComponentProps } from '@/types/interfaces/resource';
 import ResourceTable from '@/components/dashboard/table/resource-table';
 import DashboardLayout from '@/components/dashboard/layout/dashboard-layout';
+import { Upload, Bookmark, Filter, Building2, Tag, Eye, Search } from 'lucide-react';
 import DashboardPageHeader from '@/components/dashboard/layout/dashboard-page-header';
 import ResourceTableSkeleton from '@/components/dashboard/skeletons/resource-table-skeleton';
-import { Upload, Trash2, Bookmark, Filter, Building2, Tag, Eye, Search } from 'lucide-react';
 import ResourceFilterSkeleton from '@/components/dashboard/skeletons/resource-filter-skeleton';
 
 const ResourcesComponent = ({ role, userData }: ResourcesComponentProps) => {
@@ -98,13 +98,13 @@ const ResourcesComponent = ({ role, userData }: ResourcesComponentProps) => {
       dashboardTitle: 'Resource Management',
       actions: (
         <div className="flex flex-col gap-4 w-full md:flex-row sm:mt-0 space-x-3">
-          <Link
+          {/* <Link
             href="/admin/resources/recycle-bin"
             className="inline-flex items-center rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
           >
             <Trash2 className="mr-2 h-4 w-4" />
             Recycle Bin
-          </Link>
+          </Link> */}
           <Link
             href="/admin/resources/upload"
             className="group inline-flex items-center rounded-lg bg-gradient-to-r from-blue-700 to-blue-600 px-4 py-2 text-sm font-medium text-white hover:from-blue-800 hover:to-blue-700 focus:outline-none focus:ring-blue-500 focus:ring-offset-2 transition-all duration-300 shadow-md hover:shadow-lg"
