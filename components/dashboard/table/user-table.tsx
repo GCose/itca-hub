@@ -1,19 +1,20 @@
 import React from 'react';
 import {
-  Trash,
   User,
   UserX,
   Crown,
+  Trash,
   Users,
+  RefreshCw,
   UserCheck,
   ChevronLeft,
   ChevronRight,
   GraduationCap,
 } from 'lucide-react';
+import useUserActions from '@/hooks/use-user-actions';
 import { UserTableProps } from '@/types/interfaces/table';
 import UserTableSkeleton from '../skeletons/user-table-skeleton';
 import UserActionsModal from '../modals/user/user-actions-modal';
-import useUserActions from '@/hooks/use-user-actions';
 import { NetworkError, EmptyState } from '@/components/dashboard/error-messages';
 
 const UserTable = ({
@@ -68,24 +69,45 @@ const UserTable = ({
     <>
       {/*==================== User Table ====================*/}
       <div className="rounded-2xl bg-white">
+        {/*==================== Table Header ====================*/}
+        <div className="bg-white px-6 py-4 border-b border-gray-200">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-medium text-gray-900">Users</h2>
+
+            <div className="flex">
+              <p className="text-sm text-gray-500">
+                Showing {users?.length} of {total} users
+              </p>
+              <button
+                onClick={onUserUpdated}
+                title="Refresh users"
+                className="ml-3 p-1 rounded-md text-gray-400 hover:text-blue-600 hover:bg-blue-50"
+              >
+                <RefreshCw className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+        {/*==================== End of Table Header ====================*/}
+
         {/*==================== Table ====================*/}
         <div className="overflow-x-auto hide-scrollbar">
           <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-white rounded-2xl">
+            <thead className="bg-gray-50">
               <tr>
-                <th className="px-8 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th className="px-8 py-3 text-left text-sm font-normal uppercase tracking-wider text-gray-500">
                   User
                 </th>
-                <th className="px-8 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th className="px-8 py-3 text-left text-sm font-normal uppercase tracking-wider text-gray-500">
                   Role
                 </th>
-                <th className="px-8 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th className="px-8 py-3 text-left text-sm font-normal uppercase tracking-wider text-gray-500">
                   Email Status
                 </th>
-                <th className="px-8 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th className="px-8 py-3 text-left text-sm font-normal uppercase tracking-wider text-gray-500">
                   Joined
                 </th>
-                <th className="px-8 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th className="px-8 py-3 text-right text-sm font-normal uppercase tracking-wider text-gray-500">
                   Actions
                 </th>
               </tr>
