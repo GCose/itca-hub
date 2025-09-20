@@ -67,7 +67,7 @@ const ResourceEditModal = ({
     try {
       await onSave(updatedResource);
       onClose();
-    } catch {}
+    } 
   };
 
   if (!resource) return null;

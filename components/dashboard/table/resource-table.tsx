@@ -638,7 +638,7 @@ const ResourceTable = ({
 
           {/*==================== Edit Modal ====================*/}
           {showEditModal && selectedResource && (
-            <ResourceEditThe Modal
+            <ResourceEditModal
               isLoading={isEditing}
               isOpen={showEditModal}
               resource={selectedResource}
