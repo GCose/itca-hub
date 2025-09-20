@@ -189,3 +189,13 @@ export interface UploadProgress {
   currentFileIndex: number;
   phase: 'idle' | 'validating' | 'uploading' | 'creating' | 'failed';
 }
+
+export interface AdminResourceUploadPageProps {
+  userData: UserAuth;
+}
+
+export interface UseResourceUploaderProps {
+  token: string;
+  onUploadComplete?: ResourceUploaderProps['onUploadComplete'];
+  onError?: ResourceUploaderProps['onError'];
+}

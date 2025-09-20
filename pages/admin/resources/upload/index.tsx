@@ -1,14 +1,11 @@
-import ResourceUploader from '@/components/dashboard/resources/resource-uploader';
-import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
-import DashboardLayout from '@/components/dashboard/layout/dashboard-layout';
 import { UserAuth } from '@/types';
-import { isLoggedIn } from '@/utils/auth';
 import { NextApiRequest } from 'next';
-
-interface AdminResourceUploadPageProps {
-  userData: UserAuth;
-}
+import { ArrowLeft } from 'lucide-react';
+import { isLoggedIn } from '@/utils/auth';
+import { AdminResourceUploadPageProps } from '@/types/interfaces/resource';
+import DashboardLayout from '@/components/dashboard/layout/dashboard-layout';
+import ResourceUploader from '@/components/dashboard/resources/resource-uploader';
 
 const AdminResourceUploadPage = ({ userData }: AdminResourceUploadPageProps) => {
   const handleUploadComplete = (_fileData: {
