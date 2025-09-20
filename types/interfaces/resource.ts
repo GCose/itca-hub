@@ -160,3 +160,12 @@ export interface ResourceAnalyticsData {
 export interface UseResourceAdminProps {
   token: string;
 }
+
+export interface ResourcesComponentProps {
+  role: 'admin' | 'student';
+  userData: UserAuth;
+}
+
+export interface RecycleBinPageProps {
+  userData: UserAuth;
+}

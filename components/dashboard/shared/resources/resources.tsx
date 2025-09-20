@@ -1,7 +1,7 @@
 import Link from 'next/link';
-import { UserAuth } from '@/types';
 import { useState, useEffect, useCallback } from 'react';
 import useResources from '@/hooks/resources/use-resource';
+import { ResourcesComponentProps } from '@/types/interfaces/resource';
 import ResourceTable from '@/components/dashboard/table/resource-table';
 import DashboardLayout from '@/components/dashboard/layout/dashboard-layout';
 import DashboardPageHeader from '@/components/dashboard/layout/dashboard-page-header';
@@ -9,17 +9,12 @@ import ResourceTableSkeleton from '@/components/dashboard/skeletons/resource-tab
 import { Upload, Trash2, Bookmark, Filter, Building2, Tag, Eye, Search } from 'lucide-react';
 import ResourceFilterSkeleton from '@/components/dashboard/skeletons/resource-filter-skeleton';
 
-interface ResourcesComponentProps {
-  role: 'admin' | 'student';
-  userData: UserAuth;
-}
-
 const ResourcesComponent = ({ role, userData }: ResourcesComponentProps) => {
-  const { isError, resources, isLoading, pagination, fetchResources } = useResources({
-    token: userData.token,
-  });
+  const { isError, resources, isLoading, pagination, searchTerm, setSearchTerm, fetchResources } =
+    useResources({
+      token: userData.token,
+    });
 
-  const [searchTerm, setSearchTerm] = useState('');
   const [department, setDepartment] = useState<
     'all' | 'computer_science' | 'information_systems' | 'telecommunications'
   >('all');
@@ -30,14 +25,12 @@ const ResourcesComponent = ({ role, userData }: ResourcesComponentProps) => {
     fetchResources({
       page: pagination.currentPage,
       limit: pagination.limit,
-      ...(searchTerm.trim() && { search: searchTerm.trim() }),
       ...(department !== 'all' && { department }),
       ...(category !== 'all' && { category }),
       ...(role === 'admin' && visibility !== 'all' && { visibility }),
     });
   }, [
     fetchResources,
-    searchTerm,
     department,
     category,
     visibility,
@@ -50,7 +43,6 @@ const ResourcesComponent = ({ role, userData }: ResourcesComponentProps) => {
     fetchResources({
       page: newPage,
       limit: pagination.limit,
-      ...(searchTerm.trim() && { search: searchTerm.trim() }),
       ...(department !== 'all' && { department }),
       ...(category !== 'all' && { category }),
       ...(role === 'admin' && visibility !== 'all' && { visibility }),
@@ -65,30 +57,14 @@ const ResourcesComponent = ({ role, userData }: ResourcesComponentProps) => {
   };
 
   useEffect(() => {
-    loadResources();
-  }, [loadResources]);
-
-  useEffect(() => {
-    if (pagination.currentPage !== 0) {
-      fetchResources({
-        page: 0,
-        limit: pagination.limit,
-        ...(searchTerm.trim() && { search: searchTerm.trim() }),
-        ...(department !== 'all' && { department }),
-        ...(category !== 'all' && { category }),
-        ...(role === 'admin' && visibility !== 'all' && { visibility }),
-      });
-    }
-  }, [
-    searchTerm,
-    department,
-    category,
-    visibility,
-    role,
-    fetchResources,
-    pagination.limit,
-    pagination.currentPage,
-  ]);
+    fetchResources({
+      page: 0,
+      limit: pagination.limit,
+      ...(department !== 'all' && { department }),
+      ...(category !== 'all' && { category }),
+      ...(role === 'admin' && visibility !== 'all' && { visibility }),
+    });
+  }, [department, category, visibility, role, fetchResources, pagination.limit]);
 
   const pageConfig = {
     admin: {

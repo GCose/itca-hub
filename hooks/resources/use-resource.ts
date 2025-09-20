@@ -10,6 +10,7 @@ import {
 } from '@/types/interfaces/resource';
 import { BASE_URL } from '@/utils/url';
 import axios, { AxiosError } from 'axios';
+import useDebounce from '@/utils/debounce';
 import { getErrorMessage } from '@/utils/error';
 import { useState, useCallback, useEffect } from 'react';
 import { CustomError, ErrorResponseData } from '@/types';
@@ -18,6 +19,7 @@ const useResources = ({ token }: UseResourcesProps) => {
   const [resources, setResources] = useState<Resource[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
   const [pagination, setPagination] = useState<Pagination>({
     total: 0,
     limit: 10,
@@ -27,10 +29,11 @@ const useResources = ({ token }: UseResourcesProps) => {
     hasPrevPage: false,
   });
 
+  const debouncedSearchQuery = useDebounce(searchTerm, 500);
+
   const fetchResources = useCallback(
     async (params: FetchResourcesParams = {}) => {
       const {
-        search,
         category,
         page = 0,
         limit = 10,
@@ -50,7 +53,7 @@ const useResources = ({ token }: UseResourcesProps) => {
           params: {
             page: page.toString(),
             limit: limit.toString(),
-            ...(search?.trim() && { search: search.trim() }),
+            ...(debouncedSearchQuery?.trim() && { search: debouncedSearchQuery.trim() }),
             ...(category && category !== 'all' && { category }),
             ...(visibility && visibility !== 'all' && { visibility }),
             ...(academicLevel && academicLevel !== 'all' && { academicLevel }),
@@ -93,7 +96,7 @@ const useResources = ({ token }: UseResourcesProps) => {
         setIsLoading(false);
       }
     },
-    [token]
+    [token, debouncedSearchQuery]
   );
 
   const fetchSingleResource = useCallback(
@@ -259,12 +262,15 @@ const useResources = ({ token }: UseResourcesProps) => {
     resources,
     isLoading,
     pagination,
+    searchTerm,
+    downloadFile,
+    setSearchTerm,
     trackDownload,
     fetchResources,
     refreshResources,
     downloadResource,
-    downloadFile,
     fetchSingleResource,
+    debouncedSearchQuery,
   };
 };
 

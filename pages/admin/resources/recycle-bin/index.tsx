@@ -2,111 +2,99 @@ import { useState, useEffect } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import DashboardLayout from '@/components/dashboard/layout/dashboard-layout';
+import DashboardPageHeader from '@/components/dashboard/layout/dashboard-page-header';
 import { UserAuth } from '@/types';
 import { isLoggedIn } from '@/utils/auth';
 import { NextApiRequest } from 'next';
-import { useResources } from '@/hooks/admin/resources/use-resources';
+import useResources from '@/hooks/resources/use-resource';
+import useResourceAdmin from '@/hooks/resources/use-resource-admin';
 import ResourceTable from '@/components/dashboard/table/resource-table';
 
-interface RecycleBinPageProps {
-  userData: UserAuth;
-}
-
 const RecycleBinPage = ({ userData }: RecycleBinPageProps) => {
-  const {
-    resources,
-    isLoading,
-    isError,
-    fetchResources,
-    permanentlyDeleteResource,
-    batchPermanentlyDeleteResource,
-    restoreFromRecycleBin,
-    batchRestoreFromRecycleBin,
-  } = useResources({ token: userData.token });
+  const { resources, isLoading, pagination, fetchResources } = useResources({
+    token: userData.token,
+  });
+
+  const { toggleResourceTrash, deleteResourcePermanently } = useResourceAdmin({
+    token: userData.token,
+  });
 
   const [deletedResources, setDeletedResources] = useState<typeof resources>([]);
 
-  /**==========================================================
-   * This effect fetches all resources including deleted ones
-   ==========================================================*/
   useEffect(() => {
     const fetchAllResources = async () => {
-      await fetchResources(true); // true means include deleted resources
+      await fetchResources({
+        includeDeleted: true,
+        page: pagination.currentPage,
+        limit: pagination.limit,
+      });
     };
 
     fetchAllResources();
-  }, [fetchResources]);
+  }, [fetchResources, pagination.currentPage, pagination.limit]);
 
-  /**================================================
-   * This effect updates the deletedResources state
-   ================================================*/
   useEffect(() => {
     setDeletedResources(resources.filter((r) => r.isDeleted));
   }, [resources]);
 
-  /**============================================
-   * Handle permanent delete with title lookup
-   ============================================*/
-  const handlePermanentDelete = async (resourceId: string): Promise<boolean> => {
-    const resource = deletedResources.find((r) => r.resourceId === resourceId);
-    if (!resource) return false;
-    return await permanentlyDeleteResource(resourceId, resource.title);
+  const handlePageChange = (newPage: number) => {
+    fetchResources({
+      includeDeleted: true,
+      page: newPage,
+      limit: pagination.limit,
+    });
   };
 
-  /**===================================
-   * Handle restore with title lookup
-   ===================================*/
-  const handleRestore = async (resourceId: string): Promise<boolean> => {
-    const resource = deletedResources.find((r) => r.resourceId === resourceId);
-    if (!resource) return false;
-    return await restoreFromRecycleBin(resourceId, resource.title);
+  /**========================
+   * Handle refresh
+   ========================*/
+  const handleRefresh = () => {
+    fetchResources({
+      includeDeleted: true,
+      page: pagination.currentPage,
+      limit: pagination.limit,
+    });
   };
 
   return (
     <DashboardLayout title="Recycle Bin" token={userData.token}>
-      <div className="mb-8">
-        <div className="flex items-center">
-          <Link
-            href="/admin/resources"
-            className="mr-3 inline-flex items-center rounded-lg bg-white p-2 text-sm text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-gray-500 focus:ring-offset-2 transition-colors"
-          >
-            <ArrowLeft className="h-4 w-4" />
-          </Link>
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-2 flex items-center">
-              <span className="text-blue-700 mr-2">Recycle</span>
-              <span className="text-amber-500">Bin</span>
-              <span className="ml-3 relative">
-                <span className="absolute -top-1 -right-1 flex h-3 w-3">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
-                </span>
-              </span>
-            </h1>
-            <p className="text-gray-600">
-              View and manage deleted resources. Items remain here for 30 days before being
-              permanently removed.
-            </p>
-          </div>
-        </div>
+      {/*==================== Page Header ====================*/}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+        <DashboardPageHeader
+          title="Recycle"
+          subtitle="Bin"
+          description="View and manage deleted resources. Items remain here for 30 days before being permanently removed."
+          actions={
+            <Link
+              href="/admin/resources"
+              className="inline-flex items-center rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-gray-500 focus:ring-offset-2 transition-colors"
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Resources
+            </Link>
+          }
+        />
       </div>
+      {/*==================== End of Page Header ====================*/}
 
       {/*==================== Resource Table ====================*/}
       <ResourceTable
         searchTerm=""
         userRole="admin"
         mode="recycleBin"
-        isError={isError}
-        userData={userData}
         isLoading={isLoading}
+        token={userData.token}
+        total={pagination.total}
+        limit={pagination.limit}
+        onRefresh={handleRefresh}
         onClearFilters={() => {}}
+        setPage={handlePageChange}
         resources={deletedResources}
+        page={pagination.currentPage}
         allResources={deletedResources}
-        onRestoreResource={handleRestore}
-        onRefresh={() => fetchResources(true)}
-        onDeleteResource={handlePermanentDelete}
-        onRestoreMultiple={batchRestoreFromRecycleBin}
-        onDeleteMultiple={batchPermanentlyDeleteResource}
+        totalPages={pagination.totalPages}
+        onRestoreResource={toggleResourceTrash}
+        onDeleteResource={deleteResourcePermanently}
       />
       {/*==================== End of Resource Table ====================*/}
     </DashboardLayout>
