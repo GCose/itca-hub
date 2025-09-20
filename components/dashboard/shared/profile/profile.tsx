@@ -267,23 +267,23 @@ const ProfileComponent = ({ role, userData }: ProfileComponentProps) => {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-sm font-medium text-gray-500 mb-1">
+                      <label className="block text-sm font-bold text-gray-500 mb-1">
                         FIRST NAME
                       </label>
-                      <p className="text-gray-900 font-medium">{profile?.firstName}</p>
+                      <p className="text-gray-900 font-normal">{profile?.firstName}</p>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-500 mb-1">
+                      <label className="block text-sm font-bold text-gray-500 mb-1">
                         LAST NAME
                       </label>
-                      <p className="text-gray-900 font-medium">{profile?.lastName}</p>
+                      <p className="text-gray-900 font-normal">{profile?.lastName}</p>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-500 mb-1">EMAIL</label>
-                      <p className="text-gray-900 font-medium">{profile?.schoolEmail}</p>
+                      <label className="block text-sm font-bold text-gray-500 mb-1">EMAIL</label>
+                      <p className="text-gray-900 font-normal">{profile?.schoolEmail}</p>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-500 mb-1">ROLE</label>
+                      <label className="block text-sm font-bold text-gray-500 mb-1">ROLE</label>
                       {role === 'admin' ? (
                         <span className="inline-flex items-center rounded-full bg-purple-100 px-3 py-1 text-sm font-medium text-purple-800">
                           <Crown className="w-4 h-4 mr-1" />
@@ -421,7 +421,7 @@ const ProfileComponent = ({ role, userData }: ProfileComponentProps) => {
 
               {!isChangingPasswordMode ? (
                 <div>
-                  <p className="text-sm text-gray-600 mb-4">
+                  <p className="text-md text-gray-600 mb-4">
                     Keep your account secure by using a strong password.
                   </p>
                   <div className="bg-blue-50 rounded-lg p-4">
@@ -571,23 +571,19 @@ const ProfileComponent = ({ role, userData }: ProfileComponentProps) => {
               </h2>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-500 mb-1">
-                    Member Since
-                  </label>
-                  <p className="text-gray-900 font-medium">
+                  <label className="block text-sm font-bold text-gray-500 mb-1">MEMBER SINCE</label>
+                  <p className="text-gray-900 font-normal">
                     {profile?.createdAt ? formatDate(profile.createdAt) : 'N/A'}
                   </p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-500 mb-1">Last Login</label>
-                  <p className="text-gray-900 font-medium">
+                  <label className="block text-sm font-bold text-gray-500 mb-1">LAST LOGIN</label>
+                  <p className="text-gray-900 font-normal">
                     {profile?.lastLoggedIn ? formatLastLogin(profile.lastLoggedIn) : 'N/A'}
                   </p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-500 mb-1">
-                    Email Status
-                  </label>
+                  <label className="block text-sm font-bold text-gray-500 mb-1">EMAIL STATUS</label>
                   <div className="flex items-center">
                     {profile?.isEmailVerified ? (
                       <span className="inline-flex items-center rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-800">
