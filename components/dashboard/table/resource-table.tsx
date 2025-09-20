@@ -373,12 +373,12 @@ const ResourceTable = ({
                         <div className="flex-shrink-0">
                           {getDepartmentIcon(resource.department)}
                         </div>
-                        <div className="ml-2 max-w-xs">
+                        <div className="ml-2 max-w-[250px]">
                           <div className="flex items-center">
                             <span className="text-md font-normal text-gray-500 mr-2 truncate">
                               {resource.title}
                             </span>
-                            {getVisibilityIcon(resource.visibility)}
+                            <span>{getVisibilityIcon(resource.visibility)}</span>
                           </div>
                         </div>
                       </div>
@@ -386,7 +386,7 @@ const ResourceTable = ({
                     {/*==================== End of Title Column ====================*/}
 
                     {/*==================== Description Column ====================*/}
-                    <td className="px-5 py-4 text-md font-normal text-gray-500 truncate">
+                    <td className="px-5 py-4 max-w-[350px] text-md font-normal text-gray-500 whitespace ">
                       {resource.description}
                     </td>
                     {/*==================== End of Description Column ====================*/}
