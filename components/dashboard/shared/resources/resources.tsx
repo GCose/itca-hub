@@ -166,12 +166,14 @@ const ResourcesComponent = ({ role, userData }: ResourcesComponentProps) => {
           <div className="mb-6 bg-white rounded-xl p-4">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center">
-                <Filter className="h-5 w-5 text-blue-600 mr-2" />
+                <div className="mr-2 bg-green-100/70 p-2 rounded-full">
+                  <Filter className="h-5 w-5 text-green-600" />
+                </div>
                 <h3 className="text-lg font-medium text-gray-900">Filter Resources</h3>
               </div>
               <button
                 onClick={clearFilters}
-                className="text-sm text-gray-500 hover:text-blue-600 transition-colors"
+                className="text-sm text-gray-500 hover:text-blue-600 cursor-pointer transition-colors"
               >
                 Clear Filters
               </button>
@@ -197,12 +199,14 @@ const ResourcesComponent = ({ role, userData }: ResourcesComponentProps) => {
 
             {/*==================== Filter Grid ====================*/}
             <div
-              className={`grid grid-cols-1 ${role === 'admin' ? 'md:grid-cols-4' : 'md:grid-cols-3'} gap-4`}
+              className={`grid grid-cols-1 ${role === 'admin' ? 'md:grid-cols-3' : 'md:grid-cols-2'} gap-4 pt-2`}
             >
               {/*==================== Department Filter ====================*/}
               <div>
-                <label className="block text-sm font-medium text-gray-500 mb-1">
-                  <Building2 className="h-4 w-4 inline mr-1" />
+                <label className="flex items-center text-sm text-gray-700 mb-2">
+                  <div className="bg-blue-100/70 p-2 rounded-full mr-2">
+                    <Building2 className="h-5 w-5 text-blue-600" />
+                  </div>
                   Department
                 </label>
                 <select
@@ -220,8 +224,10 @@ const ResourcesComponent = ({ role, userData }: ResourcesComponentProps) => {
 
               {/*==================== Category Filter ====================*/}
               <div>
-                <label className="block text-sm font-medium text-gray-500 mb-1">
-                  <Tag className="h-4 w-4 inline mr-1" />
+                <label className="flex items-center text-sm text-gray-700 mb-2">
+                  <div className="bg-purple-100/70 p-2 rounded-full mr-2">
+                    <Tag className="h-5 w-5 text-purple-600" />
+                  </div>
                   Category
                 </label>
                 <select
@@ -240,29 +246,13 @@ const ResourcesComponent = ({ role, userData }: ResourcesComponentProps) => {
               </div>
               {/*==================== End of Category Filter ====================*/}
 
-              {/*==================== Academic Level Filter ====================*/}
-              <div>
-                <label className="block text-sm font-medium text-gray-500 mb-1">
-                  <Eye className="h-4 w-4 inline mr-1" />
-                  Academic Level
-                </label>
-                <select
-                  value="all"
-                  onChange={() => {}} // Will implement when needed
-                  className="w-full rounded-lg bg-gray-100/70 py-2.5 pl-3 pr-8 text-sm text-gray-500 focus:bg-slate-100 focus:outline-none transition-colors"
-                >
-                  <option value="all">All Levels</option>
-                  <option value="undergraduate">Undergraduate</option>
-                  <option value="postgraduate">Postgraduate</option>
-                </select>
-              </div>
-              {/*==================== End of Academic Level Filter ====================*/}
-
-              {/*==================== Visibility Filter (Admin Only) ====================*/}
+              {/*==================== Visibility Filter ====================*/}
               {role === 'admin' && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-500 mb-1">
-                    <Eye className="h-4 w-4 inline mr-1" />
+                  <label className="flex items-center text-sm text-gray-700 mb-2">
+                    <div className="bg-orange-100/70 p-2 rounded-full mr-2">
+                      <Eye className="h-5 w-5 text-orange-600" />
+                    </div>
                     Visibility
                   </label>
                   <select

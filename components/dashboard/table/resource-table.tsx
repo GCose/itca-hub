@@ -108,17 +108,11 @@ const ResourceTable = ({
     onRestoreMultiple,
   });
 
-  /**===============================================
-   * Save bookmarks to localStorage
-   ===============================================*/
   const saveBookmarks = (newBookmarks: Record<string, boolean>) => {
     setBookmarks(newBookmarks);
     localStorage.setItem('studentBookmarks', JSON.stringify(newBookmarks));
   };
 
-  /**===============================================
-   * Toggle bookmark for a resource
-   ===============================================*/
   const toggleBookmark = (resource: Resource, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
 
@@ -140,9 +134,6 @@ const ResourceTable = ({
     saveBookmarks(newBookmarks);
   };
 
-  /**===============================================
-   * Handle restoring a single resource
-   ===============================================*/
   const handleRestoreResource = async (resource: Resource, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
     if (onRestoreResource) {
@@ -150,30 +141,41 @@ const ResourceTable = ({
     }
   };
 
-  /**===============================================
-   * Handle restoring multiple resources
-   ===============================================*/
   const handleRestoreSelected = () => {
     if (selectedCount > 0 && onRestoreMultiple) {
       onRestoreMultiple(selectedResourceIds);
     }
   };
 
-  // Function to get the appropriate icon based on department
   const getDepartmentIcon = (department: string) => {
     switch (department) {
       case 'computer_science':
-        return <Laptop className="h-5 w-5 text-blue-500" />;
+        return (
+          <div className="flex items-center justify-center h-10 w-10 rounded-full bg-blue-100/70">
+            <Laptop className="h-5 w-5 text-blue-500" />
+          </div>
+        );
       case 'information_systems':
-        return <Database className="h-5 w-5 text-green-500" />;
+        return (
+          <div className="flex items-center justify-center h-10 w-10 rounded-full bg-green-100/70">
+            <Database className="h-5 w-5 text-green-500" />
+          </div>
+        );
       case 'telecommunications':
-        return <Radio className="h-5 w-5 text-purple-500" />;
+        return (
+          <div className="flex items-center justify-center h-10 w-10 rounded-full bg-purple-100/70">
+            <Radio className="h-5 w-5 text-purple-500" />
+          </div>
+        );
       default:
-        return <Database className="h-5 w-5 text-gray-500" />;
+        return (
+          <div className="flex items-center justify-center h-10 w-10 rounded-full bg-gray-100/70">
+            <Database className="h-5 w-5 text-gray-500" />
+          </div>
+        );
     }
   };
 
-  // Function to get visibility icon (admin only)
   const getVisibilityIcon = (visibility: string) => {
     if (userRole === 'user') return null;
 
@@ -192,7 +194,6 @@ const ResourceTable = ({
     await downloadResource(resource);
   };
 
-  // Function to format category display name
   const formatCategoryName = (category: string) => {
     return category.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
   };
@@ -369,12 +370,12 @@ const ResourceTable = ({
                     {/*==================== Title Column ====================*/}
                     <td className="px-5 py-4">
                       <div className="flex items-center">
-                        <div className="flex-shrink-0 h-10 w-10 flex items-center justify-center rounded-full bg-gray-100">
+                        <div className="flex-shrink-0">
                           {getDepartmentIcon(resource.department)}
                         </div>
                         <div className="ml-2 max-w-xs">
                           <div className="flex items-center">
-                            <span className="text-sm font-medium text-gray-600 mr-2 truncate">
+                            <span className="text-md font-normal text-gray-500 mr-2 truncate">
                               {resource.title}
                             </span>
                             {getVisibilityIcon(resource.visibility)}
@@ -385,22 +386,22 @@ const ResourceTable = ({
                     {/*==================== End of Title Column ====================*/}
 
                     {/*==================== Description Column ====================*/}
-                    <td className="px-5 py-4 text-sm font-medium text-gray-500 truncate">
+                    <td className="px-5 py-4 text-md font-normal text-gray-500 truncate">
                       {resource.description}
                     </td>
                     {/*==================== End of Description Column ====================*/}
 
                     {/*==================== Department Column ====================*/}
-                    <td className="whitespace-nowrap px-5 py-4 text-sm text-gray-500">
-                      <span className="inline-flex items-center px-1.5 py-0.5 text-md font-medium text-gray-500">
+                    <td className="whitespace-nowrap px-5 py-4 text-md text-gray-500">
+                      <span className="inline-flex items-center px-1.5 py-0.5 text-md font-normal text-gray-500">
                         {formatDepartment(resource.department)}
                       </span>
                     </td>
                     {/*==================== End of Department Column ====================*/}
 
                     {/*==================== Category Column ====================*/}
-                    <td className="whitespace-nowrap px-5 py-4 text-sm">
-                      <span className="inline-flex items-center rounded-full px-1.5 gap-2 py-0.5 text-md font-medium text-slate-500">
+                    <td className="whitespace-nowrap px-5 py-4 text-md">
+                      <span className="inline-flex items-center rounded-full px-1.5 gap-2 py-0.5 text-md font-normal text-slate-500">
                         {formatCategoryName(resource.category)}
                       </span>
                     </td>
@@ -408,7 +409,7 @@ const ResourceTable = ({
 
                     {/*==================== Usage Column (Admin Default Only) ====================*/}
                     {userRole === 'admin' && mode === 'default' && (
-                      <td className="whitespace-nowrap px-5 py-4 text-sm text-gray-500">
+                      <td className="whitespace-nowrap px-5 py-4 text-md text-gray-500">
                         <div className="flex items-center space-x-2">
                           <Download className="h-4 w-4 text-gray-400" />
                           <span>{resource.downloads}</span>
@@ -421,7 +422,7 @@ const ResourceTable = ({
                     {/*==================== End of Usage Column ====================*/}
 
                     {/*==================== Actions Column ====================*/}
-                    <td className="whitespace-nowrap px-5 py-4 text-sm font-medium">
+                    <td className="whitespace-nowrap px-5 py-4 text-md font-medium">
                       <div className="flex space-x-2" onClick={(e) => e.stopPropagation()}>
                         {userRole === 'admin' ? (
                           <>

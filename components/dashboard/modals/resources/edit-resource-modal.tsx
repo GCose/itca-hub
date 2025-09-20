@@ -1,7 +1,7 @@
-import { X, Save, Loader } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { Resource } from '@/types/interfaces/resource';
+import { X, Save, Loader, Pencil } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ResourceEditModalProps } from '@/types/interfaces/modal';
 
 const ResourceEditModal = ({
@@ -44,13 +44,11 @@ const ResourceEditModal = ({
     }
   }, [resource]);
 
-  const formatCategoryName = (category: string) => {
-    return category.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
-  };
+  const formatCategoryName = (category: string) =>
+    category.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
 
-  const formatDepartmentName = (dept: string) => {
-    return dept.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
-  };
+  const formatDepartmentName = (dept: string) =>
+    dept.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
 
   const handleSave = async () => {
     if (!title.trim()) return;
@@ -76,28 +74,35 @@ const ResourceEditModal = ({
     <AnimatePresence mode="wait">
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          {/*==================== Background Overlay (old UI style) ====================*/}
           <motion.div
             onClick={!isLoading ? onClose : undefined}
             className="absolute inset-0 bg-gray-900/50 backdrop-blur-sm"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
           />
 
+          {/*==================== Modal Content (old UI style) ====================*/}
           <motion.div
-            className="relative bg-white rounded-xl shadow-lg w-full max-w-2xl max-h-[90vh] overflow-hidden"
-            initial={{ scale: 0.95, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.95, opacity: 0 }}
-            transition={{ duration: 0.2 }}
+            className="relative w-full max-w-lg rounded-xl bg-white shadow-2xl"
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.97, y: 10 }}
+            transition={{ type: 'spring', damping: 20, stiffness: 300, duration: 0.3 }}
           >
-            <div className="p-6">
-              {/*==================== Modal Header ====================*/}
-              <div className="flex items-center justify-between mb-6">
-                <div>
-                  <h3 className="text-lg font-medium text-gray-900 flex items-center">
-                    Edit Resource
-                    <span className="ml-2 relative">
+            <div className="relative p-6">
+              {/*==================== Modal Header (old UI styling/colors) ====================*/}
+              <div className="mb-5 flex justify-between items-center">
+                <div className="flex items-center">
+                  <div className="mr-3 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-blue-100">
+                    <Pencil className="h-5 w-5 text-blue-600" />
+                  </div>
+                  <h3 className="text-lg font-medium flex items-center">
+                    <span className="text-blue-700 mr-2">Edit</span>
+                    <span className="text-amber-500">Resource</span>
+                    <span className="ml-3 relative">
                       <span className="absolute -top-1 -right-1 flex h-3 w-3">
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
                         <span className="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
@@ -111,6 +116,7 @@ const ResourceEditModal = ({
                   className="rounded-full p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-500 disabled:opacity-50"
                   onClick={onClose}
                   disabled={isLoading}
+                  aria-label="Close"
                 >
                   <X className="h-5 w-5" />
                 </button>
@@ -118,9 +124,8 @@ const ResourceEditModal = ({
               {/*==================== End of Modal Header ====================*/}
 
               {/*==================== Form Content ====================*/}
-              <div className="mb-6 space-y-4">
-                {/*==================== Title ====================*/}
-                <div>
+              <div className="mb-6">
+                <div className="mb-4">
                   <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
                     Title <span className="text-red-500">*</span>
                   </label>
@@ -133,10 +138,8 @@ const ResourceEditModal = ({
                     className="w-full rounded-lg border border-gray-200 p-2.5 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
                   />
                 </div>
-                {/*==================== End of Title ====================*/}
 
-                {/*==================== Description ====================*/}
-                <div>
+                <div className="mb-4">
                   <label
                     htmlFor="description"
                     className="block text-sm font-medium text-gray-700 mb-1"
@@ -151,11 +154,8 @@ const ResourceEditModal = ({
                     className="w-full rounded-lg border border-gray-200 p-2.5 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
                   />
                 </div>
-                {/*==================== End of Description ====================*/}
 
-                {/*==================== Category and Department Row ====================*/}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/*==================== Category ====================*/}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                   <div>
                     <label
                       htmlFor="category"
@@ -176,9 +176,7 @@ const ResourceEditModal = ({
                       ))}
                     </select>
                   </div>
-                  {/*==================== End of Category ====================*/}
 
-                  {/*==================== Department ====================*/}
                   <div>
                     <label
                       htmlFor="department"
@@ -207,13 +205,9 @@ const ResourceEditModal = ({
                       ))}
                     </select>
                   </div>
-                  {/*==================== End of Department ====================*/}
                 </div>
-                {/*==================== End of Category and Department Row ====================*/}
 
-                {/*==================== Visibility and Academic Level Row ====================*/}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/*==================== Visibility ====================*/}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                   <div>
                     <label
                       htmlFor="visibility"
@@ -231,9 +225,7 @@ const ResourceEditModal = ({
                       <option value="admin">Admin Only</option>
                     </select>
                   </div>
-                  {/*==================== End of Visibility ====================*/}
 
-                  {/*==================== Academic Level ====================*/}
                   <div>
                     <label
                       htmlFor="academicLevel"
@@ -254,13 +246,10 @@ const ResourceEditModal = ({
                       <option value="postgraduate">Postgraduate</option>
                     </select>
                   </div>
-                  {/*==================== End of Academic Level ====================*/}
                 </div>
-                {/*==================== End of Visibility and Academic Level Row ====================*/}
               </div>
-              {/*==================== End of Form Content ====================*/}
 
-              {/*==================== Action Buttons ====================*/}
+              {/*==================== Action Buttons (old UI styling) ====================*/}
               <div className="flex justify-end space-x-3">
                 <button
                   type="button"
@@ -289,7 +278,6 @@ const ResourceEditModal = ({
                   )}
                 </button>
               </div>
-              {/*==================== End of Action Buttons ====================*/}
             </div>
           </motion.div>
         </div>
