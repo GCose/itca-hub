@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { useState, useEffect, useCallback } from 'react';
 import useResources from '@/hooks/resources/use-resource';
+import useResourceAdmin from '@/hooks/resources/use-resource-admin';
 import { ResourcesComponentProps } from '@/types/interfaces/resource';
 import ResourceTable from '@/components/dashboard/table/resource-table';
 import DashboardLayout from '@/components/dashboard/layout/dashboard-layout';
@@ -15,11 +16,27 @@ const ResourcesComponent = ({ role, userData }: ResourcesComponentProps) => {
       token: userData.token,
     });
 
+  const adminHook = role === 'admin' ? useResourceAdmin({ token: userData.token }) : null;
+
   const [department, setDepartment] = useState<
     'all' | 'computer_science' | 'information_systems' | 'telecommunications'
   >('all');
   const [category, setCategory] = useState('all');
   const [visibility, setVisibility] = useState<'all' | 'admin'>('all');
+
+  const handleDeleteResource = useCallback(
+    async (resourceId: string): Promise<boolean> => {
+      if (!adminHook?.toggleResourceTrash) return false;
+
+      try {
+        await adminHook.toggleResourceTrash(resourceId);
+        return true;
+      } catch (error) {
+        return false;
+      }
+    },
+    [adminHook]
+  );
 
   const loadResources = useCallback(() => {
     fetchResources({
@@ -263,6 +280,7 @@ const ResourcesComponent = ({ role, userData }: ResourcesComponentProps) => {
             onClearFilters={clearFilters}
             totalPages={pagination.totalPages}
             userRole={role === 'admin' ? 'admin' : 'user'}
+            onDeleteResource={role === 'admin' ? handleDeleteResource : undefined}
           />
           {/*==================== End of Resource Table ====================*/}
         </>
