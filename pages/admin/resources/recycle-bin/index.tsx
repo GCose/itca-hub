@@ -46,9 +46,6 @@ const RecycleBinPage = ({ userData }: RecycleBinPageProps) => {
     });
   };
 
-  /**========================
-   * Handle refresh
-   ========================*/
   const handleRefresh = () => {
     fetchResources({
       includeDeleted: true,

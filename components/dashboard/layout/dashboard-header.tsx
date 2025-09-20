@@ -7,7 +7,7 @@ import { motion } from 'framer-motion';
 import { BASE_URL } from '@/utils/url';
 import { useState, useEffect, useCallback } from 'react';
 import { DashboardHeaderProps } from '@/types/interfaces/dashboard';
-import { Menu, User, LogOut, HelpCircle } from 'lucide-react';
+import { Menu, User, LogOut, HelpCircle, Crown } from 'lucide-react';
 
 const DashboardHeader = ({ sidebarOpen, token, setSidebarOpen }: DashboardHeaderProps) => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -149,7 +149,19 @@ const DashboardHeader = ({ sidebarOpen, token, setSidebarOpen }: DashboardHeader
               onClick={() => setIsProfileOpen(!isProfileOpen)}
             >
               <div className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-full bg-blue-100 text-blue-700">
-                <Image width={50} height={50} alt="profile-image" src={profilePictureUrl!} />
+                {profilePictureUrl ? (
+                  <Image
+                    width={36}
+                    height={36}
+                    alt="profile-image"
+                    src={profilePictureUrl}
+                    className="w-full h-full object-cover"
+                  />
+                ) : userData.role === 'admin' ? (
+                  <Crown className="w-5 h-5 text-blue-600" />
+                ) : (
+                  <User className="w-5 h-5 text-blue-600" />
+                )}
               </div>
               <span className="hidden text-sm font-medium text-gray-700 min-[968px]:block">
                 {fullName}
