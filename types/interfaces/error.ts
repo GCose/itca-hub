@@ -9,11 +9,12 @@ export interface NetworkErrorProps {
 
 export interface EmptyStateProps {
   title?: string;
-  uploadUrl: string;
+  uploadUrl?: string;
   itemName?: string;
   description?: string;
   onRefresh?: () => void;
   uploadIcon?: LucideIcon;
   uploadButtonText?: string;
+  showUploadButton?: boolean;
   showRefreshButton?: boolean;
 }

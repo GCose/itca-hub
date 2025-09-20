@@ -169,3 +169,14 @@ export interface ResourcesComponentProps {
 export interface RecycleBinPageProps {
   userData: UserAuth;
 }
+
+export interface ResourceUploaderProps {
+  token: string;
+  onUploadComplete?: (fileData: {
+    fileName: string;
+    fileUrl: string;
+    fileType: string;
+    fileSize: string;
+  }) => void;
+  onError?: (error: string) => void;
+}

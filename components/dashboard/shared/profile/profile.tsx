@@ -14,7 +14,7 @@ import {
   GraduationCap,
 } from 'lucide-react';
 import Image from 'next/image';
-import useProfile from '@/hooks/use-profile';
+import useProfile from '@/hooks/profile/use-profile';
 import { ProfileComponentProps } from '@/types/interfaces/profile';
 import { NetworkError } from '@/components/dashboard/error-messages';
 import DashboardLayout from '@/components/dashboard/layout/dashboard-layout';

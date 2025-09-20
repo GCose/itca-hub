@@ -1,5 +1,5 @@
 import EventCard from './event-card';
-import useEvents from '@/hooks/use-event';
+import useEvents from '@/hooks/events/use-event';
 import { useState, useEffect, useCallback } from 'react';
 import DashboardLayout from '@/components/dashboard/layout/dashboard-layout';
 import { NetworkError, EmptyState } from '@/components/dashboard/error-messages';
@@ -333,11 +333,12 @@ const EventsComponent = ({ role, userData }: EventsComponentProps) => {
           title="No events found"
           showRefreshButton={true}
           onRefresh={handleRefresh}
+          showUploadButton={role === 'admin'}
           uploadUrl={role === 'admin' ? '/events' : '/help'}
           description={
             status === 'all'
               ? 'There are no events at the moment. Check back later!'
-              : `No ${status} events found. Try adjusting your filters.`
+              : `No ${status} events found. Try adjusting your filter(s).`
           }
           uploadButtonText={role === 'admin' ? 'Create Event' : 'Go To Dashboard'}
         />

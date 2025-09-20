@@ -5,7 +5,7 @@ import useResourceAdmin from '@/hooks/resources/use-resource-admin';
 import { ResourcesComponentProps } from '@/types/interfaces/resource';
 import ResourceTable from '@/components/dashboard/table/resource-table';
 import DashboardLayout from '@/components/dashboard/layout/dashboard-layout';
-import { Upload, Filter, Building2, Tag, Eye, Search } from 'lucide-react';
+import { Upload, Filter, Building2, Tag, Eye, Search, GraduationCap } from 'lucide-react';
 import DashboardPageHeader from '@/components/dashboard/layout/dashboard-page-header';
 import ResourceTableSkeleton from '@/components/dashboard/skeletons/resource-table-skeleton';
 import ResourceFilterSkeleton from '@/components/dashboard/skeletons/resource-filter-skeleton';
@@ -23,6 +23,9 @@ const ResourcesComponent = ({ role, userData }: ResourcesComponentProps) => {
   >('all');
   const [category, setCategory] = useState('all');
   const [visibility, setVisibility] = useState<'all' | 'admin'>('all');
+  const [academicLevel, setAcademicLevel] = useState<'all' | 'undergraduate' | 'postgraduate'>(
+    'all'
+  );
 
   const { currentPage, limit } = pagination;
 
@@ -30,9 +33,10 @@ const ResourcesComponent = ({ role, userData }: ResourcesComponentProps) => {
     () => ({
       ...(department !== 'all' && { department }),
       ...(category !== 'all' && { category }),
+      ...(academicLevel !== 'all' && { academicLevel }),
       visibility: role === 'student' ? 'all' : visibility,
     }),
-    [department, category, visibility, role]
+    [department, category, academicLevel, visibility, role]
   );
 
   const filteredResources = useMemo(() => {
@@ -80,6 +84,7 @@ const ResourcesComponent = ({ role, userData }: ResourcesComponentProps) => {
     setDepartment('all');
     setCategory('all');
     setVisibility('all');
+    setAcademicLevel('all');
   }, [setSearchTerm]);
 
   useEffect(() => {
@@ -98,13 +103,6 @@ const ResourcesComponent = ({ role, userData }: ResourcesComponentProps) => {
       dashboardTitle: 'Resource Management',
       actions: (
         <div className="flex flex-col gap-4 w-full md:flex-row sm:mt-0 space-x-3">
-          {/* <Link
-            href="/admin/resources/recycle-bin"
-            className="inline-flex items-center rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-          >
-            <Trash2 className="mr-2 h-4 w-4" />
-            Recycle Bin
-          </Link> */}
           <Link
             href="/admin/resources/upload"
             className="group inline-flex items-center rounded-lg bg-gradient-to-r from-blue-700 to-blue-600 px-4 py-2 text-sm font-medium text-white hover:from-blue-800 hover:to-blue-700 focus:outline-none focus:ring-blue-500 focus:ring-offset-2 transition-all duration-300 shadow-md hover:shadow-lg"
@@ -120,17 +118,7 @@ const ResourcesComponent = ({ role, userData }: ResourcesComponentProps) => {
       subtitle: 'Library',
       description: 'Explore and access educational materials for your studies',
       dashboardTitle: 'Resource Library',
-      actions: (
-        <div className="flex flex-col gap-4 w-full md:flex-row sm:mt-0 space-x-3">
-          {/* <Link
-            href="/student/resources/bookmarks"
-            className="group inline-flex items-center rounded-lg bg-gradient-to-r from-blue-700 to-blue-600 px-4 py-2 text-sm font-medium text-white hover:from-blue-800 hover:to-blue-700 focus:outline-none focus:ring-blue-500 focus:ring-offset-2 transition-all duration-300 shadow-md hover:shadow-lg"
-          >
-            <Bookmark className="mr-2 h-4 w-4 transition-transform group-hover:translate-y-[-2px]" />
-            Bookmarks
-          </Link> */}
-        </div>
-      ),
+      actions: <div className="flex flex-col gap-4 w-full md:flex-row sm:mt-0 space-x-3"></div>,
     },
   };
 
@@ -141,9 +129,9 @@ const ResourcesComponent = ({ role, userData }: ResourcesComponentProps) => {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <DashboardPageHeader
           title={config.title}
-          actions={config.actions}
           subtitle={config.subtitle}
           description={config.description}
+          actions={config.actions}
         />
       </div>
 
@@ -187,7 +175,7 @@ const ResourcesComponent = ({ role, userData }: ResourcesComponentProps) => {
             </div>
 
             <div
-              className={`grid grid-cols-1 ${role === 'admin' ? 'md:grid-cols-3' : 'md:grid-cols-2'} gap-4 pt-2`}
+              className={`grid grid-cols-1 ${role === 'admin' ? 'md:grid-cols-4' : 'md:grid-cols-3'} gap-4 pt-2`}
             >
               <div>
                 <label className="flex items-center text-sm text-gray-700 mb-2">
@@ -227,6 +215,24 @@ const ResourcesComponent = ({ role, userData }: ResourcesComponentProps) => {
                   <option value="tutorial">Tutorials</option>
                   <option value="textbook">Textbooks</option>
                   <option value="research_papers">Research Papers</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="flex items-center text-sm text-gray-700 mb-2">
+                  <div className="bg-green-100/70 p-2 rounded-full mr-2">
+                    <GraduationCap className="h-5 w-5 text-green-600" />
+                  </div>
+                  Academic Level
+                </label>
+                <select
+                  value={academicLevel}
+                  onChange={(e) => setAcademicLevel(e.target.value as typeof academicLevel)}
+                  className="w-full rounded-lg bg-gray-100/70 py-2.5 pl-3 pr-8 text-sm text-gray-500 focus:bg-slate-100 focus:outline-none transition-colors"
+                >
+                  <option value="all">All Levels</option>
+                  <option value="undergraduate">Undergraduate</option>
+                  <option value="postgraduate">Postgraduate</option>
                 </select>
               </div>
 

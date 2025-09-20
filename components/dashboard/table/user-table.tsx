@@ -11,7 +11,7 @@ import {
   ChevronRight,
   GraduationCap,
 } from 'lucide-react';
-import useUserActions from '@/hooks/use-user-actions';
+import useUserActions from '@/hooks/users/use-user-actions';
 import { UserTableProps } from '@/types/interfaces/table';
 import UserTableSkeleton from '../skeletons/user-table-skeleton';
 import UserActionsModal from '../modals/user/user-actions-modal';

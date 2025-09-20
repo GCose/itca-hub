@@ -161,19 +161,19 @@ const ResourceTable = ({
 
       {!isError && allResources.length === 0 && (
         <EmptyState
-          uploadUrl={mode === 'recycleBin' ? '/admin/resources' : '/admin/resources/upload'}
+          itemName="resource"
+          showUploadButton={mode === 'recycleBin' || userRole === 'admin'}
+          showRefreshButton={mode !== 'recycleBin' && userRole === 'user'}
           uploadButtonText={mode === 'recycleBin' ? 'Go Back to Resources' : undefined}
+          onRefresh={mode !== 'recycleBin' && userRole === 'user' ? onRefresh : undefined}
           uploadIcon={mode === 'recycleBin' ? ArrowLeft : undefined}
           description={
             mode === 'recycleBin'
               ? 'No resources in recycle bin. Deleted resources will appear here.'
               : userRole === 'admin'
                 ? 'Get started by uploading your first educational resource to the library.'
-                : 'No resources available at the moment. Check back later for new materials.'
+                : 'Try adjusting your filter(s) or refresh the table.'
           }
-          showRefreshButton={mode !== 'recycleBin' && userRole === 'user'}
-          onRefresh={mode !== 'recycleBin' && userRole === 'user' ? onRefresh : undefined}
-          itemName="resource"
         />
       )}
 
